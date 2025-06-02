@@ -1,8 +1,16 @@
 using UnityEngine;
+using System.Collections.Generic;
 
-public class SamplePoint : MonoBehaviour
-{
-    
+public class SamplePoint : MonoBehaviour {
+
+    private static List<SamplePoint> points = new();
+
+    public static void UpdatePoints() {
+        foreach (SamplePoint point in points) {
+            point.UpdateValue();
+        }
+    }
+
     [SerializeField] private Material okMaterial;
     [SerializeField] private Material falseMaterial;
     [SerializeField] private float okThreshold = 0f;
@@ -12,19 +20,19 @@ public class SamplePoint : MonoBehaviour
     private float value = 0f;
 
     private void Start() {
-        OnPerceptronChanged();
+        UpdateValue();
     }
 
     private void OnEnable() {
-        PerceptronHost.Instance.OnPerceptronChanged += OnPerceptronChanged;
+        points.Add(this);
     }
     
     private void OnDisable() {
-        PerceptronHost.Instance.OnPerceptronChanged -= OnPerceptronChanged;
+        points.Remove(this);
     }
 
-    private void OnPerceptronChanged() {
+    private void UpdateValue() {
         value = PerceptronHost.Instance.EvaluateAt(transform.position);
-        target.sharedMaterial = (invert ? value <= okThreshold : value >= okThreshold) ? okMaterial : falseMaterial;
+        target.sharedMaterial = (invert ? value < okThreshold : value >= okThreshold) ? okMaterial : falseMaterial;
     }
 }

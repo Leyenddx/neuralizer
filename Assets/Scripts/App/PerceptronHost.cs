@@ -1,9 +1,8 @@
 using UnityEngine;
-using UnityEngine.Events;
 
-public class PerceptronHost : MonoBehaviour
-{
+public class PerceptronHost : MonoBehaviour {
     private static readonly int WeightsID = Shader.PropertyToID("_Weights");
+    private static readonly int BiasesID = Shader.PropertyToID("_Biases");
 
     public enum ActivationFunction {
         Lineal = 0,
@@ -26,23 +25,25 @@ public class PerceptronHost : MonoBehaviour
     public static PerceptronHost Instance { get; private set; }
 
     public float WeightX { get; set; } = 0f;
-    
+
     public float WeightY { get; set; } = 0f;
-    
+
     public float WeightZ { get; set; } = 0f;
 
     public Vector3 Weights => new(WeightX, WeightY, WeightZ);
 
+    public float BiasX { get; set; } = 0f;
+
+    public float BiasY { get; set; } = 0f;
+
+    public float BiasZ { get; set; } = 0f;
+
+    public Vector3 Biases => new(BiasX, BiasX, BiasZ);
+
     public ActivationFunction CurrentActivationFunction { get; private set; }
 
-    public UnityAction OnPerceptronChanged;
-    
     private void Awake() {
         Instance = this;
-    }
-
-    private void Start() {
-        OnPerceptronChanged?.Invoke();
     }
 
     public void SetLineal(bool value) {
@@ -76,9 +77,9 @@ public class PerceptronHost : MonoBehaviour
     }
 
     public void NotifyChange() {
-        OnPerceptronChanged?.Invoke();
         Shader.SetGlobalVector(WeightsID, Weights);
-        switch(CurrentActivationFunction) {
+        Shader.SetGlobalVector(BiasesID, Biases);
+        switch (CurrentActivationFunction) {
             default:
             case ActivationFunction.Lineal:
                 Shader.DisableKeyword("_ACTIVATIONFUNCTION_SIGMOID");
@@ -116,10 +117,10 @@ public class PerceptronHost : MonoBehaviour
                 Shader.EnableKeyword("_ACTIVATIONFUNCTION_STEPPED");
                 break;
         }
+        SamplePoint.UpdatePoints();
     }
 
     public float EvaluateAt(Vector3 point) {
-        return EvaluateActivationFunction(CurrentActivationFunction, Vector3.Dot(point, Weights));
+        return EvaluateActivationFunction(CurrentActivationFunction, Vector3.Dot(point + Biases, Weights));
     }
-
 }

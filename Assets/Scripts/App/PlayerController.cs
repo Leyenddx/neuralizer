@@ -1,0 +1,22 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class PlayerController : MonoBehaviour {
+
+    [SerializeField] private Transform cameraTransform;
+
+    public bool AllowRotation { get; set; } = false;
+
+    private Vector2 rotation = Vector2.zero;
+
+    public void OnPointerDelta(InputAction.CallbackContext ctx) {
+        if (!AllowRotation) return;
+        Vector2 delta = ctx.ReadValue<Vector2>();
+        delta.x /= Screen.width;
+        delta.y /= Screen.height;
+        delta *= 360f;
+        rotation.x += delta.y;
+        rotation.y -= delta.x;
+        cameraTransform.rotation = Quaternion.Euler(rotation);
+    }
+}
