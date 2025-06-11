@@ -9,14 +9,12 @@ public class PlayerController : MonoBehaviour {
     [SerializeField] private Transform cameraTransform;
     [SerializeField] private Transform planarCameraTransform;
     [SerializeField] private CinemachinePositionComposer planarCameraComposer;
-    [SerializeField] private UnityEvent<bool> OnShow2DField;
-    [SerializeField] private UnityEvent<bool> OnShow2DFunction;
     [SerializeField] private UnityEvent<bool> OnShowDrawer;
 
     public bool AllowRotation { get; set; } = false;
 
     private Vector2 targetRotation = Vector2.zero;
-    private Vector2 target2DRotation = Vector2.zero;
+    private Vector3 target2DRotation = Vector3.zero;
     private bool show2DFunction = false;
     private bool isFullscreen = false;
     private Vector2 targetComposerShift = Vector2.zero;
@@ -27,10 +25,11 @@ public class PlayerController : MonoBehaviour {
     private void Update() {
         float t = Mathf.Exp(-cameraSpeed * Time.deltaTime);
         cameraTransform.rotation = Quaternion.Slerp(Quaternion.Euler(targetRotation), cameraTransform.rotation, t);
-        // planarCameraTransform.rotation =
-        //     Quaternion.Slerp(Quaternion.Euler(target2DRotation), planarCameraTransform.rotation, t);
-        // planarCameraComposer.Composition.ScreenPosition =
-        //     Vector2.Lerp(targetComposerShift, planarCameraComposer.Composition.ScreenPosition, t);
+        planarCameraTransform.rotation =
+            Quaternion.Slerp(Quaternion.Euler(target2DRotation), planarCameraTransform.rotation, t);
+        planarCameraComposer.Composition.ScreenPosition =
+            Vector2.Lerp(show2DFunction ? Vector2.zero : targetComposerShift,
+                planarCameraComposer.Composition.ScreenPosition, t);
         currentLensShift = Vector2.Lerp(targetLensShift, currentLensShift, t);
         foreach (var cinemachineCamera in cinemachineCameras) {
             cinemachineCamera.Lens.PhysicalProperties.LensShift = currentLensShift;
@@ -42,21 +41,30 @@ public class PlayerController : MonoBehaviour {
         Vector2 delta = ctx.ReadValue<Vector2>();
         delta.x /= Screen.width;
         delta.y /= -Screen.height;
-        targetComposerShift += delta;
-        targetComposerShift.Set(Mathf.Clamp(targetComposerShift.x, -1f, 1f),
-            Mathf.Clamp(targetComposerShift.y, -1f, 1f));
+        if (!show2DFunction) {
+            targetComposerShift += delta;
+            targetComposerShift.Set(Mathf.Clamp(targetComposerShift.x, -1f, 1f),
+                Mathf.Clamp(targetComposerShift.y, -1f, 1f));
+        }
         delta *= 360f;
         targetRotation.x += delta.y;
         targetRotation.y += delta.x;
         targetRotation.x %= 360f;
         targetRotation.y %= 360f;
+        if (show2DFunction) {
+            target2DRotation.x -= delta.x;
+            target2DRotation.x %= 360f;
+        }
     }
 
     public void Toggle2DFunctionView() {
         show2DFunction = !show2DFunction;
-        target2DRotation.Set(show2DFunction ? 90f : 0f, 0f);
-        OnShow2DField?.Invoke(!show2DFunction);
-        OnShow2DFunction?.Invoke(show2DFunction);
+        if (show2DFunction) {
+            target2DRotation.Set(0f, 90f, 90f);
+        }
+        else {
+            target2DRotation.Set(0f, 0f, 0f);
+        }
     }
 
     public void ToggleFullscreen() {
@@ -69,6 +77,7 @@ public class PlayerController : MonoBehaviour {
         const float stepSize = 45f;
         targetRotation.x = Mathf.Round(targetRotation.x / stepSize) * stepSize;
         targetRotation.y = Mathf.Round(targetRotation.y / stepSize) * stepSize;
+        target2DRotation.x = Mathf.Round(target2DRotation.x / stepSize) * stepSize;
         targetComposerShift.Set(0f, 0f);
     }
 }
