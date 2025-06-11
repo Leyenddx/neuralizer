@@ -11,10 +11,10 @@ public class SamplePoint : MonoBehaviour {
         }
     }
 
-    
-    [SerializeField] private Material okMaterial;
-    [SerializeField] private Material falseMaterial;
-    [SerializeField] private Renderer target;
+
+    [SerializeField] private Color colorOk;
+    [SerializeField] private Color colorFalse;
+    [SerializeField] private SpriteRenderer target;
     [SerializeField] private bool pointOfInterest;
 
     private float value = 0f;
@@ -33,6 +33,6 @@ public class SamplePoint : MonoBehaviour {
 
     private void UpdateValue() {
         value = PerceptronHost.Instance.EvaluateAt(transform.position);
-        target.sharedMaterial = (pointOfInterest ? value >= 0.333f : value < 0.333f) ? okMaterial : falseMaterial;
+        target.color = (pointOfInterest ? value >= 0.333f : value < 0.333f) ? colorOk : colorFalse;
     }
 }

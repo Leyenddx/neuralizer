@@ -12,6 +12,6 @@ public class LookAtCamera : MonoBehaviour {
         }
 
         private void OnBeginCameraRendering(ScriptableRenderContext ctx, Camera cam) {
-            transform.LookAt(cam.transform.position);
+            transform.forward = (cam.transform.position - transform.position).normalized;
         }
 }

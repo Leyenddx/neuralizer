@@ -4,11 +4,11 @@ public class PerceptronHost : MonoBehaviour {
     private static readonly int WeightsID = Shader.PropertyToID("_Weights");
 
     public enum ActivationFunction {
-        Lineal = 0,
-        Sigmoid = 1,
-        TanH = 2,
-        ReLu = 3,
-        Stepped = 4
+        Stepped = 0,
+        Lineal = 1,
+        ReLu = 2,
+        Sigmoid = 3,
+        TanH = 4
     }
 
     public static float EvaluateActivationFunction(ActivationFunction function, float value) {
@@ -39,33 +39,37 @@ public class PerceptronHost : MonoBehaviour {
         Instance = this;
     }
 
-    public void SetLineal(bool value) {
-        if (!value) return;
-        CurrentActivationFunction = ActivationFunction.Lineal;
-        NotifyChange();
-    }
-
-    public void SetSigmoid(bool value) {
-        if (!value) return;
-        CurrentActivationFunction = ActivationFunction.Sigmoid;
-        NotifyChange();
-    }
-
-    public void SetTanH(bool value) {
-        if (!value) return;
-        CurrentActivationFunction = ActivationFunction.TanH;
-        NotifyChange();
-    }
-
-    public void SetReLu(bool value) {
-        if (!value) return;
-        CurrentActivationFunction = ActivationFunction.ReLu;
+    private void Start() {
         NotifyChange();
     }
 
     public void SetStepped(bool value) {
         if (!value) return;
-        CurrentActivationFunction = ActivationFunction.Stepped;
+        SetFunctionIndex((int)ActivationFunction.Stepped);
+    }
+    
+    public void SetLineal(bool value) {
+        if (!value) return;;
+        SetFunctionIndex((int)ActivationFunction.Lineal);
+    }
+
+    public void SetReLu(bool value) {
+        if (!value) return;
+        SetFunctionIndex((int)ActivationFunction.ReLu);
+    }
+
+    public void SetSigmoid(bool value) {
+        if (!value) return;
+        SetFunctionIndex((int)ActivationFunction.Sigmoid);
+    }
+
+    public void SetTanH(bool value) {
+        if (!value) return;
+        SetFunctionIndex((int)ActivationFunction.TanH);
+    }
+
+    public void SetFunctionIndex(int index) {
+        CurrentActivationFunction = (ActivationFunction)index;
         NotifyChange();
     }
 
