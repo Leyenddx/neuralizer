@@ -1,9 +1,9 @@
-const cacheName = "Desert Hare Studios-Neuralizer-0.1.0";
+const cacheName = "Desert Hare Studios-Neuralizer-0.1.2";
 const contentToCache = [
-    "Build/Web.loader.js",
-    "Build/Web.framework.js.unityweb",
-    "Build/Web.data.unityweb",
-    "Build/Web.wasm.unityweb",
+    "Build/public.loader.js",
+    "Build/public.framework.js.unityweb",
+    "Build/public.data.unityweb",
+    "Build/public.wasm.unityweb",
     "TemplateData/style.css"
 
 ];
