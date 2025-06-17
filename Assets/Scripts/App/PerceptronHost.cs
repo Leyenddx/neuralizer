@@ -1,27 +1,33 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PerceptronHost : MonoBehaviour {
     private static readonly int WeightsID = Shader.PropertyToID("_Weights");
+    private static readonly int FunctionParamsID = Shader.PropertyToID("_FunctionParams");
 
     public enum ActivationFunction {
         Stepped = 0,
-        Lineal = 1,
-        ReLu = 2,
-        Sigmoid = 3,
-        TanH = 4
+        ReLu = 1,
+        Sigmoid = 2,
+        TanH = 3
     }
 
-    public static float EvaluateActivationFunction(ActivationFunction function, float value) {
+    public float EvaluateActivationFunction(ActivationFunction function, float value) {
         return function switch {
             ActivationFunction.Sigmoid => 1f / (1f + Mathf.Exp(-value)),
             ActivationFunction.TanH => (float)System.Math.Tanh(value),
-            ActivationFunction.ReLu => Mathf.Max(0f, value),
-            ActivationFunction.Stepped => value > 0f ? 1f : 0f,
+            ActivationFunction.ReLu => Mathf.Max(0f, value + ReLuOffset),
+            ActivationFunction.Stepped => value >= StepThreshold ? StepMax : StepMin,
             _ => value
         };
     }
 
     public static PerceptronHost Instance { get; private set; }
+
+    [SerializeField] private UnityEvent<bool> OnStepped;
+    [SerializeField] private UnityEvent<bool> OnReLu;
+    [SerializeField] private UnityEvent<bool> OnSigmoid;
+    [SerializeField] private UnityEvent<bool> OnTanH;
 
     public float WeightX { get; set; } = 0f;
 
@@ -35,22 +41,28 @@ public class PerceptronHost : MonoBehaviour {
 
     public ActivationFunction CurrentActivationFunction { get; private set; }
 
+    public float StepMin { get; set; } = 0f;
+
+    public float StepMax { get; set; } = 1f;
+
+    public float StepThreshold { get; set; } = 0f;
+
+    public float ReLuOffset { get; set; } = 0f;
+    
+    public Vector4 FunctionParams => new(StepMin, StepMax, StepThreshold, ReLuOffset);
+
     private void Awake() {
         Instance = this;
     }
 
     private void Start() {
+        SetStepped(true);
         NotifyChange();
     }
 
     public void SetStepped(bool value) {
         if (!value) return;
         SetFunctionIndex((int)ActivationFunction.Stepped);
-    }
-    
-    public void SetLineal(bool value) {
-        if (!value) return;;
-        SetFunctionIndex((int)ActivationFunction.Lineal);
     }
 
     public void SetReLu(bool value) {
@@ -70,20 +82,17 @@ public class PerceptronHost : MonoBehaviour {
 
     public void SetFunctionIndex(int index) {
         CurrentActivationFunction = (ActivationFunction)index;
+        OnStepped?.Invoke(CurrentActivationFunction == ActivationFunction.Stepped);
+        OnReLu?.Invoke(CurrentActivationFunction == ActivationFunction.ReLu);
+        OnSigmoid?.Invoke(CurrentActivationFunction == ActivationFunction.Sigmoid);
+        OnTanH?.Invoke(CurrentActivationFunction == ActivationFunction.TanH);
         NotifyChange();
     }
 
     public void NotifyChange() {
         Shader.SetGlobalVector(WeightsID, Weights);
+        Shader.SetGlobalVector(FunctionParamsID, FunctionParams);
         switch (CurrentActivationFunction) {
-            default:
-            case ActivationFunction.Lineal:
-                Shader.DisableKeyword("_ACTIVATIONFUNCTION_SIGMOID");
-                Shader.DisableKeyword("_ACTIVATIONFUNCTION_TANH");
-                Shader.DisableKeyword("_ACTIVATIONFUNCTION_RELU");
-                Shader.DisableKeyword("_ACTIVATIONFUNCTION_STEPPED");
-                Shader.EnableKeyword("_ACTIVATIONFUNCTION_LINEAL");
-                break;
             case ActivationFunction.Sigmoid:
                 Shader.DisableKeyword("_ACTIVATIONFUNCTION_TANH");
                 Shader.DisableKeyword("_ACTIVATIONFUNCTION_RELU");

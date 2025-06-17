@@ -58,7 +58,11 @@ public class PlayerController : MonoBehaviour {
     }
 
     public void Toggle2DFunctionView() {
-        show2DFunction = !show2DFunction;
+        Set2DFunctionView(!show2DFunction);
+    }
+
+    public void Set2DFunctionView(bool view) {
+        show2DFunction = view;
         if (show2DFunction) {
             target2DRotation.Set(0f, 90f, 90f);
         }
@@ -70,7 +74,7 @@ public class PlayerController : MonoBehaviour {
     public void ToggleFullscreen() {
         isFullscreen = !isFullscreen;
         OnShowDrawer?.Invoke(!isFullscreen);
-        targetLensShift.Set(0f, isFullscreen ? 0f : -0.333333f);
+        targetLensShift.Set(0f, isFullscreen ? 0f : -0.25f);
     }
 
     public void ResetCamera() {
