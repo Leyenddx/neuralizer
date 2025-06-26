@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class LookAtCamera : MonoBehaviour {
-
+namespace Neuralizer {
+    public class LookAtCamera : MonoBehaviour {
         private void OnEnable() {
             RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
         }
@@ -14,4 +14,5 @@ public class LookAtCamera : MonoBehaviour {
         private void OnBeginCameraRendering(ScriptableRenderContext ctx, Camera cam) {
             transform.forward = (cam.transform.position - transform.position).normalized;
         }
+    }
 }

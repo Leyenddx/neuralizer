@@ -1,38 +1,37 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class SamplePoint : MonoBehaviour {
+namespace Neuralizer {
+    public class SamplePoint : MonoBehaviour {
+        
+        private static List<SamplePoint> points = new();
 
-    private static List<SamplePoint> points = new();
-
-    public static void UpdatePoints() {
-        foreach (SamplePoint point in points) {
-            point.UpdateValue();
+        public static void UpdatePoints() {
+            foreach (SamplePoint point in points) {
+                point.UpdateValue();
+            }
         }
-    }
 
+        [SerializeField] private Color colorOk;
+        [SerializeField] private Color colorFalse;
+        [SerializeField] private SpriteRenderer target;
+        [SerializeField] private bool pointOfInterest;
 
-    [SerializeField] private Color colorOk;
-    [SerializeField] private Color colorFalse;
-    [SerializeField] private SpriteRenderer target;
-    [SerializeField] private bool pointOfInterest;
+        private float value = 0f;
 
-    private float value = 0f;
+        private void OnEnable() {
+            points.Add(this);
+            transform.position = Random.insideUnitSphere * 10f;
+            UpdateValue();
+        }
 
-    private void Start() {
-        UpdateValue();
-    }
+        private void OnDisable() {
+            points.Remove(this);
+        }
 
-    private void OnEnable() {
-        points.Add(this);
-    }
-    
-    private void OnDisable() {
-        points.Remove(this);
-    }
-
-    private void UpdateValue() {
-        value = PerceptronHost.Instance.EvaluateAt(transform.position);
-        target.color = (pointOfInterest ? value >= 0.333f : value < 0.333f) ? colorOk : colorFalse;
+        private void UpdateValue() {
+            value = NetworkHost.Instance.EvaluateAt(transform.position);
+            target.color = (pointOfInterest ? value >= 0.5f : value < 0.5f) ? colorOk : colorFalse;
+        }
     }
 }
