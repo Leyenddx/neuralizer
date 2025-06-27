@@ -93,11 +93,14 @@ namespace Neuralizer {
         }
 
         public void ToggleFullscreen() {
-            isFullscreen = !isFullscreen;
-            OnShowDrawer?.Invoke(!isFullscreen);
-            targetLensShift.Set(0f, isFullscreen ? 0f : -0.25f);
+            SetFullscreen(!isFullscreen);
         }
 
+        public void SetFullscreen(bool fullscreen) {
+            isFullscreen = fullscreen;
+            OnShowDrawer?.Invoke(!isFullscreen);
+        }
+        
         public void ResetCamera() {
             const float stepSize = 45f;
             targetRotation.x = Mathf.Round(targetRotation.x / stepSize) * stepSize;

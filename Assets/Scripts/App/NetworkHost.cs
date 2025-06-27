@@ -1,20 +1,16 @@
 using Neuralizer.Data;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Pool;
 
 namespace Neuralizer {
     public class NetworkHost : MonoBehaviour {
         private static readonly int WeightsA_ID = Shader.PropertyToID("_WeightsA");
         private static readonly int WeightsB_ID = Shader.PropertyToID("_WeightsB");
         private static readonly int WeightsC_ID = Shader.PropertyToID("_WeightsC");
-
         private static readonly int WeightsD_ID = Shader.PropertyToID("_WeightsD");
         private static readonly int WeightsE_ID = Shader.PropertyToID("_WeightsE");
         private static readonly int WeightsF_ID = Shader.PropertyToID("_WeightsF");
-
-        private static readonly int WeightsG_ID = Shader.PropertyToID("_WeightsG");
-        private static readonly int WeightsH_ID = Shader.PropertyToID("_WeightsH");
-        private static readonly int WeightsI_ID = Shader.PropertyToID("_WeightsI");
 
         private static readonly int WeightsOutput_ID = Shader.PropertyToID("_WeightsOutput");
 
@@ -22,65 +18,128 @@ namespace Neuralizer {
 
         public static NetworkHost Instance { get; private set; }
 
-        [SerializeField] private UnityEvent<bool> OnStepped;
-        [SerializeField] private UnityEvent<bool> OnReLu;
-        [SerializeField] private UnityEvent<bool> OnSigmoid;
-        [SerializeField] private UnityEvent<bool> OnTanH;
-
-        public float StepMin { get; set; } = 0f;
-        public float StepMax { get; set; } = 1f;
-        public float StepThreshold { get; set; } = 0f;
-        public float ReLuOffset { get; set; } = 0f;
-        public Vector4 FunctionParams => new(StepMin, StepMax, StepThreshold, ReLuOffset);
-        public ActivationFunction CurrentActivationFunction { get; private set; }
-        public NetworkArchitecture Architecture { get; private set; } = NetworkArchitecture.ThreeThreeThree;
+        [SerializeField] private SamplePoint targetPointPrefab;
+        [SerializeField] private SamplePoint unwantedPointPrefab;
+        
+        [SerializeField] private UnityEvent<string> OnDisplayName;
+        [SerializeField] private UnityEvent<bool> OnOrbitalCamera;
+        [SerializeField] private UnityEvent<bool> OnPlanarCamera;
+        [SerializeField] private UnityEvent OnSceneLoaded;
 
         private NeuralScene currentScene;
+        private ObjectPool<SamplePoint> targetPool;
+        private ObjectPool<SamplePoint> unwantedPool;
+        
+        public ActivationFunction CurrentActivationFunction { get; private set; } = ActivationFunction.Stepped;
+        public NetworkArchitecture Architecture { get; private set; } = NetworkArchitecture.Perceptron;
 
         public NeuralScene Scene {
             get => currentScene;
             set {
                 currentScene = value;
                 Architecture = value.networkArchitecture;
-                //TODO config
+
+                switch (Architecture) {
+                    default:
+                    case NetworkArchitecture.Perceptron:
+                        Shader.EnableKeyword("_ARCHITECTURE_I_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_2_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_3_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_2_2_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_3_3_1");
+                    break;
+                    case NetworkArchitecture.Two:
+                        Shader.DisableKeyword("_ARCHITECTURE_I_1");
+                        Shader.EnableKeyword("_ARCHITECTURE_I_2_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_3_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_2_2_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_3_3_1");
+                    break;
+                    case NetworkArchitecture.Three:
+                        Shader.DisableKeyword("_ARCHITECTURE_I_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_2_1");
+                        Shader.EnableKeyword("_ARCHITECTURE_I_3_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_2_2_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_3_3_1");
+                    break;
+                    case NetworkArchitecture.TwoTwo:
+                        Shader.DisableKeyword("_ARCHITECTURE_I_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_2_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_3_1");
+                        Shader.EnableKeyword("_ARCHITECTURE_I_2_2_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_3_3_1");
+                    break;
+                    case NetworkArchitecture.ThreeThree:
+                        Shader.DisableKeyword("_ARCHITECTURE_I_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_2_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_3_1");
+                        Shader.DisableKeyword("_ARCHITECTURE_I_2_2_1");
+                        Shader.EnableKeyword("_ARCHITECTURE_I_3_3_1");
+                    break;
+                }
+                value.A.ApplyTo(A);
+                value.B.ApplyTo(B);
+                value.C.ApplyTo(C);
+                value.D.ApplyTo(D);
+                value.E.ApplyTo(E);
+                value.F.ApplyTo(F);
+                value.Output.ApplyTo(Output);
+                SamplePoint.ClearPoints();
+                foreach (Vector3 point in value.targetPoints) {
+                    targetPool.Get().transform.position = point;
+                }
+                foreach (Vector3 point in value.unwantedPoints) {
+                    unwantedPool.Get().transform.position = point;
+                }
+                SamplePoint.UpdatePoints();
+                OnDisplayName?.Invoke(value.DisplayName);
+                OnPlanarCamera?.Invoke(!value.useOrbitalCamera);
+                OnOrbitalCamera?.Invoke(value.useOrbitalCamera);
+                OnSceneLoaded?.Invoke();
             }
         }
 
-        public Neuron A { get; set; } = new();
-        public Neuron B { get; set; } = new();
-        public Neuron C { get; set; } = new();
-        public Neuron D { get; set; } = new();
-        public Neuron E { get; set; } = new();
-        public Neuron F { get; set; } = new();
-        public Neuron G { get; set; } = new();
-        public Neuron H { get; set; } = new();
-        public Neuron I { get; set; } = new();
-        public Neuron Output { get; set; } = new();
+        public Neuron A { get; set; } = new("_FUNCTION_A");
+        public Neuron B { get; set; } = new("_FUNCTION_B");
+        public Neuron C { get; set; } = new("_FUNCTION_C");
+        public Neuron D { get; set; } = new("_FUNCTION_D");
+        public Neuron E { get; set; } = new("_FUNCTION_E");
+        public Neuron F { get; set; } = new("_FUNCTION_F");
+        public Neuron Output { get; set; } = new("_FUNCTION_OUTPUT");
 
         private void Awake() {
             Instance = this;
+            targetPool = new ObjectPool<SamplePoint>(OnCreateTargetPoint, OnGetPoint, OnReleasePoint, OnDestroyPoint);
+            unwantedPool = new ObjectPool<SamplePoint>(OnCreateUnwantedPoint, OnGetPoint, OnReleasePoint, OnDestroyPoint);
         }
 
-        private void OnEnable() {
-            this.SetSigmoid(true);
-            A = Neuron.CreateRandom();
-            B = Neuron.CreateRandom();
-            C = Neuron.CreateRandom();
-            
-            D = Neuron.CreateRandom();
-            E = Neuron.CreateRandom();
-            F = Neuron.CreateRandom();
-            
-            G = Neuron.CreateRandom();
-            H = Neuron.CreateRandom();
-            I = Neuron.CreateRandom();
-            
-            Output = Neuron.CreateRandom();
-            
-            Architecture = NetworkArchitecture.ThreeThree;
-            
-            NotifyChange();
+        private SamplePoint CreatePoint(SamplePoint prefab, ObjectPool<SamplePoint> pool) {
+            var created = (Instantiate(prefab, transform)).GetComponent<SamplePoint>();
+            created.gameObject.SetActive(false);
+            created.ParentPool = pool;
+            return created;
         }
+
+        private SamplePoint OnCreateTargetPoint() {
+            return CreatePoint(targetPointPrefab, targetPool);
+        }
+        
+        private SamplePoint OnCreateUnwantedPoint() {
+            return CreatePoint(unwantedPointPrefab, unwantedPool);
+        }
+
+        private void OnGetPoint(SamplePoint obj) {
+            obj.gameObject.SetActive(true);
+        }
+
+        private void OnReleasePoint(SamplePoint obj) {
+            obj.gameObject.SetActive(false);
+        }
+
+        private void OnDestroyPoint(SamplePoint obj) {
+            Destroy(obj.gameObject);
+        }
+
 
         public void SetStepped(bool value) {
             if (!value) return;
@@ -104,10 +163,6 @@ namespace Neuralizer {
 
         public void SetFunctionIndex(int index) {
             CurrentActivationFunction = (ActivationFunction)index;
-            OnStepped?.Invoke(CurrentActivationFunction == ActivationFunction.Stepped);
-            OnReLu?.Invoke(CurrentActivationFunction == ActivationFunction.ReLu);
-            OnSigmoid?.Invoke(CurrentActivationFunction == ActivationFunction.Sigmoid);
-            OnTanH?.Invoke(CurrentActivationFunction == ActivationFunction.TanH);
             NotifyChange();
         }
 
@@ -118,118 +173,14 @@ namespace Neuralizer {
             Shader.SetGlobalVector(WeightsD_ID, D?.Info ?? Vector4.zero);
             Shader.SetGlobalVector(WeightsE_ID, E?.Info ?? Vector4.zero);
             Shader.SetGlobalVector(WeightsF_ID, F?.Info ?? Vector4.zero);
-            Shader.SetGlobalVector(WeightsG_ID, G?.Info ?? Vector4.zero);
-            Shader.SetGlobalVector(WeightsH_ID, H?.Info ?? Vector4.zero);
-            Shader.SetGlobalVector(WeightsI_ID, I?.Info ?? Vector4.zero);
             Shader.SetGlobalVector(WeightsOutput_ID, Output?.Info ?? Vector4.zero);
-            Shader.SetGlobalVector(FunctionParamsID, FunctionParams);
-
-            switch (CurrentActivationFunction) {
-                case ActivationFunction.Sigmoid:
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_TANH");
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_RELU");
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_STEPPED");
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_LINEAL");
-                    Shader.EnableKeyword("_ACTIVATIONFUNCTION_SIGMOID");
-                break;
-                case ActivationFunction.TanH:
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_RELU");
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_STEPPED");
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_LINEAL");
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_SIGMOID");
-                    Shader.EnableKeyword("_ACTIVATIONFUNCTION_TANH");
-                break;
-                case ActivationFunction.ReLu:
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_STEPPED");
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_LINEAL");
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_SIGMOID");
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_TANH");
-                    Shader.EnableKeyword("_ACTIVATIONFUNCTION_RELU");
-                break;
-                case ActivationFunction.Stepped:
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_LINEAL");
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_SIGMOID");
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_TANH");
-                    Shader.DisableKeyword("_ACTIVATIONFUNCTION_RELU");
-                    Shader.EnableKeyword("_ACTIVATIONFUNCTION_STEPPED");
-                break;
-            }
-
-            switch (Architecture) {
-                default:
-                case NetworkArchitecture.Perceptron:
-                    Shader.EnableKeyword("_ARCHITECTURE_I_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_3_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_2_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_3_3_1");
-                break;
-                case NetworkArchitecture.Two:
-                    Shader.DisableKeyword("_ARCHITECTURE_I_1");
-                    Shader.EnableKeyword("_ARCHITECTURE_I_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_3_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_2_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_3_3_1");
-                break;
-                case NetworkArchitecture.Three:
-                    Shader.DisableKeyword("_ARCHITECTURE_I_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_1");
-                    Shader.EnableKeyword("_ARCHITECTURE_I_3_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_3_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_2_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_3_3_1");
-                break;
-                case NetworkArchitecture.TwoTwo:
-                    Shader.DisableKeyword("_ARCHITECTURE_I_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_1");
-                    Shader.EnableKeyword("_ARCHITECTURE_I_2_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_3_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_2_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_3_3_1");
-                break;
-                case NetworkArchitecture.ThreeThree:
-                    Shader.DisableKeyword("_ARCHITECTURE_I_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_2_1");
-                    Shader.EnableKeyword("_ARCHITECTURE_I_3_3_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_2_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_3_3_1");
-                break;
-                case NetworkArchitecture.TwoTwoTwo:
-                    Shader.DisableKeyword("_ARCHITECTURE_I_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_3_1");
-                    Shader.EnableKeyword("_ARCHITECTURE_I_2_2_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_3_3_1");
-                break;
-                case NetworkArchitecture.ThreeThreeThree:
-                    Shader.DisableKeyword("_ARCHITECTURE_I_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_2_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_3_3_1");
-                    Shader.DisableKeyword("_ARCHITECTURE_I_2_2_2_1");
-                    Shader.EnableKeyword("_ARCHITECTURE_I_3_3_3_1");
-                break;
-            }
-
+            Shader.SetGlobalVector(FunctionParamsID, Output?.FunctionParams ?? Vector3.up);
             SamplePoint.UpdatePoints();
         }
-
 
         public float EvaluateAt(Vector3 point) {
             float value = 0f;
             Vector3 layer1;
-            Vector3 layer2;
             switch (Architecture) {
                 default:
                 case NetworkArchitecture.Perceptron:
@@ -249,27 +200,8 @@ namespace Neuralizer {
                     layer1 = new Vector3(A.Sample(point), B.Sample(point), C.Sample(point));
                     value = Output.Sample(new Vector3(D.Sample(layer1), E.Sample(layer1), F.Sample(point)));
                 break;
-                case NetworkArchitecture.TwoTwoTwo:
-                    layer1 = new Vector3(A.Sample(point), B.Sample(point), 0f);
-                    layer2 = new Vector3(D.Sample(layer1), E.Sample(layer1), 0f);
-                    value = Output.Sample(new Vector3(G.Sample(layer2), H.Sample(layer2), 0f));
-                break;
-                case NetworkArchitecture.ThreeThreeThree:
-                    layer1 = new Vector3(A.Sample(point), B.Sample(point), C.Sample(point));
-                    layer2 = new Vector3(D.Sample(layer1), E.Sample(layer1), F.Sample(layer1));
-                    value = Output.Sample(new Vector3(G.Sample(layer2), H.Sample(layer2), I.Sample(layer2)));
-                break;
             }
-
             return value;
-            //
-            // return CurrentActivationFunction switch {
-            //     ActivationFunction.Sigmoid => 1f / (1f + Mathf.Exp(-value)),
-            //     ActivationFunction.TanH => (float)System.Math.Tanh(value),
-            //     ActivationFunction.ReLu => Mathf.Max(0f, value + ReLuOffset),
-            //     ActivationFunction.Stepped => value >= StepThreshold ? StepMax : StepMin,
-            //     _ => value
-            // };
         }
     }
 }

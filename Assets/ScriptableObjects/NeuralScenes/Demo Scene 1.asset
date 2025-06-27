@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d657411bcaa5491891f4ecd2d0e31d3a, type: 3}
+  m_Name: Demo Scene 1
+  m_EditorClassIdentifier: 
+  displayName: Ejercicio 1
+  targetPoints:
+  - {x: -5.31, y: 2.55, z: 0}
+  - {x: 0.93, y: 2.86, z: 0}
+  - {x: -3.29, y: -2.19, z: 0}
+  unwantedPoints:
+  - {x: 3.45, y: 15.3, z: 0}
+  networkArchitecture: 1
+  useOrbitalCamera: 0
+  A:
+    weigthX: 0
+    weigthY: 0
+    weigthZ: 0
+    bias: 0
+    activationFunction: 0
+  B:
+    weigthX: 0
+    weigthY: 0
+    weigthZ: 0
+    bias: 0
+    activationFunction: 0
+  C:
+    weigthX: 0
+    weigthY: 0
+    weigthZ: 0
+    bias: 0
+    activationFunction: 0
+  D:
+    weigthX: 0
+    weigthY: 0
+    weigthZ: 0
+    bias: 0
+    activationFunction: 0
+  E:
+    weigthX: 0
+    weigthY: 0
+    weigthZ: 0
+    bias: 0
+    activationFunction: 0
+  F:
+    weigthX: 0
+    weigthY: 0
+    weigthZ: 0
+    bias: 0
+    activationFunction: 0
+  Output:
+    weigthX: -0.39
+    weigthY: 0.52
+    weigthZ: -0.58
+    bias: 2.3
+    activationFunction: 2
