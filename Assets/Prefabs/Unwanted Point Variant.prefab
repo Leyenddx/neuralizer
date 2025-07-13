@@ -92,6 +92,10 @@ PrefabInstance:
       propertyPath: color.m_Mode
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3584700185792303791, guid: 2804b4488bfdd274bb54adaf73b45709, type: 3}
+      propertyPath: pointOfInterest
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8199848234873332772, guid: 2804b4488bfdd274bb54adaf73b45709, type: 3}
       propertyPath: m_Name
       value: Unwanted Point Variant

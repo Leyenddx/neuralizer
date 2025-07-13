@@ -1,7 +1,11 @@
+using System;
+using System.Collections.Generic;
 using Neuralizer.Data;
+using Neuralizer.NetworkRendering;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Pool;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 namespace Neuralizer {
     public class NetworkHost : MonoBehaviour {
@@ -9,8 +13,6 @@ namespace Neuralizer {
         private static readonly int WeightsB_ID = Shader.PropertyToID("_WeightsB");
         private static readonly int WeightsC_ID = Shader.PropertyToID("_WeightsC");
         private static readonly int WeightsD_ID = Shader.PropertyToID("_WeightsD");
-        private static readonly int WeightsE_ID = Shader.PropertyToID("_WeightsE");
-        private static readonly int WeightsF_ID = Shader.PropertyToID("_WeightsF");
 
         private static readonly int WeightsOutput_ID = Shader.PropertyToID("_WeightsOutput");
 
@@ -20,6 +22,9 @@ namespace Neuralizer {
 
         [SerializeField] private SamplePoint targetPointPrefab;
         [SerializeField] private SamplePoint unwantedPointPrefab;
+        [SerializeField] private Material inputLayerMaterial;
+        [SerializeField] private Material hiddenLayerMaterial;
+        [SerializeField] private Material outputLayerMaterial;
         
         [SerializeField] private UnityEvent<string> OnDisplayName;
         [SerializeField] private UnityEvent<bool> OnOrbitalCamera;
@@ -27,62 +32,25 @@ namespace Neuralizer {
         [SerializeField] private UnityEvent OnSceneLoaded;
 
         private NeuralScene currentScene;
-        private ObjectPool<SamplePoint> targetPool;
-        private ObjectPool<SamplePoint> unwantedPool;
+        private UnityEngine.Pool.ObjectPool<SamplePoint> targetPool;
+        private UnityEngine.Pool.ObjectPool<SamplePoint> unwantedPool;
+        private NeuralRenderPass networkPass;
+        private bool enqueuePass = false;
         
         public ActivationFunction CurrentActivationFunction { get; private set; } = ActivationFunction.Stepped;
-        public NetworkArchitecture Architecture { get; private set; } = NetworkArchitecture.Perceptron;
-
+        
         public NeuralScene Scene {
             get => currentScene;
             set {
                 currentScene = value;
-                Architecture = value.networkArchitecture;
-
-                switch (Architecture) {
-                    default:
-                    case NetworkArchitecture.Perceptron:
-                        Shader.EnableKeyword("_ARCHITECTURE_I_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_2_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_3_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_2_2_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_3_3_1");
-                    break;
-                    case NetworkArchitecture.Two:
-                        Shader.DisableKeyword("_ARCHITECTURE_I_1");
-                        Shader.EnableKeyword("_ARCHITECTURE_I_2_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_3_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_2_2_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_3_3_1");
-                    break;
-                    case NetworkArchitecture.Three:
-                        Shader.DisableKeyword("_ARCHITECTURE_I_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_2_1");
-                        Shader.EnableKeyword("_ARCHITECTURE_I_3_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_2_2_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_3_3_1");
-                    break;
-                    case NetworkArchitecture.TwoTwo:
-                        Shader.DisableKeyword("_ARCHITECTURE_I_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_2_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_3_1");
-                        Shader.EnableKeyword("_ARCHITECTURE_I_2_2_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_3_3_1");
-                    break;
-                    case NetworkArchitecture.ThreeThree:
-                        Shader.DisableKeyword("_ARCHITECTURE_I_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_2_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_3_1");
-                        Shader.DisableKeyword("_ARCHITECTURE_I_2_2_1");
-                        Shader.EnableKeyword("_ARCHITECTURE_I_3_3_1");
-                    break;
-                }
-                value.A.ApplyTo(A);
-                value.B.ApplyTo(B);
-                value.C.ApplyTo(C);
-                value.D.ApplyTo(D);
-                value.E.ApplyTo(E);
-                value.F.ApplyTo(F);
+                value.AA.ApplyTo(AA);
+                value.AB.ApplyTo(AB);
+                value.AC.ApplyTo(AC);
+                value.AD.ApplyTo(AD);
+                value.BA.ApplyTo(BA);
+                value.BB.ApplyTo(BB);
+                value.BC.ApplyTo(BC);
+                value.BD.ApplyTo(BD);
                 value.Output.ApplyTo(Output);
                 SamplePoint.ClearPoints();
                 foreach (Vector3 point in value.targetPoints) {
@@ -91,7 +59,8 @@ namespace Neuralizer {
                 foreach (Vector3 point in value.unwantedPoints) {
                     unwantedPool.Get().transform.position = point;
                 }
-                SamplePoint.UpdatePoints();
+
+                NotifyChange();
                 OnDisplayName?.Invoke(value.DisplayName);
                 OnPlanarCamera?.Invoke(!value.useOrbitalCamera);
                 OnOrbitalCamera?.Invoke(value.useOrbitalCamera);
@@ -99,21 +68,55 @@ namespace Neuralizer {
             }
         }
 
-        public Neuron A { get; set; } = new("_FUNCTION_A");
-        public Neuron B { get; set; } = new("_FUNCTION_B");
-        public Neuron C { get; set; } = new("_FUNCTION_C");
-        public Neuron D { get; set; } = new("_FUNCTION_D");
-        public Neuron E { get; set; } = new("_FUNCTION_E");
-        public Neuron F { get; set; } = new("_FUNCTION_F");
-        public Neuron Output { get; set; } = new("_FUNCTION_OUTPUT");
+        public Neuron AA { get; set; } = new();
+        public Neuron AB { get; set; } = new();
+        public Neuron AC { get; set; } = new();
+        public Neuron AD { get; set; } = new();
+        public Neuron BA { get; set; } = new();
+        public Neuron BB { get; set; } = new();
+        public Neuron BC { get; set; } = new();
+        public Neuron BD { get; set; } = new();
+        public Neuron Output { get; set; } = new();
 
         private void Awake() {
             Instance = this;
-            targetPool = new ObjectPool<SamplePoint>(OnCreateTargetPoint, OnGetPoint, OnReleasePoint, OnDestroyPoint);
-            unwantedPool = new ObjectPool<SamplePoint>(OnCreateUnwantedPoint, OnGetPoint, OnReleasePoint, OnDestroyPoint);
+            targetPool = new(OnCreateTargetPoint, OnGetPoint, OnReleasePoint, OnDestroyPoint);
+            unwantedPool = new(OnCreateUnwantedPoint, OnGetPoint, OnReleasePoint, OnDestroyPoint);
         }
 
-        private SamplePoint CreatePoint(SamplePoint prefab, ObjectPool<SamplePoint> pool) {
+        private void OnEnable() {
+            networkPass = new() {
+                inputLayerMaterial = inputLayerMaterial,
+                hiddenLayerMaterial = hiddenLayerMaterial,
+                outputLayerMaterial = outputLayerMaterial
+            };
+            RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
+        }
+
+        private void OnDisable() {
+            RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
+            networkPass.Dispose();
+            networkPass = null;
+        }
+
+        private void OnBeginCameraRendering(ScriptableRenderContext ctx, Camera cam) {
+            if (enqueuePass) {
+                networkPass.AA = AA;
+                networkPass.AB = AB;
+                networkPass.AC = AC;
+                networkPass.AD = AD;
+                networkPass.BA = BA;
+                networkPass.BB = BB;
+                networkPass.BC = BD;
+                networkPass.BD = BD;
+                networkPass.Output = Output;
+                cam.GetUniversalAdditionalCameraData().scriptableRenderer.EnqueuePass(networkPass);
+                enqueuePass = false;
+            }
+        }
+
+
+        private SamplePoint CreatePoint(SamplePoint prefab, UnityEngine.Pool.ObjectPool<SamplePoint> pool) {
             var created = (Instantiate(prefab, transform)).GetComponent<SamplePoint>();
             created.gameObject.SetActive(false);
             created.ParentPool = pool;
@@ -167,40 +170,24 @@ namespace Neuralizer {
         }
 
         public void NotifyChange() {
-            Shader.SetGlobalVector(WeightsA_ID, A?.Info ?? Vector4.zero);
-            Shader.SetGlobalVector(WeightsB_ID, B?.Info ?? Vector4.zero);
-            Shader.SetGlobalVector(WeightsC_ID, C?.Info ?? Vector4.zero);
-            Shader.SetGlobalVector(WeightsD_ID, D?.Info ?? Vector4.zero);
-            Shader.SetGlobalVector(WeightsE_ID, E?.Info ?? Vector4.zero);
-            Shader.SetGlobalVector(WeightsF_ID, F?.Info ?? Vector4.zero);
-            Shader.SetGlobalVector(WeightsOutput_ID, Output?.Info ?? Vector4.zero);
-            Shader.SetGlobalVector(FunctionParamsID, Output?.FunctionParams ?? Vector3.up);
             SamplePoint.UpdatePoints();
+        }
+
+        public void Randomize() {
+            Neuron.Randomize(AA);
+            Neuron.Randomize(AB);
+            Neuron.Randomize(AC);
+            Neuron.Randomize(AD);
+            Neuron.Randomize(BA);
+            Neuron.Randomize(BB);
+            Neuron.Randomize(BC);
+            Neuron.Randomize(BD);
+            Neuron.Randomize(Output);
+            NotifyChange();
         }
 
         public float EvaluateAt(Vector3 point) {
             float value = 0f;
-            Vector3 layer1;
-            switch (Architecture) {
-                default:
-                case NetworkArchitecture.Perceptron:
-                    value = Output.Sample(point);
-                break;
-                case NetworkArchitecture.Two:
-                    value = Output.Sample(new Vector3(A.Sample(point), B.Sample(point), 0f));
-                break;
-                case NetworkArchitecture.Three:
-                    value = Output.Sample(new Vector3(A.Sample(point), B.Sample(point), C.Sample(point)));
-                break;
-                case NetworkArchitecture.TwoTwo:
-                    layer1 = new Vector3(A.Sample(point), B.Sample(point), 0f);
-                    value = Output.Sample(new Vector3(D.Sample(layer1), E.Sample(layer1), 0f));
-                break;
-                case NetworkArchitecture.ThreeThree:
-                    layer1 = new Vector3(A.Sample(point), B.Sample(point), C.Sample(point));
-                    value = Output.Sample(new Vector3(D.Sample(layer1), E.Sample(layer1), F.Sample(point)));
-                break;
-            }
             return value;
         }
     }

@@ -7,10 +7,9 @@ namespace Neuralizer.Data {
         [SerializeField] private string displayName;
         public Vector3[] targetPoints;
         public Vector3[] unwantedPoints;
-        public NetworkArchitecture networkArchitecture = NetworkArchitecture.Perceptron;
         public bool useOrbitalCamera = false;
 
-        public NeuronPrefab A, B, C, D, E, F, Output;
+        public NeuronPrefab AA, AB, AC, AD, BA, BB, BC, BD, Output;
 
         public string DisplayName => string.IsNullOrEmpty(displayName) ? name : displayName;
 
@@ -22,13 +21,17 @@ namespace Neuralizer.Data {
             public float weigthY = 0f;
             [Range(-Mathf.PI, Mathf.PI)]
             public float weigthZ = 0f;
+            [Range(-Mathf.PI, Mathf.PI)]
+            public float weigthW = 0f;
             [Range(-10f, 10f)]
             public float bias = 0f;
             public ActivationFunction activationFunction;
-
+            public bool displayNeuron;
+            
             public void ApplyTo(Neuron neuron) {
-                neuron.Info = new Vector4(weigthX, weigthY, weigthZ, bias);
-                neuron.ActivationFunction = activationFunction;
+                neuron.weights.Set(weigthX, weigthY, weigthZ, weigthW);
+                neuron.bias = bias;
+                neuron.activationFunction = activationFunction;
             }
         }
 
