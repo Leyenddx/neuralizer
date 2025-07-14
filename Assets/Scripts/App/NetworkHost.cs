@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Neuralizer.Data;
 using Neuralizer.NetworkRendering;
 using UnityEngine;
@@ -9,23 +7,16 @@ using UnityEngine.Rendering.Universal;
 
 namespace Neuralizer {
     public class NetworkHost : MonoBehaviour {
-        private static readonly int WeightsA_ID = Shader.PropertyToID("_WeightsA");
-        private static readonly int WeightsB_ID = Shader.PropertyToID("_WeightsB");
-        private static readonly int WeightsC_ID = Shader.PropertyToID("_WeightsC");
-        private static readonly int WeightsD_ID = Shader.PropertyToID("_WeightsD");
 
-        private static readonly int WeightsOutput_ID = Shader.PropertyToID("_WeightsOutput");
-
-        private static readonly int FunctionParamsID = Shader.PropertyToID("_FunctionParams");
-
+        private static readonly ShaderKeyword architecturePerceptron = new("_ARCHITECTURE_PERCEPTRON");
+        private static readonly ShaderKeyword orbitalCamera = new("_2D_GRAPH");
         public static NetworkHost Instance { get; private set; }
 
         [SerializeField] private SamplePoint targetPointPrefab;
         [SerializeField] private SamplePoint unwantedPointPrefab;
-        [SerializeField] private Material inputLayerMaterial;
-        [SerializeField] private Material hiddenLayerMaterial;
-        [SerializeField] private Material outputLayerMaterial;
-        
+        [SerializeField] private Material inputMaterial;
+        [SerializeField] private Material layerMaterial;
+
         [SerializeField] private UnityEvent<string> OnDisplayName;
         [SerializeField] private UnityEvent<bool> OnOrbitalCamera;
         [SerializeField] private UnityEvent<bool> OnPlanarCamera;
@@ -36,9 +27,7 @@ namespace Neuralizer {
         private UnityEngine.Pool.ObjectPool<SamplePoint> unwantedPool;
         private NeuralRenderPass networkPass;
         private bool enqueuePass = false;
-        
-        public ActivationFunction CurrentActivationFunction { get; private set; } = ActivationFunction.Stepped;
-        
+
         public NeuralScene Scene {
             get => currentScene;
             set {
@@ -52,10 +41,14 @@ namespace Neuralizer {
                 value.BC.ApplyTo(BC);
                 value.BD.ApplyTo(BD);
                 value.Output.ApplyTo(Output);
+                networkPass.architecture = value.architecture;
+                architecturePerceptron.Enabled = Scene.architecture == Architecture.Perceptron;
+                orbitalCamera.Enabled = Scene.useOrbitalCamera;
                 SamplePoint.ClearPoints();
                 foreach (Vector3 point in value.targetPoints) {
                     targetPool.Get().transform.position = point;
                 }
+
                 foreach (Vector3 point in value.unwantedPoints) {
                     unwantedPool.Get().transform.position = point;
                 }
@@ -68,15 +61,15 @@ namespace Neuralizer {
             }
         }
 
-        public Neuron AA { get; set; } = new();
-        public Neuron AB { get; set; } = new();
-        public Neuron AC { get; set; } = new();
-        public Neuron AD { get; set; } = new();
-        public Neuron BA { get; set; } = new();
-        public Neuron BB { get; set; } = new();
-        public Neuron BC { get; set; } = new();
-        public Neuron BD { get; set; } = new();
-        public Neuron Output { get; set; } = new();
+        public Neuron AA { get; } = new();
+        public Neuron AB { get; } = new();
+        public Neuron AC { get; } = new();
+        public Neuron AD { get; } = new();
+        public Neuron BA { get; } = new();
+        public Neuron BB { get; } = new();
+        public Neuron BC { get; } = new();
+        public Neuron BD { get; } = new();
+        public Neuron Output { get; } = new();
 
         private void Awake() {
             Instance = this;
@@ -86,9 +79,8 @@ namespace Neuralizer {
 
         private void OnEnable() {
             networkPass = new() {
-                inputLayerMaterial = inputLayerMaterial,
-                hiddenLayerMaterial = hiddenLayerMaterial,
-                outputLayerMaterial = outputLayerMaterial
+                inputMaterial = inputMaterial,
+                layerMaterial = layerMaterial
             };
             RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
         }
@@ -100,24 +92,32 @@ namespace Neuralizer {
         }
 
         private void OnBeginCameraRendering(ScriptableRenderContext ctx, Camera cam) {
-            if (enqueuePass) {
-                networkPass.AA = AA;
-                networkPass.AB = AB;
-                networkPass.AC = AC;
-                networkPass.AD = AD;
-                networkPass.BA = BA;
-                networkPass.BB = BB;
-                networkPass.BC = BD;
-                networkPass.BD = BD;
-                networkPass.Output = Output;
-                cam.GetUniversalAdditionalCameraData().scriptableRenderer.EnqueuePass(networkPass);
-                enqueuePass = false;
+            if (!Scene) {
+                return;
             }
+
+            if (Scene.architecture == Architecture.Perceptron) {
+                return;
+            }
+
+            // if (enqueuePass) {
+            networkPass.AA = AA;
+            networkPass.AB = AB;
+            networkPass.AC = AC;
+            networkPass.AD = AD;
+            networkPass.BA = BA;
+            networkPass.BB = BB;
+            networkPass.BC = BD;
+            networkPass.BD = BD;
+            networkPass.Output = Output;
+            cam.GetUniversalAdditionalCameraData().scriptableRenderer.EnqueuePass(networkPass);
+            //     enqueuePass = false;
+            // }
         }
 
 
         private SamplePoint CreatePoint(SamplePoint prefab, UnityEngine.Pool.ObjectPool<SamplePoint> pool) {
-            var created = (Instantiate(prefab, transform)).GetComponent<SamplePoint>();
+            SamplePoint created = (Instantiate(prefab, transform)).GetComponent<SamplePoint>();
             created.gameObject.SetActive(false);
             created.ParentPool = pool;
             return created;
@@ -126,7 +126,7 @@ namespace Neuralizer {
         private SamplePoint OnCreateTargetPoint() {
             return CreatePoint(targetPointPrefab, targetPool);
         }
-        
+
         private SamplePoint OnCreateUnwantedPoint() {
             return CreatePoint(unwantedPointPrefab, unwantedPool);
         }
@@ -143,34 +143,13 @@ namespace Neuralizer {
             Destroy(obj.gameObject);
         }
 
-
-        public void SetStepped(bool value) {
-            if (!value) return;
-            SetFunctionIndex((int)ActivationFunction.Stepped);
-        }
-
-        public void SetReLu(bool value) {
-            if (!value) return;
-            SetFunctionIndex((int)ActivationFunction.ReLu);
-        }
-
-        public void SetSigmoid(bool value) {
-            if (!value) return;
-            SetFunctionIndex((int)ActivationFunction.Sigmoid);
-        }
-
-        public void SetTanH(bool value) {
-            if (!value) return;
-            SetFunctionIndex((int)ActivationFunction.TanH);
-        }
-
-        public void SetFunctionIndex(int index) {
-            CurrentActivationFunction = (ActivationFunction)index;
-            NotifyChange();
-        }
-
         public void NotifyChange() {
+            if (Scene.architecture == Architecture.Perceptron) {
+                Output.SetShaderData();
+            }
+
             SamplePoint.UpdatePoints();
+            enqueuePass = true;
         }
 
         public void Randomize() {
@@ -178,6 +157,10 @@ namespace Neuralizer {
             Neuron.Randomize(AB);
             Neuron.Randomize(AC);
             Neuron.Randomize(AD);
+            AA.weights.w = 0f;
+            AB.weights.w = 0f;
+            AC.weights.w = 0f;
+            AD.weights.w = 0f;
             Neuron.Randomize(BA);
             Neuron.Randomize(BB);
             Neuron.Randomize(BC);
@@ -187,8 +170,18 @@ namespace Neuralizer {
         }
 
         public float EvaluateAt(Vector3 point) {
-            float value = 0f;
-            return value;
+            switch (Scene.architecture) {
+                default:
+                case Architecture.Perceptron:
+                    return Output.Sample(point);
+                case Architecture.OneLayer:
+                    return Output.Sample(new Vector4(AA.Sample(point), AB.Sample(point), AC.Sample(point),
+                        AD.Sample(point)));
+                case Architecture.TwoLayers:
+                    Vector4 layer2_1 = new(AA.Sample(point), AB.Sample(point), AC.Sample(point), AD.Sample(point));
+                    return Output.Sample(new Vector4(BA.Sample(layer2_1), BB.Sample(layer2_1), BC.Sample(layer2_1),
+                        BD.Sample(layer2_1)));
+            }
         }
     }
 }

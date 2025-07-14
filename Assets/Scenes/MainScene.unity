@@ -3182,6 +3182,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetPointPrefab: {fileID: 3584700185792303791, guid: 2804b4488bfdd274bb54adaf73b45709, type: 3}
   unwantedPointPrefab: {fileID: 3708654867115146830, guid: 7f05ad76ea4209f4f9625be3908b9756, type: 3}
+  inputMaterial: {fileID: -876546973899608171, guid: 960ac2dacd6550946a56ef9b83de00fc, type: 3}
+  layerMaterial: {fileID: -876546973899608171, guid: 04b19d3cb0d3a4945a5b08913550058e, type: 3}
   OnDisplayName:
     m_PersistentCalls:
       m_Calls:

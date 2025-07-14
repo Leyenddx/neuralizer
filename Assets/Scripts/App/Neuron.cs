@@ -1,6 +1,8 @@
+using Neuralizer.NetworkRendering;
 using UnityEngine;
 
 namespace Neuralizer {
+
     [System.Serializable]
     public class Neuron {
         public Vector4 weights;
@@ -11,16 +13,31 @@ namespace Neuralizer {
         public const float StepThreshold = 0f;
         public const float StepMax = 1f;
         public const float StepMin = 0f;
-        
-        public float Sample(Vector4 value) {
-            float sample = Vector3.Dot(value, weights) + bias;
+
+        public float EvaluateActivationFunction(float value) {
             return activationFunction switch {
-                ActivationFunction.Sigmoid => 1f / (1f + Mathf.Exp(-sample)),
-                ActivationFunction.TanH => (float)System.Math.Tanh(sample),
-                ActivationFunction.ReLu => Mathf.Max(0f, sample + ReLuOffset),
-                ActivationFunction.Stepped => sample > StepThreshold ? StepMax : StepMin,
-                _ => sample
+                ActivationFunction.Sigmoid => 1f / (1f + Mathf.Exp(-value)),
+                ActivationFunction.TanH => (float)System.Math.Tanh(value),
+                ActivationFunction.ReLu => Mathf.Max(0f, value + ReLuOffset),
+                ActivationFunction.Stepped => value > StepThreshold ? StepMax : StepMin,
+                _ => value
             };
+        }
+
+        public float Sample(Vector4 value) {
+            return EvaluateActivationFunction(Vector4.Dot(value, weights) + bias);
+        }
+
+        public float Sample(Vector3 value) {
+            return EvaluateActivationFunction(Vector3.Dot(value, weights) + bias);
+        }
+        
+        // public float Sample(Vector2 value) {
+        //     return EvaluateActivationFunction(Vector2.Dot(value, weights) + bias);
+        // }
+
+        public void SetShaderData() {
+            NeuralRenderPass.SetShaderData(this);
         }
 
         public static void Randomize(Neuron target) {

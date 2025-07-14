@@ -13,53 +13,83 @@ MonoBehaviour:
   m_Name: Demo Scene 1
   m_EditorClassIdentifier: 
   displayName: Ejercicio 1
+  architecture: 0
   targetPoints:
   - {x: -5.31, y: 2.55, z: 0}
   - {x: 0.93, y: 2.86, z: 0}
   - {x: -3.29, y: -2.19, z: 0}
   unwantedPoints:
   - {x: 3.45, y: 15.3, z: 0}
-  networkArchitecture: 1
   useOrbitalCamera: 0
-  A:
+  AA:
     weigthX: 0
     weigthY: 0
     weigthZ: 0
+    weigthW: 0
     bias: 0
     activationFunction: 0
-  B:
+    displayNeuron: 0
+  AB:
     weigthX: 0
     weigthY: 0
     weigthZ: 0
+    weigthW: 0
     bias: 0
     activationFunction: 0
-  C:
+    displayNeuron: 0
+  AC:
     weigthX: 0
     weigthY: 0
     weigthZ: 0
+    weigthW: 0
     bias: 0
     activationFunction: 0
-  D:
+    displayNeuron: 0
+  AD:
     weigthX: 0
     weigthY: 0
     weigthZ: 0
+    weigthW: 0
     bias: 0
     activationFunction: 0
-  E:
+    displayNeuron: 0
+  BA:
     weigthX: 0
     weigthY: 0
     weigthZ: 0
+    weigthW: 0
     bias: 0
     activationFunction: 0
-  F:
+    displayNeuron: 0
+  BB:
     weigthX: 0
     weigthY: 0
     weigthZ: 0
+    weigthW: 0
     bias: 0
     activationFunction: 0
+    displayNeuron: 0
+  BC:
+    weigthX: 0
+    weigthY: 0
+    weigthZ: 0
+    weigthW: 0
+    bias: 0
+    activationFunction: 0
+    displayNeuron: 0
+  BD:
+    weigthX: 0
+    weigthY: 0
+    weigthZ: 0
+    weigthW: 0
+    bias: 0
+    activationFunction: 0
+    displayNeuron: 0
   Output:
     weigthX: -0.39
     weigthY: 0.52
     weigthZ: -0.58
+    weigthW: 0
     bias: 2.3
     activationFunction: 2
+    displayNeuron: 1

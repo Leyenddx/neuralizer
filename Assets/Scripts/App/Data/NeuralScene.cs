@@ -5,6 +5,7 @@ namespace Neuralizer.Data {
     public class NeuralScene : ScriptableObject {
 
         [SerializeField] private string displayName;
+        public Architecture architecture;
         public Vector3[] targetPoints;
         public Vector3[] unwantedPoints;
         public bool useOrbitalCamera = false;
