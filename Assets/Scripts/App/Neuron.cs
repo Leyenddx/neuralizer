@@ -1,5 +1,8 @@
 using Neuralizer.NetworkRendering;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.RenderGraphModule;
+using UnityEngine.Rendering.Universal;
 
 namespace Neuralizer {
 
@@ -8,6 +11,8 @@ namespace Neuralizer {
         public Vector4 weights;
         public float bias;
         public ActivationFunction activationFunction;
+        public RTHandle resultTexture;
+        public Material material;
 
         public const float ReLuOffset = 0f;
         public const float StepThreshold = 0f;
@@ -36,8 +41,20 @@ namespace Neuralizer {
         //     return EvaluateActivationFunction(Vector2.Dot(value, weights) + bias);
         // }
 
+        public void PrepareForRenderPass(int textureId, string textureName, Material baseMaterial) {
+            resultTexture = RTHandles.Alloc(textureId, textureName);
+            material = Object.Instantiate(baseMaterial);
+        }
+
         public void SetShaderData() {
             NeuralRenderPass.SetShaderData(this);
+        }
+
+        public TextureHandle SetupRenderTarget(string name, RenderGraph renderGraph, RenderTextureDescriptor descriptor) {
+            RenderingUtils.ReAllocateHandleIfNeeded(ref resultTexture, descriptor, FilterMode.Point,
+                TextureWrapMode.Clamp,
+                name: name);
+            return renderGraph.ImportTexture(resultTexture);
         }
 
         public static void Randomize(Neuron target) {

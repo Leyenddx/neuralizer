@@ -15,11 +15,11 @@ MonoBehaviour:
   displayName: Ejercicio 1
   architecture: 0
   targetPoints:
-  - {x: -5.31, y: 2.55, z: 0}
-  - {x: 0.93, y: 2.86, z: 0}
-  - {x: -3.29, y: -2.19, z: 0}
+  - {x: -5.31, y: 2.55, z: 4}
+  - {x: 0.93, y: 2.86, z: 4}
+  - {x: -3.29, y: -2.19, z: 4}
   unwantedPoints:
-  - {x: 3.45, y: 15.3, z: 0}
+  - {x: 3.45, y: 15.3, z: -4}
   useOrbitalCamera: 0
   AA:
     weigthX: 0
@@ -86,10 +86,10 @@ MonoBehaviour:
     activationFunction: 0
     displayNeuron: 0
   Output:
-    weigthX: -0.39
-    weigthY: 0.52
-    weigthZ: -0.58
+    weigthX: 0.5
+    weigthY: 0
+    weigthZ: 0
     weigthW: 0
-    bias: 2.3
+    bias: 0
     activationFunction: 2
     displayNeuron: 1

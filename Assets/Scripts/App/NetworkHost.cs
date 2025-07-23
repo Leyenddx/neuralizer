@@ -7,15 +7,18 @@ using UnityEngine.Rendering.Universal;
 
 namespace Neuralizer {
     public class NetworkHost : MonoBehaviour {
+        
+        private const string NetworkRenderingInfo_Name = "_NetworkRenderingInfo";
+        private static readonly int NetworkRenderingInfo_Id = Shader.PropertyToID(NetworkRenderingInfo_Name);
 
-        private static readonly ShaderKeyword architecturePerceptron = new("_ARCHITECTURE_PERCEPTRON");
-        private static readonly ShaderKeyword orbitalCamera = new("_2D_GRAPH");
+        // private static readonly ShaderKeyword architecturePerceptron = new("_ARCHITECTURE_PERCEPTRON");
+        private static readonly ShaderKeyword planarGraph = new("_2D_GRAPH");
         public static NetworkHost Instance { get; private set; }
 
         [SerializeField] private SamplePoint targetPointPrefab;
         [SerializeField] private SamplePoint unwantedPointPrefab;
-        [SerializeField] private Material inputMaterial;
-        [SerializeField] private Material layerMaterial;
+        [SerializeField] private Material neuronMaterial;
+        [SerializeField] private Material paintMaterial;
 
         [SerializeField] private UnityEvent<string> OnDisplayName;
         [SerializeField] private UnityEvent<bool> OnOrbitalCamera;
@@ -26,7 +29,6 @@ namespace Neuralizer {
         private UnityEngine.Pool.ObjectPool<SamplePoint> targetPool;
         private UnityEngine.Pool.ObjectPool<SamplePoint> unwantedPool;
         private NeuralRenderPass networkPass;
-        private bool enqueuePass = false;
 
         public NeuralScene Scene {
             get => currentScene;
@@ -42,8 +44,8 @@ namespace Neuralizer {
                 value.BD.ApplyTo(BD);
                 value.Output.ApplyTo(Output);
                 networkPass.architecture = value.architecture;
-                architecturePerceptron.Enabled = Scene.architecture == Architecture.Perceptron;
-                orbitalCamera.Enabled = Scene.useOrbitalCamera;
+                networkPass.isPlanar = !Scene.useOrbitalCamera;
+                planarGraph.Enabled = networkPass.isPlanar;
                 SamplePoint.ClearPoints();
                 foreach (Vector3 point in value.targetPoints) {
                     targetPool.Get().transform.position = point;
@@ -79,9 +81,19 @@ namespace Neuralizer {
 
         private void OnEnable() {
             networkPass = new() {
-                inputMaterial = inputMaterial,
-                layerMaterial = layerMaterial
+                neuronMaterial = neuronMaterial,
+                paintMaterial = paintMaterial,
+                AA = AA,
+                AB = AB,
+                AC = AC,
+                AD = AD,
+                BA = BA,
+                BB = BB,
+                BC = BC,
+                BD = BD,
+                Output = Output
             };
+            networkPass.Initialize();
             RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
         }
 
@@ -91,28 +103,16 @@ namespace Neuralizer {
             networkPass = null;
         }
 
+        private Vector4 networkRenderingInfo = Vector4.zero;
         private void OnBeginCameraRendering(ScriptableRenderContext ctx, Camera cam) {
+            networkRenderingInfo.x = 1f - Mathf.Exp(-((float)Screen.currentResolution.refreshRateRatio.value / Mathf.PI) * Time.unscaledDeltaTime);
+            networkRenderingInfo.y = (networkRenderingInfo.y + 1) % 1024;
+            networkRenderingInfo.z = cam.focusDistance;
+            Shader.SetGlobalVector(NetworkRenderingInfo_Id, networkRenderingInfo);
             if (!Scene) {
                 return;
             }
-
-            if (Scene.architecture == Architecture.Perceptron) {
-                return;
-            }
-
-            // if (enqueuePass) {
-            networkPass.AA = AA;
-            networkPass.AB = AB;
-            networkPass.AC = AC;
-            networkPass.AD = AD;
-            networkPass.BA = BA;
-            networkPass.BB = BB;
-            networkPass.BC = BD;
-            networkPass.BD = BD;
-            networkPass.Output = Output;
             cam.GetUniversalAdditionalCameraData().scriptableRenderer.EnqueuePass(networkPass);
-            //     enqueuePass = false;
-            // }
         }
 
 
@@ -144,12 +144,7 @@ namespace Neuralizer {
         }
 
         public void NotifyChange() {
-            if (Scene.architecture == Architecture.Perceptron) {
-                Output.SetShaderData();
-            }
-
             SamplePoint.UpdatePoints();
-            enqueuePass = true;
         }
 
         public void Randomize() {

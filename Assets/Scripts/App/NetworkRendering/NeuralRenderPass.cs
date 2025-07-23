@@ -19,6 +19,8 @@ namespace Neuralizer.NetworkRendering {
         private const string BC_Name = "_BC";
         private const string BD_Name = "_BD";
         private const string Output_Name = "_Output";
+        private const string Paint_Name = "_PaintOutput";
+        private const string History_Name = "_History";
 
         private static readonly int A_ID = Shader.PropertyToID(A_Name);
         private static readonly int B_ID = Shader.PropertyToID(B_Name);
@@ -33,6 +35,8 @@ namespace Neuralizer.NetworkRendering {
         private static readonly int BC_ID = Shader.PropertyToID(BC_Name);
         private static readonly int BD_ID = Shader.PropertyToID(BD_Name);
         private static readonly int Output_ID = Shader.PropertyToID(Output_Name);
+        private static readonly int Paint_ID = Shader.PropertyToID(Paint_Name);
+        private static readonly int History_ID = Shader.PropertyToID(History_Name);
 
         private static readonly int Weights_ID = Shader.PropertyToID("_Weights");
         private static readonly int Bias_ID = Shader.PropertyToID("_Bias");
@@ -43,290 +47,304 @@ namespace Neuralizer.NetworkRendering {
         private static readonly ShaderKeyword activationFunction_Sigmoid = new("_ACTIVATIONFUNCTION_SIGMOID");
         private static readonly ShaderKeyword activationFunction_TanH = new("_ACTIVATIONFUNCTION_TANH");
 
-        public Material inputMaterial;
-        public Material layerMaterial;
+        private static readonly ShaderKeyword inputSource_World = new("_INPUT_SOURCE_WORLD");
+        private static readonly ShaderKeyword inputSource_2Textures = new("_INPUT_SOURCE_2TEXTURES");
+        private static readonly ShaderKeyword inputSource_4Textures = new("_INPUT_SOURCE_4TEXTURES");
+
+        public Material neuronMaterial;
+        public Material paintMaterial;
         public Neuron AA, AB, AC, AD, BA, BB, BC, BD, Output;
         public Architecture architecture;
+        public bool isPlanar = false;
 
-        private RTHandle AATex, ABTex, ACTex, ADTex, BATex, BBTex, BCTex, BDTex, OutputTex;
-        private RenderTextureDescriptor descriptor;
+        private RTHandle history;
+        private RenderTextureDescriptor neuronDescriptor;
+        private RenderTextureDescriptor paintDescriptor;
 
-        private static readonly GraphicsFormat[] AccumulationFormatList = {
+        private static readonly GraphicsFormat[] NeuronOutputFormatList = {
             GraphicsFormat.R16G16B16A16_SFloat,
             GraphicsFormat.R32G32B32A32_SFloat
         };
 
-        public class InputPassData {
+        private static readonly GraphicsFormat[] CameraFormatList = {
+            // GraphicsFormat.R16G16B16A16_SFloat,
+            // GraphicsFormat.B10G11R11_UFloatPack32,
+            GraphicsFormat.R8G8B8A8_UNorm,
+            GraphicsFormat.B8G8R8A8_UNorm
+        };
+
+        private class InputPassData {
             public TextureHandle output;
-            public Material material;
-            public Neuron target;
+            public Neuron neuron;
         }
 
-        public class LayeredPassData {
+        private class LayeredPassData : InputPassData {
             public TextureHandle inputA;
             public TextureHandle inputB;
             public TextureHandle inputC;
             public TextureHandle inputD;
-            public TextureHandle output;
+        }
+
+        private class PaintPassData {
+            public TextureHandle cameraTex;
+            public TextureHandle networkOutput;
+            public TextureHandle paintOutput;
+            public TextureHandle history;
             public Material material;
-            public Neuron target;
+        }
+
+        private class CopyPassData {
+            public TextureHandle source;
         }
 
         public NeuralRenderPass() {
-            renderPassEvent = RenderPassEvent.AfterRenderingPrePasses;
-            AATex = RTHandles.Alloc(AA_ID, AA_Name);
-            ABTex = RTHandles.Alloc(AB_ID, AB_Name);
-            ACTex = RTHandles.Alloc(AC_ID, AC_Name);
-            ADTex = RTHandles.Alloc(AD_ID, AD_Name);
-            BATex = RTHandles.Alloc(BA_ID, BA_Name);
-            BBTex = RTHandles.Alloc(BB_ID, BB_Name);
-            BCTex = RTHandles.Alloc(BC_ID, BC_Name);
-            BDTex = RTHandles.Alloc(BD_ID, BD_Name);
-            OutputTex = RTHandles.Alloc(Output_ID, Output_Name);
+            renderPassEvent = RenderPassEvent.AfterRenderingPostProcessing;
+            history = RTHandles.Alloc(History_ID, History_Name);
+        }
 
-            const int size = 36;
-            const int sizeSqr = size * size;
-
-            descriptor = new(sizeSqr, size, RenderTextureFormat.ARGBFloat, 0);
-            descriptor.msaaSamples = 1;
-            descriptor.mipCount = 0;
-            descriptor.sRGB = false;
-            descriptor.useMipMap = false;
-            descriptor.autoGenerateMips = false;
-            descriptor.bindMS = false;
-            descriptor.useDynamicScale = false;
-            descriptor.graphicsFormat = GraphicsFormat.R32G32B32A32_SFloat;
-
-            if (!SystemInfo.IsFormatSupported(descriptor.graphicsFormat, GraphicsFormatUsage.Render)) {
-                descriptor.graphicsFormat = GraphicsFormat.None;
-                for (int i = 0; i < AccumulationFormatList.Length; i++)
-                    if (SystemInfo.IsFormatSupported(AccumulationFormatList[i], GraphicsFormatUsage.Render)) {
-                        descriptor.graphicsFormat = AccumulationFormatList[i];
-                        break;
-                    }
-            }
+        public void Initialize() {
+            AA.PrepareForRenderPass(AA_ID, AA_Name, neuronMaterial);
+            AB.PrepareForRenderPass(AB_ID, AB_Name, neuronMaterial);
+            AC.PrepareForRenderPass(AC_ID, AC_Name, neuronMaterial);
+            AD.PrepareForRenderPass(AD_ID, AD_Name, neuronMaterial);
+            BA.PrepareForRenderPass(BA_ID, BA_Name, neuronMaterial);
+            BB.PrepareForRenderPass(BB_ID, BB_Name, neuronMaterial);
+            BC.PrepareForRenderPass(BC_ID, BC_Name, neuronMaterial);
+            BD.PrepareForRenderPass(BD_ID, BD_Name, neuronMaterial);
+            Output.PrepareForRenderPass(Output_ID, Output_Name, neuronMaterial);
         }
 
         public void Dispose() {
-            AATex.Release();
-            ABTex.Release();
-            ACTex.Release();
-            ADTex.Release();
-            BATex.Release();
-            BBTex.Release();
-            BCTex.Release();
-            BDTex.Release();
-            OutputTex.Release();
-        }
-
-        private void ReAllocateIfNeeded(ref RTHandle handle, string name) {
-            RenderingUtils.ReAllocateHandleIfNeeded(ref handle, descriptor, FilterMode.Point, TextureWrapMode.Clamp,
-                name: name);
+            AA.resultTexture.Release();
+            AB.resultTexture.Release();
+            AC.resultTexture.Release();
+            AD.resultTexture.Release();
+            BA.resultTexture.Release();
+            BB.resultTexture.Release();
+            BC.resultTexture.Release();
+            BD.resultTexture.Release();
+            Output.resultTexture.Release();
         }
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData) {
-            // UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
-            // UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
+            UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
+            UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
 
-            ReAllocateIfNeeded(ref AATex, AA_Name);
-            ReAllocateIfNeeded(ref ABTex, AB_Name);
-            ReAllocateIfNeeded(ref ACTex, AC_Name);
-            ReAllocateIfNeeded(ref ADTex, AD_Name);
-
-            TextureHandle AAHandle = renderGraph.ImportTexture(AATex);
-            TextureHandle ABHandle = renderGraph.ImportTexture(ABTex);
-            TextureHandle ACHandle = renderGraph.ImportTexture(ACTex);
-            TextureHandle ADHandle = renderGraph.ImportTexture(ADTex);
-
-            ReAllocateIfNeeded(ref OutputTex, Output_Name);
-            TextureHandle OutputHandle = renderGraph.ImportTexture(OutputTex);
-
-            using (var builder = renderGraph.AddRasterRenderPass<InputPassData>("Neuron AA", out var passData)) {
-                passData.output = AAHandle;
-                passData.material = inputMaterial;
-                passData.target = AA;
-                builder.SetRenderAttachment(passData.output, 0);
-                builder.SetRenderFunc((InputPassData data, RasterGraphContext context) =>
-                    ExecuteInputPass(data, context));
+            neuronDescriptor = cameraData.cameraTargetDescriptor;
+            neuronDescriptor.msaaSamples = 1;
+            neuronDescriptor.mipCount = 0;
+            neuronDescriptor.sRGB = false;
+            neuronDescriptor.depthStencilFormat = GraphicsFormat.None;
+            neuronDescriptor.memoryless = RenderTextureMemoryless.None;
+            neuronDescriptor.useMipMap = false;
+            neuronDescriptor.autoGenerateMips = false;
+            neuronDescriptor.bindMS = false;
+            neuronDescriptor.useDynamicScale = false;
+            neuronDescriptor.graphicsFormat = GraphicsFormat.R16G16B16A16_SFloat;
+            
+            switch(architecture) {
+                case Architecture.Perceptron:
+                    neuronDescriptor.width /= 2;
+                    neuronDescriptor.height /= 2;
+                break;
+                case Architecture.OneLayer:
+                    neuronDescriptor.width /= 3;
+                    neuronDescriptor.height /= 3;
+                break;
+                case Architecture.TwoLayers:
+                    neuronDescriptor.width /= 4;
+                    neuronDescriptor.height /= 4;
+                break;
             }
 
-            using (var builder = renderGraph.AddRasterRenderPass<InputPassData>("Neuron AB", out var passData)) {
-                passData.output = ABHandle;
-                passData.material = inputMaterial;
-                passData.target = AB;
-                builder.SetRenderAttachment(passData.output, 0);
-                builder.SetRenderFunc((InputPassData data, RasterGraphContext context) =>
-                    ExecuteInputPass(data, context));
-            }
-
-            using (var builder = renderGraph.AddRasterRenderPass<InputPassData>("Neuron AC", out var passData)) {
-                passData.output = ACHandle;
-                passData.material = inputMaterial;
-                passData.target = AC;
-                builder.SetRenderAttachment(passData.output, 0);
-                builder.SetRenderFunc((InputPassData data, RasterGraphContext context) =>
-                    ExecuteInputPass(data, context));
-            }
-
-            using (var builder = renderGraph.AddRasterRenderPass<InputPassData>("Neuron AD", out var passData)) {
-                passData.output = ADHandle;
-                passData.material = inputMaterial;
-                passData.target = AD;
-                builder.SetRenderAttachment(passData.output, 0);
-                builder.SetRenderFunc((InputPassData data, RasterGraphContext context) =>
-                    ExecuteInputPass(data, context));
-            }
-
-            if (architecture == Architecture.TwoLayers) {
-                ReAllocateIfNeeded(ref BATex, BA_Name);
-                ReAllocateIfNeeded(ref BBTex, BB_Name);
-                ReAllocateIfNeeded(ref BCTex, BC_Name);
-                ReAllocateIfNeeded(ref BDTex, BD_Name);
-
-                TextureHandle BAHandle = renderGraph.ImportTexture(BATex);
-                TextureHandle BBHandle = renderGraph.ImportTexture(BBTex);
-                TextureHandle BCHandle = renderGraph.ImportTexture(BCTex);
-                TextureHandle BDHandle = renderGraph.ImportTexture(BDTex);
-
-                using (var builder = renderGraph.AddRasterRenderPass<LayeredPassData>("Neuron BA", out var passData)) {
-                    passData.inputA = AAHandle;
-                    passData.inputB = ABHandle;
-                    passData.inputC = ACHandle;
-                    passData.inputD = ADHandle;
-                    passData.output = BAHandle;
-                    passData.target = BA;
-                    passData.material = layerMaterial;
-                    builder.UseTexture(passData.inputA);
-                    builder.UseTexture(passData.inputB);
-                    builder.UseTexture(passData.inputC);
-                    builder.UseTexture(passData.inputD);
-                    builder.SetRenderAttachment(passData.output, 0);
-                    builder.SetRenderFunc((LayeredPassData data, RasterGraphContext context) =>
-                        ExecuteHiddenPass(data, context));
-                }
-
-                using (var builder = renderGraph.AddRasterRenderPass<LayeredPassData>("Neuron BB", out var passData)) {
-                    passData.inputA = AAHandle;
-                    passData.inputB = ABHandle;
-                    passData.inputC = ACHandle;
-                    passData.inputD = ADHandle;
-                    passData.output = BBHandle;
-                    passData.target = BB;
-                    passData.material = layerMaterial;
-                    builder.UseTexture(passData.inputA);
-                    builder.UseTexture(passData.inputB);
-                    builder.UseTexture(passData.inputC);
-                    builder.UseTexture(passData.inputD);
-                    builder.SetRenderAttachment(passData.output, 0);
-                    builder.SetRenderFunc((LayeredPassData data, RasterGraphContext context) =>
-                        ExecuteHiddenPass(data, context));
-                }
-
-                using (var builder = renderGraph.AddRasterRenderPass<LayeredPassData>("Neuron BC", out var passData)) {
-                    passData.inputA = AAHandle;
-                    passData.inputB = ABHandle;
-                    passData.inputC = ACHandle;
-                    passData.inputD = ADHandle;
-                    passData.output = BCHandle;
-                    passData.target = BC;
-                    passData.material = layerMaterial;
-                    builder.UseTexture(passData.inputA);
-                    builder.UseTexture(passData.inputB);
-                    builder.UseTexture(passData.inputC);
-                    builder.UseTexture(passData.inputD);
-                    builder.SetRenderAttachment(passData.output, 0);
-                    builder.SetRenderFunc((LayeredPassData data, RasterGraphContext context) =>
-                        ExecuteHiddenPass(data, context));
-                }
-
-                using (var builder = renderGraph.AddRasterRenderPass<LayeredPassData>("Neuron BD", out var passData)) {
-                    passData.inputA = AAHandle;
-                    passData.inputB = ABHandle;
-                    passData.inputC = ACHandle;
-                    passData.inputD = ADHandle;
-                    passData.output = BDHandle;
-                    passData.target = BD;
-                    passData.material = layerMaterial;
-                    builder.UseTexture(passData.inputA);
-                    builder.UseTexture(passData.inputB);
-                    builder.UseTexture(passData.inputC);
-                    builder.UseTexture(passData.inputD);
-                    builder.SetRenderAttachment(passData.output, 0);
-                    builder.SetRenderFunc((LayeredPassData data, RasterGraphContext context) =>
-                        ExecuteHiddenPass(data, context));
-                }
-
-                using (var builder =
-                       renderGraph.AddRasterRenderPass<LayeredPassData>("Neuron Output", out var passData)) {
-                    passData.inputA = BAHandle;
-                    passData.inputB = BBHandle;
-                    passData.inputC = BCHandle;
-                    passData.inputD = BDHandle;
-                    passData.output = OutputHandle;
-                    passData.target = Output;
-                    passData.material = layerMaterial;
-                    builder.UseTexture(passData.inputA);
-                    builder.UseTexture(passData.inputB);
-                    builder.UseTexture(passData.inputC);
-                    builder.UseTexture(passData.inputD);
-                    builder.SetRenderAttachment(passData.output, 0);
-                    builder.SetRenderFunc((LayeredPassData data, RasterGraphContext context) =>
-                        ExecuteOutputPass(data, context));
+            if (!SystemInfo.IsFormatSupported(neuronDescriptor.graphicsFormat, GraphicsFormatUsage.Render)) {
+                neuronDescriptor.graphicsFormat = GraphicsFormat.None;
+                foreach (GraphicsFormat t in NeuronOutputFormatList) {
+                    if (!SystemInfo.IsFormatSupported(t, GraphicsFormatUsage.Render)) continue;
+                    neuronDescriptor.graphicsFormat = t;
+                    break;
                 }
             }
-            else {
-                using (var builder =
-                       renderGraph.AddRasterRenderPass<LayeredPassData>("Neuron Output", out var passData)) {
-                    passData.inputA = AAHandle;
-                    passData.inputB = ABHandle;
-                    passData.inputC = ACHandle;
-                    passData.inputD = ADHandle;
-                    passData.output = OutputHandle;
-                    passData.target = Output;
-                    passData.material = layerMaterial;
-                    builder.UseTexture(passData.inputA);
-                    builder.UseTexture(passData.inputB);
-                    builder.UseTexture(passData.inputC);
-                    builder.UseTexture(passData.inputD);
-                    builder.SetRenderAttachment(passData.output, 0);
-                    builder.SetRenderFunc((LayeredPassData data, RasterGraphContext context) =>
-                        ExecuteOutputPass(data, context));
+
+            paintDescriptor = cameraData.cameraTargetDescriptor;
+            paintDescriptor.msaaSamples = 1;
+            paintDescriptor.mipCount = 0;
+            // desc.sRGB = false;
+            paintDescriptor.depthStencilFormat = GraphicsFormat.None;
+            paintDescriptor.memoryless = RenderTextureMemoryless.None;
+            paintDescriptor.useMipMap = false;
+            paintDescriptor.autoGenerateMips = false;
+            paintDescriptor.enableRandomWrite = false;
+            paintDescriptor.bindMS = false;
+            paintDescriptor.useDynamicScale = false;
+
+            if (!SystemInfo.IsFormatSupported(neuronDescriptor.graphicsFormat, GraphicsFormatUsage.Render)) {
+                neuronDescriptor.graphicsFormat = GraphicsFormat.None;
+
+                foreach (GraphicsFormat t in CameraFormatList) {
+                    if (!SystemInfo.IsFormatSupported(t, GraphicsFormatUsage.Render)) continue;
+                    neuronDescriptor.graphicsFormat = t;
+                    break;
                 }
             }
+            
+            TextureHandle OutputHandle = Output.SetupRenderTarget(Output_Name, renderGraph, neuronDescriptor);
+
+            var paintHandle = UniversalRenderer.CreateRenderGraphTexture(renderGraph, paintDescriptor, Paint_Name,
+                false,
+                FilterMode.Bilinear);
+            
+            RenderingUtils.ReAllocateHandleIfNeeded(ref history, paintDescriptor, FilterMode.Point,
+                TextureWrapMode.Clamp,
+                name: History_Name);
+            
+            var historyHandle = renderGraph.ImportTexture(history);
+            
+            
+            switch(architecture) {
+                case Architecture.Perceptron:
+                    AddInputNeuronPass("Neuron Output", renderGraph, Output, OutputHandle);
+                break;
+                case Architecture.OneLayer:
+                    TextureHandle AHandle = AA.SetupRenderTarget(A_Name, renderGraph, neuronDescriptor);
+                    TextureHandle BHandle = AB.SetupRenderTarget(B_Name, renderGraph, neuronDescriptor);
+                    TextureHandle CHandle = AC.SetupRenderTarget(D_Name, renderGraph, neuronDescriptor);
+                    TextureHandle DHandle = AD.SetupRenderTarget(A_Name, renderGraph, neuronDescriptor);
+                    AddInputNeuronPass("Neuron AA", renderGraph, AA, AHandle);
+                    AddInputNeuronPass("Neuron AB", renderGraph, AB, BHandle);
+                    AddInputNeuronPass("Neuron AC", renderGraph, AC, CHandle);
+                    AddInputNeuronPass("Neuron AD", renderGraph, AD, DHandle);
+                    
+                    AddLayeredNeuronPass("Neuron Output", renderGraph, Output, AHandle, BHandle, CHandle, DHandle, OutputHandle);
+                break;
+                case Architecture.TwoLayers:
+                    TextureHandle AAHandle = AA.SetupRenderTarget(A_Name, renderGraph, neuronDescriptor);
+                    TextureHandle ABHandle = AB.SetupRenderTarget(B_Name, renderGraph, neuronDescriptor);
+                    TextureHandle ACHandle = AC.SetupRenderTarget(D_Name, renderGraph, neuronDescriptor);
+                    TextureHandle ADHandle = AD.SetupRenderTarget(A_Name, renderGraph, neuronDescriptor);
+                    TextureHandle BAHandle = BA.SetupRenderTarget(A_Name, renderGraph, neuronDescriptor);
+                    TextureHandle BBHandle = BB.SetupRenderTarget(B_Name, renderGraph, neuronDescriptor);
+                    TextureHandle BCHandle = BC.SetupRenderTarget(D_Name, renderGraph, neuronDescriptor);
+                    TextureHandle BDHandle = BD.SetupRenderTarget(A_Name, renderGraph, neuronDescriptor);
+                    
+                    AddInputNeuronPass("Neuron AA", renderGraph, AA, AAHandle);
+                    AddInputNeuronPass("Neuron AB", renderGraph, AB, ABHandle);
+                    AddInputNeuronPass("Neuron AC", renderGraph, AC, ACHandle);
+                    AddInputNeuronPass("Neuron AD", renderGraph, AD, ADHandle);
+                    AddLayeredNeuronPass("Neuron BA", renderGraph, BA, AAHandle, ABHandle, ACHandle, ADHandle, BAHandle);
+                    AddLayeredNeuronPass("Neuron BB", renderGraph, BB, AAHandle, ABHandle, ACHandle, ADHandle, BBHandle);
+                    AddLayeredNeuronPass("Neuron BC", renderGraph, BC, AAHandle, ABHandle, ACHandle, ADHandle, BCHandle);
+                    AddLayeredNeuronPass("Neuron BD", renderGraph, BD, AAHandle, ABHandle, ACHandle, ADHandle, BDHandle);
+
+                    AddLayeredNeuronPass("Neuron Output", renderGraph, Output, BAHandle, BBHandle, BCHandle, BDHandle, OutputHandle);
+                break;
+            }
+
+            using (var builder =
+                   renderGraph.AddRasterRenderPass<PaintPassData>("Neuron Paint", out var passData)) {
+                passData.material = paintMaterial;
+                passData.cameraTex = resourceData.activeColorTexture;
+                passData.networkOutput = OutputHandle;
+                passData.history = historyHandle;
+                passData.paintOutput = paintHandle;
+                builder.UseTexture(passData.cameraTex);
+                builder.UseTexture(passData.networkOutput);
+                builder.UseTexture(passData.history);
+                builder.SetRenderAttachment(passData.paintOutput, 0);
+                builder.SetRenderFunc((PaintPassData data, RasterGraphContext context) =>
+                    ExecutePaintPass(data, context));
+            }
+
+            using (var builder =
+                   renderGraph.AddRasterRenderPass<CopyPassData>("Neuron Copy",
+                       out var passData)) {
+                passData.source = paintHandle;
+                builder.UseTexture(passData.source);
+                builder.SetRenderAttachment(resourceData.activeColorTexture, 0);
+                builder.SetRenderFunc((CopyPassData data, RasterGraphContext context) =>
+                    ExecuteCopyPass(data, context));
+            }
+
+            using (var builder =
+                   renderGraph.AddRasterRenderPass<CopyPassData>("Copy History",
+                       out var passData)) {
+                passData.source = resourceData.activeColorTexture;
+                builder.UseTexture(passData.source);
+                builder.SetRenderAttachment(historyHandle, 0);
+                builder.SetRenderFunc((CopyPassData data, RasterGraphContext context) =>
+                    ExecuteCopyPass(data, context));
+            }
+        }
+
+        private static void AddInputNeuronPass(string passName, RenderGraph renderGraph, Neuron targetNeuron, TextureHandle OutputHandle) {
+            using IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<InputPassData>(passName, out var passData);
+            passData.output = OutputHandle;
+            passData.neuron = targetNeuron;
+            builder.SetRenderAttachment(passData.output, 0);
+            builder.SetRenderFunc((InputPassData data, RasterGraphContext context) =>
+                ExecuteInputPass(data, context));
+        }
+
+        private static void AddLayeredNeuronPass(string passName, RenderGraph renderGraph, Neuron targetNeuron, TextureHandle A,
+            TextureHandle B, TextureHandle C, TextureHandle D, TextureHandle OutputHandle) {
+            using IRasterRenderGraphBuilder builder =
+                renderGraph.AddRasterRenderPass<LayeredPassData>(passName, out var passData);
+            passData.inputA = A;
+            passData.inputB = B;
+            passData.inputC = C;
+            passData.inputD = D;
+            passData.neuron = targetNeuron;
+            passData.output = OutputHandle;
+            builder.UseTexture(passData.inputA);
+            builder.UseTexture(passData.inputB);
+            builder.UseTexture(passData.inputC);
+            builder.UseTexture(passData.inputD);
+            builder.SetRenderAttachment(passData.output, 0);
+            builder.SetRenderFunc((LayeredPassData data, RasterGraphContext context) =>
+                ExecuteLayeredPass(data, context));
         }
 
         public static void SetShaderData(Neuron target) {
-            Shader.SetGlobalVector(Weights_ID, target.weights);
-            Shader.SetGlobalFloat(Bias_ID, target.bias);
-            activationFunction_Linear.Enabled = target.activationFunction == ActivationFunction.Linear;
-            activationFunction_Stepped.Enabled = target.activationFunction == ActivationFunction.Stepped;
-            activationFunction_ReLu.Enabled = target.activationFunction == ActivationFunction.ReLu;
-            activationFunction_Sigmoid.Enabled = target.activationFunction == ActivationFunction.Sigmoid;
-            activationFunction_TanH.Enabled = target.activationFunction == ActivationFunction.TanH;
+            target.material.SetVector(Weights_ID, target.weights);
+            target.material.SetFloat(Bias_ID, target.bias);
+            activationFunction_Linear.SetMaterial(target.material,
+                target.activationFunction == ActivationFunction.Linear);
+            activationFunction_Stepped.SetMaterial(target.material,
+                target.activationFunction == ActivationFunction.Stepped);
+            activationFunction_ReLu.SetMaterial(target.material, target.activationFunction == ActivationFunction.ReLu);
+            activationFunction_Sigmoid.SetMaterial(target.material,
+                target.activationFunction == ActivationFunction.Sigmoid);
+            activationFunction_TanH.SetMaterial(target.material, target.activationFunction == ActivationFunction.TanH);
         }
 
         static void ExecuteInputPass(InputPassData data, RasterGraphContext context) {
-            SetShaderData(data.target);
-            Blitter.BlitTexture(context.cmd, Vector4.one, data.material, 0);
+            inputSource_World.SetMaterial(data.neuron.material, true);
+            inputSource_2Textures.SetMaterial(data.neuron.material, false);
+            inputSource_4Textures.SetMaterial(data.neuron.material, false);
+            SetShaderData(data.neuron);
+            Blitter.BlitTexture(context.cmd, Vector4.one, data.neuron.material, 0);
         }
 
-        static void ExecuteHiddenPass(LayeredPassData data, RasterGraphContext context) {
-            Shader.SetGlobalTexture(A_ID, data.inputA);
-            Shader.SetGlobalTexture(B_ID, data.inputB);
-            Shader.SetGlobalTexture(C_ID, data.inputC);
-            Shader.SetGlobalTexture(D_ID, data.inputD);
-            SetShaderData(data.target);
-            Blitter.BlitTexture(context.cmd, Vector4.one, data.material, 0);
+        static void ExecuteLayeredPass(LayeredPassData data, RasterGraphContext context) {
+            inputSource_World.SetMaterial(data.neuron.material, false);
+            inputSource_2Textures.SetMaterial(data.neuron.material, false);
+            inputSource_4Textures.SetMaterial(data.neuron.material, true);
+            data.neuron.material.SetTexture(A_ID, data.inputA);
+            data.neuron.material.SetTexture(B_ID, data.inputB);
+            data.neuron.material.SetTexture(C_ID, data.inputC);
+            data.neuron.material.SetTexture(D_ID, data.inputD);
+            SetShaderData(data.neuron);
+            Blitter.BlitTexture(context.cmd, Vector4.one, data.neuron.material, 0);
         }
 
-        static void ExecuteOutputPass(LayeredPassData data, RasterGraphContext context) {
-            Shader.SetGlobalTexture(A_ID, data.inputA);
-            Shader.SetGlobalTexture(B_ID, data.inputB);
-            Shader.SetGlobalTexture(C_ID, data.inputC);
-            Shader.SetGlobalTexture(D_ID, data.inputD);
-            SetShaderData(data.target);
-            Blitter.BlitTexture(context.cmd, Vector4.one, data.material, 0);
-            Shader.SetGlobalTexture(Output_ID, data.output);
+        static void ExecutePaintPass(PaintPassData data, RasterGraphContext context) {
+            Shader.SetGlobalTexture(Output_ID, data.networkOutput);
+            Shader.SetGlobalTexture(History_ID, data.history);
+            Blitter.BlitTexture(context.cmd, data.cameraTex, Vector4.one, data.material, 0);
+        }
+
+        static void ExecuteCopyPass(CopyPassData data, RasterGraphContext context) {
+            Blitter.BlitTexture(context.cmd, data.source, Vector2.one, 0f, true);
         }
     }
 }

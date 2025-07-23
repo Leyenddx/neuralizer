@@ -22,6 +22,15 @@ namespace Neuralizer {
             }
         }
 
+        public void SetMaterial(Material target, bool value) {
+            if (value) {
+                target.EnableKeyword(name);
+            }
+            else {
+                target.DisableKeyword(name);
+            }
+        }
+
         public string Name => name;
     }
 }
