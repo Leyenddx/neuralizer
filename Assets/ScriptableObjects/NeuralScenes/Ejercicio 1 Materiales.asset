@@ -10,18 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d657411bcaa5491891f4ecd2d0e31d3a, type: 3}
-  m_Name: Demo Scene 3
+  m_Name: Ejercicio 1 Materiales
   m_EditorClassIdentifier: 
-  displayName: Ejercicio 3
-  architecture: 1
+  displayName: "Materiales de Construcci\xF3n"
+  architecture: 0
   targetPoints:
-  - {x: -2.81, y: 4.14, z: 0}
-  - {x: 5.96, y: -5.36, z: 0}
-  - {x: 3.88, y: -2.96, z: 0}
+  - {x: 4, y: 2, z: 2}
+  - {x: 5, y: 1, z: 2}
+  - {x: 5, y: 2, z: 2}
+  - {x: 6, y: 1, z: 2}
   unwantedPoints:
-  - {x: 6.77, y: -3.56, z: 0}
-  - {x: 3.4, y: -4.48, z: 0}
-  - {x: 2.71, y: -8.83, z: 0}
+  - {x: 1, y: 5, z: -2}
+  - {x: 2, y: 4, z: -2}
+  - {x: 2, y: 5, z: -2}
+  - {x: 3, y: 3, z: -2}
   useOrbitalCamera: 0
   AA:
     weigthX: 0
@@ -88,10 +90,10 @@ MonoBehaviour:
     activationFunction: 0
     displayNeuron: 0
   Output:
-    weigthX: 0.39
-    weigthY: 0.55
+    weigthX: 0
+    weigthY: 0
     weigthZ: 0
     weigthW: 0
-    bias: 3.8
+    bias: 0
     activationFunction: 2
     displayNeuron: 1
