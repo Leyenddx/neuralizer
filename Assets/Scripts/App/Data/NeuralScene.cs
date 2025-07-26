@@ -5,14 +5,46 @@ namespace Neuralizer.Data {
     public class NeuralScene : ScriptableObject {
 
         [SerializeField] private string displayName;
+        [SerializeField] private string scoreboardID;
         public Architecture architecture;
         public Vector3[] targetPoints;
         public Vector3[] unwantedPoints;
         public bool useOrbitalCamera = false;
+        public bool allowTraining = false;
 
         public NeuronPrefab AA, AB, AC, AD, BA, BB, BC, BD, Output;
 
         public string DisplayName => string.IsNullOrEmpty(displayName) ? name : displayName;
+        
+        public string ScoreboardID => string.IsNullOrEmpty(scoreboardID) ? "" : scoreboardID;
+
+        public bool AllowScoring => !string.IsNullOrEmpty(scoreboardID);
+        
+        public NeuronPrefab GetTargetNeuron(TargetNeuron target) {
+            switch (target) {
+                default:
+                case TargetNeuron.None:
+                    return null;
+                case TargetNeuron.AA:
+                    return AA;
+                case TargetNeuron.AB:
+                    return AB;
+                case TargetNeuron.AC:
+                    return AC;
+                case TargetNeuron.AD:
+                    return AD;
+                case TargetNeuron.BA:
+                    return BA;
+                case TargetNeuron.BB:
+                    return BB;
+                case TargetNeuron.BC:
+                    return BC;
+                case TargetNeuron.BD:
+                    return BD;
+                case TargetNeuron.Output:
+                    return Output;
+            }
+        }
 
         [System.Serializable]
         public class NeuronPrefab {

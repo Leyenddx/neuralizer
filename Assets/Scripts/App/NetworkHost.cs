@@ -1,3 +1,4 @@
+using System;
 using Neuralizer.Data;
 using Neuralizer.NetworkRendering;
 using UnityEngine;
@@ -24,6 +25,7 @@ namespace Neuralizer {
         [SerializeField] private UnityEvent<bool> OnOrbitalCamera;
         [SerializeField] private UnityEvent<bool> OnPlanarCamera;
         [SerializeField] private UnityEvent OnSceneLoaded;
+        [SerializeField] private UnityEvent<bool> OnAllowTraining;
 
         private NeuralScene currentScene;
         private UnityEngine.Pool.ObjectPool<SamplePoint> targetPool;
@@ -175,6 +177,32 @@ namespace Neuralizer {
                     Vector4 layer2_1 = new(AA.Sample(point), AB.Sample(point), AC.Sample(point), AD.Sample(point));
                     return Output.Sample(new Vector4(BA.Sample(layer2_1), BB.Sample(layer2_1), BC.Sample(layer2_1),
                         BD.Sample(layer2_1)));
+            }
+        }
+
+        public Neuron GetTargetNeuron(TargetNeuron target) {
+            switch (target) {
+                default:
+                case TargetNeuron.None:
+                    return null;
+                case TargetNeuron.AA:
+                    return AA;
+                case TargetNeuron.AB:
+                    return AB;
+                case TargetNeuron.AC:
+                    return AC;
+                case TargetNeuron.AD:
+                    return AD;
+                case TargetNeuron.BA:
+                    return BA;
+                case TargetNeuron.BB:
+                    return BB;
+                case TargetNeuron.BC:
+                    return BC;
+                case TargetNeuron.BD:
+                    return BD;
+                case TargetNeuron.Output:
+                    return Output;
             }
         }
     }
