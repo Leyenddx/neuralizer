@@ -107,7 +107,7 @@ namespace Neuralizer {
 
         private Vector4 networkRenderingInfo = Vector4.zero;
         private void OnBeginCameraRendering(ScriptableRenderContext ctx, Camera cam) {
-            networkRenderingInfo.x = 1f - Mathf.Exp(-((float)Screen.currentResolution.refreshRateRatio.value) * Time.unscaledDeltaTime);
+            networkRenderingInfo.x = 1f - Mathf.Exp(-((float)Screen.currentResolution.refreshRateRatio.value / Mathf.PI) * Time.unscaledDeltaTime);
             networkRenderingInfo.y = (networkRenderingInfo.y + 1) % 1024;
             networkRenderingInfo.z = cam.focusDistance;
             Shader.SetGlobalVector(NetworkRenderingInfo_Id, networkRenderingInfo);

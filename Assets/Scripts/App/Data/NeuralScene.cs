@@ -48,15 +48,15 @@ namespace Neuralizer.Data {
 
         [System.Serializable]
         public class NeuronPrefab {
-            [Range(-Mathf.PI, Mathf.PI)]
-            public float weigthX = 0f;
-            [Range(-Mathf.PI, Mathf.PI)]
-            public float weigthY = 0f;
-            [Range(-Mathf.PI, Mathf.PI)]
-            public float weigthZ = 0f;
-            [Range(-Mathf.PI, Mathf.PI)]
-            public float weigthW = 0f;
             [Range(-10f, 10f)]
+            public float weigthX = 0f;
+            [Range(-10f, 10f)]
+            public float weigthY = 0f;
+            [Range(-10f, 10f)]
+            public float weigthZ = 0f;
+            [Range(-10f, 10f)]
+            public float weigthW = 0f;
+            [Range(-32f, 32f)]
             public float bias = 0f;
             public ActivationFunction activationFunction;
             public bool displayNeuron;
