@@ -1,4 +1,4 @@
-const cacheName = "Desert Hare Studios-Neuralizer-0.3.0";
+const cacheName = "Desert Hare Studios-Neuralizer-0.3.1";
 const contentToCache = [
     "Build/public.loader.js",
     "Build/public.framework.js.unityweb",
