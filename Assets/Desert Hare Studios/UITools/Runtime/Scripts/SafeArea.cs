@@ -9,7 +9,7 @@ public class SafeArea : MonoBehaviour {
     private Vector2 minAnchor;
     private Vector2 maxAnchor;
 
-    bool ignoreCallback = false;
+    private bool ignoreCallback = false;
 
     private void OnRectTransformDimensionsChange() {
         if(ignoreCallback) {
@@ -23,7 +23,7 @@ public class SafeArea : MonoBehaviour {
         ResizeToFit();
     }
 
-    public void ResizeToFit() {
+    private void ResizeToFit() {
         safeArea = Screen.safeArea;
         minAnchor = safeArea.position;
         maxAnchor = minAnchor + safeArea.size;

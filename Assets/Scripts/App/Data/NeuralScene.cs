@@ -4,15 +4,32 @@ namespace Neuralizer.Data {
     [CreateAssetMenu(fileName = "Neural Scene", menuName = "Neuralizer/Scene")]
     public class NeuralScene : ScriptableObject {
 
+        [Header("Scene Settings")]
         [SerializeField] private string displayName;
         [SerializeField] private string scoreboardID;
+        [Header("Network Settings")]
         public Architecture architecture;
         public Vector3[] targetPoints;
         public Vector3[] unwantedPoints;
+        [Header("Scene Constraints")]
         public bool useOrbitalCamera = false;
         public bool allowTraining = false;
+        public bool allowRandomizeNeuron = true;
+        public bool allowRandomizeNetwork = true;
+        
+        [Header("Output Layer")]
+        public NeuronPrefab Output;
 
-        public NeuronPrefab AA, AB, AC, AD, BA, BB, BC, BD, Output;
+        [Header("First Layer")]
+        public NeuronPrefab AA;
+        public NeuronPrefab AB;
+        public NeuronPrefab AC;
+        public NeuronPrefab AD;
+        [Header("Second Layer")]
+        public NeuronPrefab BA;
+        public NeuronPrefab BB;
+        public NeuronPrefab BC;
+        public NeuronPrefab BD;
 
         public string DisplayName => string.IsNullOrEmpty(displayName) ? name : displayName;
         
@@ -49,20 +66,20 @@ namespace Neuralizer.Data {
         [System.Serializable]
         public class NeuronPrefab {
             [Range(-10f, 10f)]
-            public float weigthX = 0f;
+            public float weightX = 0f;
             [Range(-10f, 10f)]
-            public float weigthY = 0f;
+            public float weightY = 0f;
             [Range(-10f, 10f)]
-            public float weigthZ = 0f;
+            public float weightZ = 0f;
             [Range(-10f, 10f)]
-            public float weigthW = 0f;
-            [Range(-32f, 32f)]
+            public float weightW = 0f;
+            [Range(-50f, 50f)]
             public float bias = 0f;
             public ActivationFunction activationFunction;
             public bool displayNeuron;
             
             public void ApplyTo(Neuron neuron) {
-                neuron.weights.Set(weigthX, weigthY, weigthZ, weigthW);
+                neuron.weights.Set(weightX, weightY, weightZ, weightW);
                 neuron.bias = bias;
                 neuron.activationFunction = activationFunction;
             }

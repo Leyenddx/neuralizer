@@ -34,6 +34,7 @@ namespace Neuralizer {
         private LayoutElement targetFlex;
 
         public Neuron CurrentNeuron { get; set; }
+        public TargetNeuron CurrentTargetNeuron { get; set; }
 
         private void Start() {
             restFlexWidth.Set(aLayer.flexibleWidth, bLayer.flexibleWidth, outputLayer.flexibleWidth);
@@ -70,6 +71,7 @@ namespace Neuralizer {
             Neuron targetNeuron = network.GetTargetNeuron(button.Target);
             if (value) {
                 CurrentNeuron = targetNeuron;
+                CurrentTargetNeuron = button.Target;
                 OnWeightXLoaded?.Invoke(CurrentNeuron.weights.x);
                 OnWeightYLoaded?.Invoke(CurrentNeuron.weights.y);
                 OnWeightZLoaded?.Invoke(CurrentNeuron.weights.z);
@@ -151,57 +153,50 @@ namespace Neuralizer {
         }
 
         public void OnWeightXChanged(float value) {
-            if (CurrentNeuron == null) {
-                return;
-            }
-
+            if (CurrentNeuron == null) return;
             CurrentNeuron.weights.x = value;
             network.NotifyChange();
         }
 
         public void OnWeightYChanged(float value) {
-            if (CurrentNeuron == null) {
-                return;
-            }
-
+            if (CurrentNeuron == null) return;
             CurrentNeuron.weights.y = value;
             network.NotifyChange();
         }
 
         public void OnWeightZChanged(float value) {
-            if (CurrentNeuron == null) {
-                return;
-            }
-
+            if (CurrentNeuron == null) return;
             CurrentNeuron.weights.z = value;
             network.NotifyChange();
         }
 
         public void OnWeightWChanged(float value) {
-            if (CurrentNeuron == null) {
-                return;
-            }
-
+            if (CurrentNeuron == null) return;
             CurrentNeuron.weights.w = value;
             network.NotifyChange();
         }
 
         public void OnBiasChanged(float value) {
-            if (CurrentNeuron == null) {
-                return;
-            }
-
+            if (CurrentNeuron == null) return;
             CurrentNeuron.bias = value;
             network.NotifyChange();
         }
 
         public void OnActivationFunctionChanged(int i) {
-            if (CurrentNeuron == null) {
-                return;
-            }
-
+            if (CurrentNeuron == null) return;
             CurrentNeuron.activationFunction = (ActivationFunction)i;
             network.NotifyChange();
+        }
+
+        public void RandomizeCurrentNeuron() {
+            if (CurrentNeuron == null) return;
+            network.RandomizeNeuron(CurrentTargetNeuron);
+            OnWeightXLoaded?.Invoke(CurrentNeuron.weights.x);
+            OnWeightYLoaded?.Invoke(CurrentNeuron.weights.y);
+            OnWeightZLoaded?.Invoke(CurrentNeuron.weights.z);
+            OnWeightWLoaded?.Invoke(CurrentNeuron.weights.w);
+            OnBiasLoaded?.Invoke(CurrentNeuron.bias);
+            OnActivationFunctionLoaded?.Invoke((int)CurrentNeuron.activationFunction);
         }
     }
 }

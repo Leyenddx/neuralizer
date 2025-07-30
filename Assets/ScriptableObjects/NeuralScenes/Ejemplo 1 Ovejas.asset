@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Ejemplo 1 Ovejas
   m_EditorClassIdentifier: 
   displayName: "\xBFOveja o Lobo?"
+  scoreboardID: 
   architecture: 0
   targetPoints:
   - {x: 11, y: 1, z: 4}
@@ -20,81 +21,84 @@ MonoBehaviour:
   - {x: 9, y: 9, z: 4}
   - {x: 15, y: -5, z: 4}
   unwantedPoints:
-  - {x: -5, y: 10, z: -4}
-  - {x: -5, y: -7, z: -4}
-  - {x: 3, y: -5, z: -4}
-  - {x: 4, y: -9, z: -4}
-  - {x: 7, y: -9, z: -4}
+  - {x: -5, y: 10, z: 1}
+  - {x: -5, y: -7, z: 1}
+  - {x: 3, y: -5, z: 1}
+  - {x: 4, y: -9, z: 1}
+  - {x: 7, y: -9, z: 1}
   useOrbitalCamera: 0
+  allowTraining: 0
+  allowRandomizeNeuron: 1
+  allowRandomizeNetwork: 1
+  Output:
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
+    bias: 0
+    activationFunction: 2
+    displayNeuron: 1
   AA:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 0
   AB:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 0
   AC:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 0
   AD:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 0
   BA:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 0
   BB:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 0
   BC:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 0
   BD:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 0
-  Output:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
-    bias: 0
-    activationFunction: 2
-    displayNeuron: 1

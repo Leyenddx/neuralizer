@@ -8,7 +8,6 @@ using UnityEngine.Rendering.Universal;
 
 namespace Neuralizer {
     public class NetworkHost : MonoBehaviour {
-        
         private const string NetworkRenderingInfo_Name = "_NetworkRenderingInfo";
         private static readonly int NetworkRenderingInfo_Id = Shader.PropertyToID(NetworkRenderingInfo_Name);
 
@@ -25,8 +24,12 @@ namespace Neuralizer {
         [SerializeField] private UnityEvent<bool> OnOrbitalCamera;
         [SerializeField] private UnityEvent<bool> OnPlanarCamera;
         [SerializeField] private UnityEvent OnSceneLoaded;
+        [SerializeField] private UnityEvent OnSceneUnloaded;
         [SerializeField] private UnityEvent<bool> OnAllowTraining;
-
+        [SerializeField] private UnityEvent<bool> OnAllowRandomizeNeuron;
+        [SerializeField] private UnityEvent<bool> OnAllowRandomizeNetwork;
+        [SerializeField] private UnityEvent OnInvalidNetworkSubmitted;
+        [SerializeField] private UnityEvent OnValidNetworkSubmitted;
         private NeuralScene currentScene;
         private UnityEngine.Pool.ObjectPool<SamplePoint> targetPool;
         private UnityEngine.Pool.ObjectPool<SamplePoint> unwantedPool;
@@ -36,32 +39,46 @@ namespace Neuralizer {
             get => currentScene;
             set {
                 currentScene = value;
-                value.AA.ApplyTo(AA);
-                value.AB.ApplyTo(AB);
-                value.AC.ApplyTo(AC);
-                value.AD.ApplyTo(AD);
-                value.BA.ApplyTo(BA);
-                value.BB.ApplyTo(BB);
-                value.BC.ApplyTo(BC);
-                value.BD.ApplyTo(BD);
-                value.Output.ApplyTo(Output);
-                networkPass.architecture = value.architecture;
-                networkPass.isPlanar = !Scene.useOrbitalCamera;
-                planarGraph.Enabled = networkPass.isPlanar;
                 SamplePoint.ClearPoints();
-                foreach (Vector3 point in value.targetPoints) {
-                    targetPool.Get().transform.position = point;
-                }
+                if (value) {
+                    value.AA.ApplyTo(AA);
+                    value.AB.ApplyTo(AB);
+                    value.AC.ApplyTo(AC);
+                    value.AD.ApplyTo(AD);
+                    value.BA.ApplyTo(BA);
+                    value.BB.ApplyTo(BB);
+                    value.BC.ApplyTo(BC);
+                    value.BD.ApplyTo(BD);
+                    value.Output.ApplyTo(Output);
+                    networkPass.architecture = value.architecture;
+                    networkPass.isPlanar = !Scene.useOrbitalCamera;
+                    planarGraph.Enabled = networkPass.isPlanar;
+                    foreach (Vector3 point in value.targetPoints) {
+                        targetPool.Get().transform.position = point;
+                    }
 
-                foreach (Vector3 point in value.unwantedPoints) {
-                    unwantedPool.Get().transform.position = point;
-                }
+                    foreach (Vector3 point in value.unwantedPoints) {
+                        unwantedPool.Get().transform.position = point;
+                    }
 
-                NotifyChange();
-                OnDisplayName?.Invoke(value.DisplayName);
-                OnPlanarCamera?.Invoke(!value.useOrbitalCamera);
-                OnOrbitalCamera?.Invoke(value.useOrbitalCamera);
-                OnSceneLoaded?.Invoke();
+                    NotifyChange();
+                    OnDisplayName?.Invoke(value.DisplayName);
+                    OnPlanarCamera?.Invoke(!value.useOrbitalCamera);
+                    OnOrbitalCamera?.Invoke(value.useOrbitalCamera);
+                    OnAllowTraining?.Invoke(value.allowTraining);
+                    OnAllowRandomizeNeuron?.Invoke(value.allowRandomizeNeuron);
+                    OnAllowRandomizeNetwork?.Invoke(value.allowRandomizeNetwork);
+                    OnSceneLoaded?.Invoke();
+                }
+                else {
+                    OnDisplayName?.Invoke("");
+                    OnPlanarCamera?.Invoke(true);
+                    OnOrbitalCamera?.Invoke(false);
+                    OnAllowTraining?.Invoke(false);
+                    OnAllowRandomizeNeuron?.Invoke(false);
+                    OnAllowRandomizeNetwork?.Invoke(false);
+                    OnSceneUnloaded?.Invoke();
+                }
             }
         }
 
@@ -106,15 +123,25 @@ namespace Neuralizer {
         }
 
         private Vector4 networkRenderingInfo = Vector4.zero;
+
         private void OnBeginCameraRendering(ScriptableRenderContext ctx, Camera cam) {
-            networkRenderingInfo.x = 1f - Mathf.Exp(-((float)Screen.currentResolution.refreshRateRatio.value / Mathf.PI) * Time.unscaledDeltaTime);
+            if (!currentScene) return;
+
+            networkRenderingInfo.x =
+                1f - Mathf.Exp(-((float)Screen.currentResolution.refreshRateRatio.value / Mathf.PI) *
+                               Time.unscaledDeltaTime);
             networkRenderingInfo.y = (networkRenderingInfo.y + 1) % 1024;
             networkRenderingInfo.z = cam.focusDistance;
             Shader.SetGlobalVector(NetworkRenderingInfo_Id, networkRenderingInfo);
             if (!Scene) {
                 return;
             }
+
             cam.GetUniversalAdditionalCameraData().scriptableRenderer.EnqueuePass(networkPass);
+        }
+
+        public void CloseScene() {
+            Scene = null;
         }
 
         private SamplePoint CreatePoint(SamplePoint prefab, UnityEngine.Pool.ObjectPool<SamplePoint> pool) {
@@ -162,6 +189,63 @@ namespace Neuralizer {
             Neuron.Randomize(BC);
             Neuron.Randomize(BD);
             Neuron.Randomize(Output);
+            if (Scene.architecture == Architecture.Perceptron) {
+                Output.weights.w = 0f;
+                if (!Scene.useOrbitalCamera) {
+                    Output.weights.z = 0f;
+                }
+            }
+            else if (!Scene.useOrbitalCamera) {
+                AA.weights.z = 0f;
+                AB.weights.z = 0f;
+                AC.weights.z = 0f;
+                AD.weights.z = 0f;
+            }
+
+            NotifyChange();
+        }
+
+        public void RandomizeNeuron(TargetNeuron target) {
+            Neuron targetNeuron = GetTargetNeuron(target);
+            Neuron.Randomize(targetNeuron);
+            switch (target) {
+                case TargetNeuron.AA:
+                case TargetNeuron.AB:
+                case TargetNeuron.AC:
+                case TargetNeuron.AD:
+                    targetNeuron.weights.w = 0f;
+                break;
+                case TargetNeuron.BA:
+                case TargetNeuron.BB:
+                case TargetNeuron.BC:
+                case TargetNeuron.BD:
+                    if (!Scene.useOrbitalCamera) {
+                        AA.weights.z = 0f;
+                        AB.weights.z = 0f;
+                        AC.weights.z = 0f;
+                        AD.weights.z = 0f;
+                        AA.weights.w = 0f;
+                        AB.weights.w = 0f;
+                        AC.weights.w = 0f;
+                        AD.weights.w = 0f;
+                    }
+
+                break;
+                case TargetNeuron.Output:
+                    if (Scene.architecture == Architecture.Perceptron) {
+                        Output.weights.w = 0f;
+                        if (!Scene.useOrbitalCamera) {
+                            Output.weights.z = 0f;
+                        }
+                    }
+                    else if (!Scene.useOrbitalCamera) {
+                        Output.weights.z = 0f;
+                        Output.weights.w = 0f;
+                    }
+
+                break;
+            }
+
             NotifyChange();
         }
 
@@ -204,6 +288,10 @@ namespace Neuralizer {
                 case TargetNeuron.Output:
                     return Output;
             }
+        }
+
+        public void SubmitResult() {
+            (SamplePoint.AreAllValid() ? OnValidNetworkSubmitted : OnInvalidNetworkSubmitted)?.Invoke();
         }
     }
 }

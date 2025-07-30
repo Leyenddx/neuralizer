@@ -93,6 +93,30 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3584700185792303791, guid: 2804b4488bfdd274bb54adaf73b45709, type: 3}
+      propertyPath: validColor.b
+      value: 0.9411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 3584700185792303791, guid: 2804b4488bfdd274bb54adaf73b45709, type: 3}
+      propertyPath: validColor.g
+      value: 0.8745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 3584700185792303791, guid: 2804b4488bfdd274bb54adaf73b45709, type: 3}
+      propertyPath: validColor.r
+      value: 0.20392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 3584700185792303791, guid: 2804b4488bfdd274bb54adaf73b45709, type: 3}
+      propertyPath: colors.key3.b
+      value: 0.9411765
+      objectReference: {fileID: 0}
+    - target: {fileID: 3584700185792303791, guid: 2804b4488bfdd274bb54adaf73b45709, type: 3}
+      propertyPath: colors.key3.g
+      value: 0.8745098
+      objectReference: {fileID: 0}
+    - target: {fileID: 3584700185792303791, guid: 2804b4488bfdd274bb54adaf73b45709, type: 3}
+      propertyPath: colors.key3.r
+      value: 0.20392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 3584700185792303791, guid: 2804b4488bfdd274bb54adaf73b45709, type: 3}
       propertyPath: pointOfInterest
       value: 0
       objectReference: {fileID: 0}

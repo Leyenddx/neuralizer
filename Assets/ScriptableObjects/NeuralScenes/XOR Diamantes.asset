@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: XOR Diamantes
   m_EditorClassIdentifier: 
   displayName: "\xA1Diamantes!"
+  scoreboardID: 
   architecture: 1
   targetPoints:
   - {x: -9.5, y: -4.5, z: 3.1415927}
@@ -21,95 +22,98 @@ MonoBehaviour:
   - {x: 6.5, y: -6.5, z: 3.1415927}
   - {x: 10.5, y: -5.5, z: 3.1415927}
   unwantedPoints:
-  - {x: -10.25, y: 6.25, z: -3.1415927}
-  - {x: -9.5, y: 1.5, z: -3.1415927}
-  - {x: -5, y: 3.5, z: -3.141593}
-  - {x: -2, y: 10, z: -3.141593}
-  - {x: 3.5, y: 5, z: -3.141593}
-  - {x: 9.5, y: 7.5, z: -3.141593}
-  - {x: 9.5, y: 1, z: -3.141593}
-  - {x: -1.5, y: -1, z: -3.141593}
-  - {x: 4.5, y: -1, z: -3.141593}
-  - {x: -10.25, y: -10.5, z: -3.141593}
-  - {x: -8.5, y: -8.5, z: -3.141593}
-  - {x: -5.5, y: -11.5, z: -3.141593}
-  - {x: -2, y: -9, z: -3.141593}
-  - {x: -1, y: -11.5, z: -3.141593}
-  - {x: 3.75, y: -9, z: -3.141593}
-  - {x: 6.25, y: -10, z: -3.141593}
-  - {x: 7, y: -13, z: -3.141593}
-  - {x: 11, y: -10.5, z: -3.141593}
-  - {x: 10, y: -13, z: -3.141593}
+  - {x: -10.25, y: 6.25, z: 1}
+  - {x: -9.5, y: 1.5, z: 1}
+  - {x: -5, y: 3.5, z: 1}
+  - {x: -2, y: 10, z: 1}
+  - {x: 3.5, y: 5, z: 1}
+  - {x: 9.5, y: 7.5, z: 1}
+  - {x: 9.5, y: 1, z: 1}
+  - {x: -1.5, y: -1, z: 1}
+  - {x: 4.5, y: -1, z: 1}
+  - {x: -10.25, y: -10.5, z: 1}
+  - {x: -8.5, y: -8.5, z: 1}
+  - {x: -5.5, y: -11.5, z: 1}
+  - {x: -2, y: -9, z: 1}
+  - {x: -1, y: -11.5, z: 1}
+  - {x: 3.75, y: -9, z: 1}
+  - {x: 6.25, y: -10, z: 1}
+  - {x: 7, y: -13, z: 1}
+  - {x: 11, y: -10.5, z: 1}
+  - {x: 10, y: -13, z: 1}
   useOrbitalCamera: 0
+  allowTraining: 0
+  allowRandomizeNeuron: 1
+  allowRandomizeNetwork: 1
+  Output:
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
+    bias: 0
+    activationFunction: 2
+    displayNeuron: 1
   AA:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 1
   AB:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 1
   AC:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 0
   AD:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 0
   BA:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 0
   BB:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 0
   BC:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 0
   BD:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
     bias: 0
     activationFunction: 0
     displayNeuron: 0
-  Output:
-    weigthX: 0
-    weigthY: 0
-    weigthZ: 0
-    weigthW: 0
-    bias: 0
-    activationFunction: 2
-    displayNeuron: 1
