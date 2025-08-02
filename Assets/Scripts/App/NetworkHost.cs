@@ -17,6 +17,7 @@ namespace Neuralizer {
         [SerializeField] private SamplePoint unwantedPointPrefab;
         [SerializeField] private Material neuronMaterial;
         [SerializeField] private Material paintMaterial;
+        [SerializeField] private Material ddfxaaMaterial;
 
         [SerializeField] private UnityEvent<string> OnDisplayName;
         [SerializeField] private UnityEvent<bool> OnOrbitalCamera;
@@ -102,6 +103,7 @@ namespace Neuralizer {
             networkPass = new() {
                 neuronMaterial = neuronMaterial,
                 paintMaterial = paintMaterial,
+                ddfxaaMaterial = ddfxaaMaterial,
                 AA = AA,
                 AB = AB,
                 AC = AC,
