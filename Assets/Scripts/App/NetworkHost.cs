@@ -1,4 +1,3 @@
-using System;
 using Neuralizer.Data;
 using Neuralizer.NetworkRendering;
 using UnityEngine;
@@ -11,7 +10,6 @@ namespace Neuralizer {
         private const string NetworkRenderingInfo_Name = "_NetworkRenderingInfo";
         private static readonly int NetworkRenderingInfo_Id = Shader.PropertyToID(NetworkRenderingInfo_Name);
 
-        // private static readonly ShaderKeyword architecturePerceptron = new("_ARCHITECTURE_PERCEPTRON");
         private static readonly ShaderKeyword planarGraph = new("_2D_GRAPH");
         public static NetworkHost Instance { get; private set; }
 
@@ -25,6 +23,7 @@ namespace Neuralizer {
         [SerializeField] private UnityEvent<bool> OnPlanarCamera;
         [SerializeField] private UnityEvent OnSceneLoaded;
         [SerializeField] private UnityEvent OnSceneUnloaded;
+        [SerializeField] private UnityEvent<bool> OnAllowEditing;
         [SerializeField] private UnityEvent<bool> OnAllowTraining;
         [SerializeField] private UnityEvent<bool> OnAllowRandomizeNeuron;
         [SerializeField] private UnityEvent<bool> OnAllowRandomizeNetwork;
@@ -65,9 +64,10 @@ namespace Neuralizer {
                     OnDisplayName?.Invoke(value.DisplayName);
                     OnPlanarCamera?.Invoke(!value.useOrbitalCamera);
                     OnOrbitalCamera?.Invoke(value.useOrbitalCamera);
-                    OnAllowTraining?.Invoke(value.allowTraining);
-                    OnAllowRandomizeNeuron?.Invoke(value.allowRandomizeNeuron);
-                    OnAllowRandomizeNetwork?.Invoke(value.allowRandomizeNetwork);
+                    OnAllowTraining?.Invoke(value.allowTraining && value.allowEditing);
+                    OnAllowRandomizeNeuron?.Invoke(value.allowRandomizeNeuron && value.allowEditing);
+                    OnAllowRandomizeNetwork?.Invoke(value.allowRandomizeNetwork && value.allowEditing);
+                    OnAllowEditing?.Invoke(value.allowEditing);
                     OnSceneLoaded?.Invoke();
                 }
                 else {
@@ -126,16 +126,14 @@ namespace Neuralizer {
 
         private void OnBeginCameraRendering(ScriptableRenderContext ctx, Camera cam) {
             if (!currentScene) return;
+            if (!Scene) return;
 
-            networkRenderingInfo.x =
-                1f - Mathf.Exp(-((float)Screen.currentResolution.refreshRateRatio.value / Mathf.PI) *
-                               Time.unscaledDeltaTime);
+            const float shutterSpeed = 1f / 36f;
+            networkRenderingInfo.x = 1f - (Time.unscaledDeltaTime / shutterSpeed);
+            networkRenderingInfo.x = Mathf.Clamp01(networkRenderingInfo.x);
             networkRenderingInfo.y = (networkRenderingInfo.y + 1) % 1024;
             networkRenderingInfo.z = cam.focusDistance;
             Shader.SetGlobalVector(NetworkRenderingInfo_Id, networkRenderingInfo);
-            if (!Scene) {
-                return;
-            }
 
             cam.GetUniversalAdditionalCameraData().scriptableRenderer.EnqueuePass(networkPass);
         }

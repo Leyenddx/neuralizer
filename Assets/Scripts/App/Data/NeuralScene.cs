@@ -13,6 +13,7 @@ namespace Neuralizer.Data {
         public Vector3[] unwantedPoints;
         [Header("Scene Constraints")]
         public bool useOrbitalCamera = false;
+        public bool allowEditing = true;
         public bool allowTraining = false;
         public bool allowRandomizeNeuron = true;
         public bool allowRandomizeNetwork = true;
