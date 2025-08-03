@@ -358,15 +358,15 @@ namespace Neuralizer.NetworkRendering {
         }
 
         public void Dispose() {
-            AA.resultTexture.Release();
-            AB.resultTexture.Release();
-            AC.resultTexture.Release();
-            AD.resultTexture.Release();
-            BA.resultTexture.Release();
-            BB.resultTexture.Release();
-            BC.resultTexture.Release();
-            BD.resultTexture.Release();
-            Output.resultTexture.Release();
+            // AA.resultTexture.Release();
+            // AB.resultTexture.Release();
+            // AC.resultTexture.Release();
+            // AD.resultTexture.Release();
+            // BA.resultTexture.Release();
+            // BB.resultTexture.Release();
+            // BC.resultTexture.Release();
+            // BD.resultTexture.Release();
+            // Output.resultTexture.Release();
         }
     }
 }
