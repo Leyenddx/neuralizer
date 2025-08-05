@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: "\xBFOveja o Lobo?"
   scoreboardID: 
+  origin: {x: 0, y: 0, z: 0}
   architecture: 0
   targetPoints:
-  - {x: 11, y: 1, z: 4}
-  - {x: 15, y: 5, z: 4}
-  - {x: 9, y: 9, z: 4}
-  - {x: 15, y: -5, z: 4}
+  - {x: 11, y: 1, z: 3.1415927}
+  - {x: 15, y: 5, z: 3.1415927}
+  - {x: 9, y: 9, z: 3.1415927}
+  - {x: 15, y: -5, z: 3.1415927}
   unwantedPoints:
   - {x: -5, y: 10, z: 1}
   - {x: -5, y: -7, z: 1}
@@ -27,17 +28,17 @@ MonoBehaviour:
   - {x: 4, y: -9, z: 1}
   - {x: 7, y: -9, z: 1}
   useOrbitalCamera: 0
-  allowEditing: 1
+  allowEditing: 0
   allowTraining: 0
-  allowRandomizeNeuron: 1
-  allowRandomizeNetwork: 1
+  allowRandomizeNeuron: 0
+  allowRandomizeNetwork: 0
   Output:
-    weightX: 0
-    weightY: 0
+    weightX: 2
+    weightY: 1
     weightZ: 0
     weightW: 0
-    bias: 0
-    activationFunction: 2
+    bias: -10
+    activationFunction: 0
     displayNeuron: 1
   AA:
     weightX: 0

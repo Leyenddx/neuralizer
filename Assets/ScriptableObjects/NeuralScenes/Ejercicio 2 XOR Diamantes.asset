@@ -1,0 +1,120 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d657411bcaa5491891f4ecd2d0e31d3a, type: 3}
+  m_Name: Ejercicio 2 XOR Diamantes
+  m_EditorClassIdentifier: 
+  displayName: "\xA1Diamantes!"
+  scoreboardID: 
+  architecture: 1
+  targetPoints:
+  - {x: -9.5, y: -4.5, z: 3.1415927}
+  - {x: -2.5, y: -5.5, z: 3.1415927}
+  - {x: 2.5, y: -6, z: 3.1415927}
+  - {x: 6.5, y: -6.5, z: 3.1415927}
+  - {x: 10.5, y: -5.5, z: 3.1415927}
+  unwantedPoints:
+  - {x: -10.25, y: 6.25, z: 1}
+  - {x: -9.5, y: 1.5, z: 1}
+  - {x: -5, y: 3.5, z: 1}
+  - {x: -2, y: 10, z: 1}
+  - {x: 3.5, y: 5, z: 1}
+  - {x: 9.5, y: 7.5, z: 1}
+  - {x: 9.5, y: 1, z: 1}
+  - {x: -1.5, y: -1, z: 1}
+  - {x: 4.5, y: -1, z: 1}
+  - {x: -10.25, y: -10.5, z: 1}
+  - {x: -8.5, y: -8.5, z: 1}
+  - {x: -5.5, y: -11.5, z: 1}
+  - {x: -2, y: -9, z: 1}
+  - {x: -1, y: -11.5, z: 1}
+  - {x: 3.75, y: -9, z: 1}
+  - {x: 6.25, y: -10, z: 1}
+  - {x: 7, y: -13, z: 1}
+  - {x: 11, y: -10.5, z: 1}
+  - {x: 10, y: -13, z: 1}
+  useOrbitalCamera: 0
+  allowEditing: 1
+  allowTraining: 0
+  allowRandomizeNeuron: 0
+  allowRandomizeNetwork: 0
+  Output:
+    weightX: 1
+    weightY: 1
+    weightZ: 0
+    weightW: 0
+    bias: 0
+    activationFunction: 0
+    displayNeuron: 1
+  AA:
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
+    bias: 0
+    activationFunction: 0
+    displayNeuron: 1
+  AB:
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
+    bias: 0
+    activationFunction: 0
+    displayNeuron: 1
+  AC:
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
+    bias: 0
+    activationFunction: 0
+    displayNeuron: 0
+  AD:
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
+    bias: 0
+    activationFunction: 0
+    displayNeuron: 0
+  BA:
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
+    bias: 0
+    activationFunction: 0
+    displayNeuron: 0
+  BB:
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
+    bias: 0
+    activationFunction: 0
+    displayNeuron: 0
+  BC:
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
+    bias: 0
+    activationFunction: 0
+    displayNeuron: 0
+  BD:
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
+    bias: 0
+    activationFunction: 0
+    displayNeuron: 0

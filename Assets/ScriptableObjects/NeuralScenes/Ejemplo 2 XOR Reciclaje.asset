@@ -10,48 +10,54 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d657411bcaa5491891f4ecd2d0e31d3a, type: 3}
-  m_Name: XOR Diamantes
+  m_Name: Ejemplo 2 XOR Reciclaje
   m_EditorClassIdentifier: 
-  displayName: "\xA1Diamantes!"
+  displayName: Reciclaje
   scoreboardID: 
+  origin: {x: 0, y: 0, z: 0}
   architecture: 1
   targetPoints:
-  - {x: -9.5, y: -4.5, z: 3.1415927}
-  - {x: -2.5, y: -5.5, z: 3.1415927}
-  - {x: 2.5, y: -6, z: 3.1415927}
-  - {x: 6.5, y: -6.5, z: 3.1415927}
-  - {x: 10.5, y: -5.5, z: 3.1415927}
+  - {x: 0.26, y: 0.76, z: 3.1415927}
+  - {x: 0.68, y: 0.27, z: 3.1415927}
+  - {x: 0.07, y: 0.65, z: 3.1415927}
+  - {x: 0.2, y: 0.59, z: 3.1415927}
+  - {x: 0.23, y: 0.63, z: 3.1415927}
+  - {x: 0.14, y: 0.51, z: 3.1415927}
+  - {x: 0.12, y: 0.8, z: 3.1415927}
+  - {x: 0.77, y: 0.08, z: 3.1415927}
+  - {x: 0, y: 0.86, z: 3.1415927}
+  - {x: 0.89, y: 0.23, z: 3.1415927}
+  - {x: 0.06, y: 0.92, z: 3.1415927}
+  - {x: 0.17, y: 0.69, z: 3.1415927}
+  - {x: 0.43, y: 0.86, z: 3.1415927}
+  - {x: 0.59, y: 0.86, z: 3.1415927}
   unwantedPoints:
-  - {x: -10.25, y: 6.25, z: 1}
-  - {x: -9.5, y: 1.5, z: 1}
-  - {x: -5, y: 3.5, z: 1}
-  - {x: -2, y: 10, z: 1}
-  - {x: 3.5, y: 5, z: 1}
-  - {x: 9.5, y: 7.5, z: 1}
-  - {x: 9.5, y: 1, z: 1}
-  - {x: -1.5, y: -1, z: 1}
-  - {x: 4.5, y: -1, z: 1}
-  - {x: -10.25, y: -10.5, z: 1}
-  - {x: -8.5, y: -8.5, z: 1}
-  - {x: -5.5, y: -11.5, z: 1}
-  - {x: -2, y: -9, z: 1}
-  - {x: -1, y: -11.5, z: 1}
-  - {x: 3.75, y: -9, z: 1}
-  - {x: 6.25, y: -10, z: 1}
-  - {x: 7, y: -13, z: 1}
-  - {x: 11, y: -10.5, z: 1}
-  - {x: 10, y: -13, z: 1}
+  - {x: 0.43, y: 0.32, z: 1}
+  - {x: 0.65, y: 0.76, z: 1}
+  - {x: 0.4, y: 0.32, z: 1}
+  - {x: 0.48, y: 0.24, z: 1}
+  - {x: 0.85, y: 0.61, z: 1}
+  - {x: 0.24, y: 0.45, z: 1}
+  - {x: 0.05, y: 0.33, z: 1}
+  - {x: 1, y: 0.55, z: 1}
+  - {x: 0.32, y: 0.38, z: 1}
+  - {x: 0.74, y: 0.6, z: 1}
+  - {x: 0.74, y: 0.6, z: 1}
+  - {x: 0.56, y: 0.88, z: 1}
+  - {x: 0.78, y: 0.76, z: 1}
+  - {x: 0.69, y: 0.96, z: 1}
   useOrbitalCamera: 0
+  allowEditing: 0
   allowTraining: 0
-  allowRandomizeNeuron: 1
-  allowRandomizeNetwork: 1
+  allowRandomizeNeuron: 0
+  allowRandomizeNetwork: 0
   Output:
-    weightX: 0
-    weightY: 0
+    weightX: 1
+    weightY: 1
     weightZ: 0
     weightW: 0
     bias: 0
-    activationFunction: 2
+    activationFunction: 0
     displayNeuron: 1
   AA:
     weightX: 0
@@ -59,7 +65,7 @@ MonoBehaviour:
     weightZ: 0
     weightW: 0
     bias: 0
-    activationFunction: 0
+    activationFunction: 1
     displayNeuron: 1
   AB:
     weightX: 0
@@ -67,7 +73,7 @@ MonoBehaviour:
     weightZ: 0
     weightW: 0
     bias: 0
-    activationFunction: 0
+    activationFunction: 1
     displayNeuron: 1
   AC:
     weightX: 0

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: "Materiales de Construcci\xF3n"
   scoreboardID: 
+  origin: {x: 0, y: 0, z: 0}
   architecture: 0
   targetPoints:
   - {x: 4, y: 2, z: 3.1415927}
@@ -26,16 +27,17 @@ MonoBehaviour:
   - {x: 2, y: 5, z: 1}
   - {x: 3, y: 3, z: 1}
   useOrbitalCamera: 0
+  allowEditing: 1
   allowTraining: 0
-  allowRandomizeNeuron: 1
-  allowRandomizeNetwork: 1
+  allowRandomizeNeuron: 0
+  allowRandomizeNetwork: 0
   Output:
     weightX: 0
     weightY: 0
     weightZ: 0
     weightW: 0
     bias: 0
-    activationFunction: 2
+    activationFunction: 0
     displayNeuron: 1
   AA:
     weightX: 0

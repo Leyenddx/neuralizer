@@ -53,10 +53,24 @@ namespace Neuralizer {
                     networkPass.architecture = value.architecture;
                     networkPass.isPlanar = !Scene.useOrbitalCamera;
                     planarGraph.Enabled = networkPass.isPlanar;
+                    transform.position = value.origin;
+                    // Vector3 sum = Vector3.zero;
+                    // float weight = 0f;
+                    // foreach (Vector3 point in value.targetPoints) {
+                    //     sum += point;
+                    //     weight += 1f;
+                    // }
+                    // foreach (Vector3 point in value.unwantedPoints) {
+                    //     sum += point;
+                    //     weight += 1f;
+                    // }
+                    // if (networkPass.isPlanar) {
+                    //     sum.z = 0f;
+                    // }
+                    // transform.position = sum / weight;
                     foreach (Vector3 point in value.targetPoints) {
                         targetPool.Get().transform.position = point;
                     }
-
                     foreach (Vector3 point in value.unwantedPoints) {
                         unwantedPool.Get().transform.position = point;
                     }
@@ -65,13 +79,14 @@ namespace Neuralizer {
                     OnDisplayName?.Invoke(value.DisplayName);
                     OnPlanarCamera?.Invoke(!value.useOrbitalCamera);
                     OnOrbitalCamera?.Invoke(value.useOrbitalCamera);
-                    OnAllowTraining?.Invoke(value.allowTraining && value.allowEditing);
-                    OnAllowRandomizeNeuron?.Invoke(value.allowRandomizeNeuron && value.allowEditing);
-                    OnAllowRandomizeNetwork?.Invoke(value.allowRandomizeNetwork && value.allowEditing);
+                    OnAllowTraining?.Invoke(value.allowTraining);
+                    OnAllowRandomizeNeuron?.Invoke(value.allowRandomizeNeuron);
+                    OnAllowRandomizeNetwork?.Invoke(value.allowRandomizeNetwork);
                     OnAllowEditing?.Invoke(value.allowEditing);
                     OnSceneLoaded?.Invoke();
                 }
                 else {
+                    transform.position = Vector3.zero;
                     OnDisplayName?.Invoke("");
                     OnPlanarCamera?.Invoke(true);
                     OnOrbitalCamera?.Invoke(false);

@@ -7,6 +7,7 @@ namespace Neuralizer.Data {
         [Header("Scene Settings")]
         [SerializeField] private string displayName;
         [SerializeField] private string scoreboardID;
+        public Vector3 origin;
         [Header("Network Settings")]
         public Architecture architecture;
         public Vector3[] targetPoints;

@@ -106,7 +106,7 @@ namespace Neuralizer.NetworkRendering {
         }
 
         public NeuralRenderPass() {
-            renderPassEvent = RenderPassEvent.AfterRenderingPostProcessing;
+            renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
             // history = RTHandles.Alloc(History_ID, History_Name);
         }
 
