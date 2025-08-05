@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   displayName: "\xA1Diamantes!"
   scoreboardID: 
+  origin: {x: 0, y: 0, z: 0}
   architecture: 1
   targetPoints:
   - {x: -9.5, y: -4.5, z: 3.1415927}
@@ -51,7 +52,7 @@ MonoBehaviour:
     weightY: 1
     weightZ: 0
     weightW: 0
-    bias: 0
+    bias: -0.5
     activationFunction: 0
     displayNeuron: 1
   AA:
@@ -60,7 +61,7 @@ MonoBehaviour:
     weightZ: 0
     weightW: 0
     bias: 0
-    activationFunction: 0
+    activationFunction: 3
     displayNeuron: 1
   AB:
     weightX: 0
@@ -68,7 +69,7 @@ MonoBehaviour:
     weightZ: 0
     weightW: 0
     bias: 0
-    activationFunction: 0
+    activationFunction: 3
     displayNeuron: 1
   AC:
     weightX: 0
