@@ -17,7 +17,7 @@ namespace Neuralizer {
         [SerializeField] private SamplePoint unwantedPointPrefab;
         [SerializeField] private Material neuronMaterial;
         [SerializeField] private Material paintMaterial;
-        [SerializeField] private Material ddfxaaMaterial;
+        [SerializeField] private Material blurMaterial;
 
         [SerializeField] private UnityEvent<string> OnDisplayName;
         [SerializeField] private UnityEvent<bool> OnOrbitalCamera;
@@ -118,7 +118,7 @@ namespace Neuralizer {
             networkPass = new() {
                 neuronMaterial = neuronMaterial,
                 paintMaterial = paintMaterial,
-                ddfxaaMaterial = ddfxaaMaterial,
+                blurMaterial = blurMaterial,
                 AA = AA,
                 AB = AB,
                 AC = AC,
@@ -135,7 +135,6 @@ namespace Neuralizer {
 
         private void OnDisable() {
             RenderPipelineManager.beginCameraRendering -= OnBeginCameraRendering;
-            networkPass.Dispose();
             networkPass = null;
         }
 
@@ -306,7 +305,13 @@ namespace Neuralizer {
         }
 
         public void SubmitResult() {
-            (SamplePoint.AreAllValid() ? OnValidNetworkSubmitted : OnInvalidNetworkSubmitted)?.Invoke();
+            if (SamplePoint.AreAllValid()) {
+                OnValidNetworkSubmitted?.Invoke();
+                Scene.IsCompleted = true;
+            }
+            else {
+                OnInvalidNetworkSubmitted?.Invoke();
+            }
         }
     }
 }

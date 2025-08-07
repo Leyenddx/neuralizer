@@ -1,44 +1,53 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Neuralizer.Data {
     [CreateAssetMenu(fileName = "Neural Scene", menuName = "Neuralizer/Scene")]
     public class NeuralScene : ScriptableObject {
+        [Header("Scene Settings")] [SerializeField]
+        private string displayName;
 
-        [Header("Scene Settings")]
-        [SerializeField] private string displayName;
+        [SerializeField] private string storageName;
         [SerializeField] private string scoreboardID;
         public Vector3 origin;
-        [Header("Network Settings")]
-        public Architecture architecture;
+        [Header("Network Settings")] public Architecture architecture;
         public Vector3[] targetPoints;
         public Vector3[] unwantedPoints;
-        [Header("Scene Constraints")]
-        public bool useOrbitalCamera = false;
+        [Header("Scene Constraints")] public bool useOrbitalCamera = false;
         public bool allowEditing = true;
         public bool allowTraining = false;
         public bool allowRandomizeNeuron = true;
         public bool allowRandomizeNetwork = true;
-        
-        [Header("Output Layer")]
-        public NeuronPrefab Output;
 
-        [Header("First Layer")]
-        public NeuronPrefab AA;
+        [Header("Output Layer")] public NeuronPrefab Output;
+
+        [Header("First Layer")] public NeuronPrefab AA;
         public NeuronPrefab AB;
         public NeuronPrefab AC;
         public NeuronPrefab AD;
-        [Header("Second Layer")]
-        public NeuronPrefab BA;
+        [Header("Second Layer")] public NeuronPrefab BA;
         public NeuronPrefab BB;
         public NeuronPrefab BC;
         public NeuronPrefab BD;
 
         public string DisplayName => string.IsNullOrEmpty(displayName) ? name : displayName;
-        
+
+        public string StorageName => string.IsNullOrEmpty(storageName) ? name : storageName;
+
         public string ScoreboardID => string.IsNullOrEmpty(scoreboardID) ? "" : scoreboardID;
 
         public bool AllowScoring => !string.IsNullOrEmpty(scoreboardID);
-        
+
+        public event UnityAction<bool> OnIsCompleted;
+
+        public bool IsCompleted {
+            get => PlayerPrefs.GetInt(StorageName + ".completed", 0) > 0;
+            set {
+                PlayerPrefs.SetInt(StorageName + ".completed", value ? 1 : 0);
+                OnIsCompleted?.Invoke(value);
+            }
+        }
+
         public NeuronPrefab GetTargetNeuron(TargetNeuron target) {
             switch (target) {
                 default:
@@ -67,25 +76,19 @@ namespace Neuralizer.Data {
 
         [System.Serializable]
         public class NeuronPrefab {
-            [Range(-10f, 10f)]
-            public float weightX = 0f;
-            [Range(-10f, 10f)]
-            public float weightY = 0f;
-            [Range(-10f, 10f)]
-            public float weightZ = 0f;
-            [Range(-10f, 10f)]
-            public float weightW = 0f;
-            [Range(-50f, 50f)]
-            public float bias = 0f;
+            [Range(-10f, 10f)] public float weightX = 0f;
+            [Range(-10f, 10f)] public float weightY = 0f;
+            [Range(-10f, 10f)] public float weightZ = 0f;
+            [Range(-10f, 10f)] public float weightW = 0f;
+            [Range(-50f, 50f)] public float bias = 0f;
             public ActivationFunction activationFunction;
             public bool displayNeuron;
-            
+
             public void ApplyTo(Neuron neuron) {
                 neuron.weights.Set(weightX, weightY, weightZ, weightW);
                 neuron.bias = bias;
                 neuron.activationFunction = activationFunction;
             }
         }
-
     }
 }

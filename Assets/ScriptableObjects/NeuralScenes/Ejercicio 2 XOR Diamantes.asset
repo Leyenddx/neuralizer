@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Ejercicio 2 XOR Diamantes
   m_EditorClassIdentifier: 
   displayName: "\xA1Diamantes!"
-  scoreboardID: 
+  storageName: diamantes
+  scoreboardID: diamantes
   origin: {x: 0, y: 0, z: 0}
   architecture: 1
   targetPoints:

@@ -47,7 +47,7 @@ MonoBehaviour:
   - {x: 0.78, y: 0.76, z: 1}
   - {x: 0.69, y: 0.96, z: 1}
   useOrbitalCamera: 0
-  allowEditing: 0
+  allowEditing: 1
   allowTraining: 0
   allowRandomizeNeuron: 0
   allowRandomizeNetwork: 0

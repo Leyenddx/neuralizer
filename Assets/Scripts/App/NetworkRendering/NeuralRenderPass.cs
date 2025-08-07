@@ -20,7 +20,6 @@ namespace Neuralizer.NetworkRendering {
         private const string BD_Name = "_BD";
         private const string Output_Name = "_Output";
         private const string Paint_Name = "_PaintOutput";
-        // private const string History_Name = "_History";
         private const string Weights_Name = "_Weights";
         private const string Bias_Name = "_Bias";
 
@@ -38,7 +37,6 @@ namespace Neuralizer.NetworkRendering {
         private static readonly int BD_ID = Shader.PropertyToID(BD_Name);
         private static readonly int Output_ID = Shader.PropertyToID(Output_Name);
         private static readonly int Paint_ID = Shader.PropertyToID(Paint_Name);
-        // private static readonly int History_ID = Shader.PropertyToID(History_Name);
 
         private static readonly int Weights_ID = Shader.PropertyToID(Weights_Name);
         private static readonly int Bias_ID = Shader.PropertyToID(Bias_Name);
@@ -55,12 +53,11 @@ namespace Neuralizer.NetworkRendering {
 
         public Material neuronMaterial;
         public Material paintMaterial;
-        public Material ddfxaaMaterial;
+        public Material blurMaterial;
         public Neuron AA, AB, AC, AD, BA, BB, BC, BD, Output;
         public Architecture architecture;
         public bool isPlanar = false;
 
-        // private RTHandle history;
         private RenderTextureDescriptor neuronDescriptor;
         private RenderTextureDescriptor paintDescriptor;
 
@@ -92,11 +89,10 @@ namespace Neuralizer.NetworkRendering {
             public TextureHandle cameraTex;
             public TextureHandle networkOutput;
             public TextureHandle paintOutput;
-            // public TextureHandle history;
             public Material material;
         }
 
-        private class DDFXAAPass {
+        private class BlurPass {
             public TextureHandle source;
             public Material material;
         }
@@ -106,8 +102,7 @@ namespace Neuralizer.NetworkRendering {
         }
 
         public NeuralRenderPass() {
-            renderPassEvent = RenderPassEvent.AfterRenderingSkybox;
-            // history = RTHandles.Alloc(History_ID, History_Name);
+            renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
         }
 
         public void Initialize() {
@@ -157,11 +152,10 @@ namespace Neuralizer.NetworkRendering {
 
         static void ExecutePaintPass(PaintPassData data, RasterGraphContext context) {
             Shader.SetGlobalTexture(Output_ID, data.networkOutput);
-            // Shader.SetGlobalTexture(History_ID, data.history);
             Blitter.BlitTexture(context.cmd, data.cameraTex, Vector2.one, data.material, 0);
         }
 
-        static void ExecuteDDFXAAPass(DDFXAAPass data, RasterGraphContext context) {
+        static void ExecuteBlurPass(BlurPass data, RasterGraphContext context) {
             Blitter.BlitTexture(context.cmd, data.source, Vector2.one, data.material, 0);
         }
 
@@ -195,6 +189,17 @@ namespace Neuralizer.NetworkRendering {
             builder.SetRenderAttachment(passData.output, 0);
             builder.SetRenderFunc((LayeredPassData data, RasterGraphContext context) =>
                 ExecuteLayeredPass(data, context));
+        }
+
+        private static void AddBlurPass(string passName, RenderGraph renderGraph, Material material, TextureHandle from, TextureHandle to) {
+            using var builder =
+                renderGraph.AddRasterRenderPass<BlurPass>(passName, out var passData);
+            passData.material = material;
+            passData.source = from;
+            builder.UseTexture(passData.source);
+            builder.SetRenderAttachment(to, 0);
+            builder.SetRenderFunc((BlurPass data, RasterGraphContext context) =>
+                ExecuteBlurPass(data, context));
         }
 
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData) {
@@ -264,14 +269,7 @@ namespace Neuralizer.NetworkRendering {
             var paintHandle = UniversalRenderer.CreateRenderGraphTexture(renderGraph, paintDescriptor, Paint_Name,
                 false,
                 FilterMode.Bilinear);
-            //
-            // RenderingUtils.ReAllocateHandleIfNeeded(ref history, paintDescriptor, FilterMode.Point,
-            //     TextureWrapMode.Clamp,
-            //     name: History_Name);
-            //
-            // var historyHandle = renderGraph.ImportTexture(history);
-            
-            
+
             switch(architecture) {
                 case Architecture.Perceptron:
                     AddInputNeuronPass("Neuron Output", renderGraph, Output, OutputHandle);
@@ -316,57 +314,15 @@ namespace Neuralizer.NetworkRendering {
                 passData.material = paintMaterial;
                 passData.cameraTex = resourceData.activeColorTexture;
                 passData.networkOutput = OutputHandle;
-                // passData.history = historyHandle;
                 passData.paintOutput = paintHandle;
                 builder.UseTexture(passData.cameraTex);
                 builder.UseTexture(passData.networkOutput);
-                // builder.UseTexture(passData.history);
                 builder.SetRenderAttachment(passData.paintOutput, 0);
                 builder.SetRenderFunc((PaintPassData data, RasterGraphContext context) =>
                     ExecutePaintPass(data, context));
             }
 
-            using (var builder =
-                   renderGraph.AddRasterRenderPass<DDFXAAPass>("DDFXAA", out var passData)) {
-                passData.material = ddfxaaMaterial;
-                passData.source = paintHandle;
-                builder.UseTexture(passData.source);
-                builder.SetRenderAttachment(resourceData.activeColorTexture, 0);
-                builder.SetRenderFunc((DDFXAAPass data, RasterGraphContext context) =>
-                    ExecuteDDFXAAPass(data, context));
-            }
-
-            // using (var builder =
-            //        renderGraph.AddRasterRenderPass<CopyPassData>("Neuron Copy",
-            //            out var passData)) {
-            //     passData.source = paintHandle;
-            //     builder.UseTexture(passData.source);
-            //     builder.SetRenderAttachment(resourceData.activeColorTexture, 0);
-            //     builder.SetRenderFunc((CopyPassData data, RasterGraphContext context) =>
-            //         ExecuteCopyPass(data, context));
-            // }
-            
-            // using (var builder =
-            //        renderGraph.AddRasterRenderPass<CopyPassData>("Copy History",
-            //            out var passData)) {
-            //     passData.source = resourceData.activeColorTexture;
-            //     builder.UseTexture(passData.source);
-            //     builder.SetRenderAttachment(historyHandle, 0);
-            //     builder.SetRenderFunc((CopyPassData data, RasterGraphContext context) =>
-            //         ExecuteCopyPass(data, context));
-            // }
-        }
-
-        public void Dispose() {
-            // AA.resultTexture.Release();
-            // AB.resultTexture.Release();
-            // AC.resultTexture.Release();
-            // AD.resultTexture.Release();
-            // BA.resultTexture.Release();
-            // BB.resultTexture.Release();
-            // BC.resultTexture.Release();
-            // BD.resultTexture.Release();
-            // Output.resultTexture.Release();
+            AddBlurPass("Blur", renderGraph, blurMaterial, paintHandle, resourceData.activeColorTexture);
         }
     }
 }
