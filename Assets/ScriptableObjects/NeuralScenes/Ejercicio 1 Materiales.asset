@@ -27,6 +27,8 @@ MonoBehaviour:
   - {x: 2, y: 4, z: 1}
   - {x: 2, y: 5, z: 1}
   - {x: 3, y: 3, z: 1}
+  weightRange: {x: -5, y: 5}
+  biasRange: {x: -10, y: 10}
   useOrbitalCamera: 0
   allowEditing: 1
   allowTraining: 0

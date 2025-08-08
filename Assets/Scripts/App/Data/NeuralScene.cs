@@ -13,7 +13,9 @@ namespace Neuralizer.Data {
         [Header("Network Settings")] public Architecture architecture;
         public Vector3[] targetPoints;
         public Vector3[] unwantedPoints;
-        [Header("Scene Constraints")] public bool useOrbitalCamera = false;
+        [Header("Scene Constraints")] public Vector2 weightRange = new(-15f, 15f);
+        public Vector2 biasRange = new(-30f, 30f);
+        public bool useOrbitalCamera = false;
         public bool allowEditing = true;
         public bool allowTraining = false;
         public bool allowRandomizeNeuron = true;

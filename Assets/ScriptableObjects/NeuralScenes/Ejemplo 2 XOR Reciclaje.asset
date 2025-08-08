@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Ejemplo 2 XOR Reciclaje
   m_EditorClassIdentifier: 
   displayName: Reciclaje
+  storageName: 
   scoreboardID: 
   origin: {x: 0, y: 0, z: 0}
   architecture: 1
@@ -46,6 +47,8 @@ MonoBehaviour:
   - {x: 0.56, y: 0.88, z: 1}
   - {x: 0.78, y: 0.76, z: 1}
   - {x: 0.69, y: 0.96, z: 1}
+  weightRange: {x: -5, y: 5}
+  biasRange: {x: -10, y: 10}
   useOrbitalCamera: 0
   allowEditing: 1
   allowTraining: 0

@@ -30,6 +30,10 @@ namespace Neuralizer {
         [SerializeField] private UnityEvent<bool> OnAllowRandomizeNetwork;
         [SerializeField] private UnityEvent OnInvalidNetworkSubmitted;
         [SerializeField] private UnityEvent OnValidNetworkSubmitted;
+        [SerializeField] private UnityEvent<float> OnWeightSliderMin;
+        [SerializeField] private UnityEvent<float> OnWeightSliderMax;
+        [SerializeField] private UnityEvent<float> OnBiasSliderMin;
+        [SerializeField] private UnityEvent<float> OnBiasSliderMax;
         private NeuralScene currentScene;
         private UnityEngine.Pool.ObjectPool<SamplePoint> targetPool;
         private UnityEngine.Pool.ObjectPool<SamplePoint> unwantedPool;
@@ -83,6 +87,10 @@ namespace Neuralizer {
                     OnAllowRandomizeNeuron?.Invoke(value.allowRandomizeNeuron);
                     OnAllowRandomizeNetwork?.Invoke(value.allowRandomizeNetwork);
                     OnAllowEditing?.Invoke(value.allowEditing);
+                    OnWeightSliderMin?.Invoke(value.weightRange.x);
+                    OnWeightSliderMax?.Invoke(value.weightRange.y);
+                    OnBiasSliderMin?.Invoke(value.biasRange.x);
+                    OnBiasSliderMax?.Invoke(value.biasRange.y);
                     OnSceneLoaded?.Invoke();
                 }
                 else {

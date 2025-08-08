@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Ejemplo 1 Ovejas
   m_EditorClassIdentifier: 
   displayName: "\xBFOveja o Lobo?"
+  storageName: 
   scoreboardID: 
   origin: {x: 0, y: 0, z: 0}
   architecture: 0
@@ -27,6 +28,8 @@ MonoBehaviour:
   - {x: 3, y: -5, z: 1}
   - {x: 4, y: -9, z: 1}
   - {x: 7, y: -9, z: 1}
+  weightRange: {x: -5, y: 5}
+  biasRange: {x: -10, y: 10}
   useOrbitalCamera: 0
   allowEditing: 1
   allowTraining: 0

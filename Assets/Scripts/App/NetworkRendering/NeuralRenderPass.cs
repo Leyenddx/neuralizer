@@ -102,7 +102,7 @@ namespace Neuralizer.NetworkRendering {
         }
 
         public NeuralRenderPass() {
-            renderPassEvent = RenderPassEvent.BeforeRenderingOpaques;
+            renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
         }
 
         public void Initialize() {
@@ -312,7 +312,7 @@ namespace Neuralizer.NetworkRendering {
             using (var builder =
                    renderGraph.AddRasterRenderPass<PaintPassData>("Neuron Paint", out var passData)) {
                 passData.material = paintMaterial;
-                passData.cameraTex = resourceData.activeColorTexture;
+                passData.cameraTex = resourceData.cameraColor;
                 passData.networkOutput = OutputHandle;
                 passData.paintOutput = paintHandle;
                 builder.UseTexture(passData.cameraTex);
