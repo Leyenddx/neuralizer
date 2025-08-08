@@ -20,6 +20,7 @@ namespace Neuralizer.NetworkRendering {
         private const string BD_Name = "_BD";
         private const string Output_Name = "_Output";
         private const string Paint_Name = "_PaintOutput";
+        private const string Intermediate_Name = "_IntermediateOutput";
         private const string Weights_Name = "_Weights";
         private const string Bias_Name = "_Bias";
 
@@ -37,6 +38,7 @@ namespace Neuralizer.NetworkRendering {
         private static readonly int BD_ID = Shader.PropertyToID(BD_Name);
         private static readonly int Output_ID = Shader.PropertyToID(Output_Name);
         private static readonly int Paint_ID = Shader.PropertyToID(Paint_Name);
+        private static readonly int Intermediate_ID = Shader.PropertyToID(Intermediate_Name);
 
         private static readonly int Weights_ID = Shader.PropertyToID(Weights_Name);
         private static readonly int Bias_ID = Shader.PropertyToID(Bias_Name);
@@ -202,6 +204,16 @@ namespace Neuralizer.NetworkRendering {
                 ExecuteBlurPass(data, context));
         }
 
+        private static void AddCopyPass(string passName, RenderGraph renderGraph, TextureHandle from, TextureHandle to) {
+            using var builder =
+                renderGraph.AddRasterRenderPass<CopyPassData>(passName, out var passData);
+            passData.source = from;
+            builder.UseTexture(passData.source);
+            builder.SetRenderAttachment(to, 0);
+            builder.SetRenderFunc((CopyPassData data, RasterGraphContext context) =>
+                ExecuteCopyPass(data, context));
+        }
+
         public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData) {
             UniversalCameraData cameraData = frameData.Get<UniversalCameraData>();
             UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
@@ -269,6 +281,10 @@ namespace Neuralizer.NetworkRendering {
             var paintHandle = UniversalRenderer.CreateRenderGraphTexture(renderGraph, paintDescriptor, Paint_Name,
                 false,
                 FilterMode.Bilinear);
+            
+            var intermediateHandle = UniversalRenderer.CreateRenderGraphTexture(renderGraph, paintDescriptor, Intermediate_Name,
+                false,
+                FilterMode.Bilinear);
 
             switch(architecture) {
                 case Architecture.Perceptron:
@@ -322,7 +338,12 @@ namespace Neuralizer.NetworkRendering {
                     ExecutePaintPass(data, context));
             }
 
-            AddBlurPass("Blur", renderGraph, blurMaterial, paintHandle, resourceData.activeColorTexture);
+            AddBlurPass("Blur", renderGraph, blurMaterial, paintHandle, intermediateHandle);
+            
+            AddCopyPass("Copy Camera", renderGraph, intermediateHandle, resourceData.cameraColor);
+            
+            AddCopyPass("Copy Active", renderGraph, intermediateHandle, resourceData.activeColorTexture);
+            
         }
     }
 }
