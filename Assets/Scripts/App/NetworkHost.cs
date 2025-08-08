@@ -18,6 +18,7 @@ namespace Neuralizer {
         [SerializeField] private Material neuronMaterial;
         [SerializeField] private Material paintMaterial;
         [SerializeField] private Material blurMaterial;
+        [SerializeField] private Material outputMaterial;
 
         [SerializeField] private UnityEvent<string> OnDisplayName;
         [SerializeField] private UnityEvent<bool> OnOrbitalCamera;
@@ -127,6 +128,7 @@ namespace Neuralizer {
                 neuronMaterial = neuronMaterial,
                 paintMaterial = paintMaterial,
                 blurMaterial = blurMaterial,
+                outputMaterial = outputMaterial,
                 AA = AA,
                 AB = AB,
                 AC = AC,
@@ -151,6 +153,7 @@ namespace Neuralizer {
         private void OnBeginCameraRendering(ScriptableRenderContext ctx, Camera cam) {
             if (!currentScene) return;
             if (!Scene) return;
+            if (cam.cameraType != CameraType.Game) return;
 
             const float shutterSpeed = 1f / 36f;
             networkRenderingInfo.x = 1f - (Time.unscaledDeltaTime / shutterSpeed);

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
+using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
 namespace Neuralizer.NetworkRendering {
@@ -56,6 +57,7 @@ namespace Neuralizer.NetworkRendering {
         public Material neuronMaterial;
         public Material paintMaterial;
         public Material blurMaterial;
+        public Material outputMaterial;
         public Neuron AA, AB, AC, AD, BA, BB, BC, BD, Output;
         public Architecture architecture;
         public bool isPlanar = false;
@@ -94,7 +96,7 @@ namespace Neuralizer.NetworkRendering {
             public Material material;
         }
 
-        private class BlurPass {
+        private class BlitPass {
             public TextureHandle source;
             public Material material;
         }
@@ -104,7 +106,8 @@ namespace Neuralizer.NetworkRendering {
         }
 
         public NeuralRenderPass() {
-            renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
+            ConfigureInput(ScriptableRenderPassInput.Color);
+            renderPassEvent = RenderPassEvent.AfterRenderingPostProcessing;
         }
 
         public void Initialize() {
@@ -157,7 +160,7 @@ namespace Neuralizer.NetworkRendering {
             Blitter.BlitTexture(context.cmd, data.cameraTex, Vector2.one, data.material, 0);
         }
 
-        static void ExecuteBlurPass(BlurPass data, RasterGraphContext context) {
+        static void ExecuteBlurPass(BlitPass data, RasterGraphContext context) {
             Blitter.BlitTexture(context.cmd, data.source, Vector2.one, data.material, 0);
         }
 
@@ -165,8 +168,10 @@ namespace Neuralizer.NetworkRendering {
             Blitter.BlitTexture(context.cmd, data.source, Vector2.one, 0f, true);
         }
 
-        private static void AddInputNeuronPass(string passName, RenderGraph renderGraph, Neuron targetNeuron, TextureHandle OutputHandle) {
-            using IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<InputPassData>(passName, out var passData);
+        private static void AddInputNeuronPass(string passName, RenderGraph renderGraph, Neuron targetNeuron,
+            TextureHandle OutputHandle) {
+            using IRasterRenderGraphBuilder builder =
+                renderGraph.AddRasterRenderPass<InputPassData>(passName, out var passData);
             passData.output = OutputHandle;
             passData.neuron = targetNeuron;
             builder.SetRenderAttachment(passData.output, 0);
@@ -174,7 +179,8 @@ namespace Neuralizer.NetworkRendering {
                 ExecuteInputPass(data, context));
         }
 
-        private static void AddLayeredNeuronPass(string passName, RenderGraph renderGraph, Neuron targetNeuron, TextureHandle A,
+        private static void AddLayeredNeuronPass(string passName, RenderGraph renderGraph, Neuron targetNeuron,
+            TextureHandle A,
             TextureHandle B, TextureHandle C, TextureHandle D, TextureHandle OutputHandle) {
             using IRasterRenderGraphBuilder builder =
                 renderGraph.AddRasterRenderPass<LayeredPassData>(passName, out var passData);
@@ -193,17 +199,17 @@ namespace Neuralizer.NetworkRendering {
                 ExecuteLayeredPass(data, context));
         }
 
-        private static void AddBlurPass(string passName, RenderGraph renderGraph, Material material, TextureHandle from, TextureHandle to) {
+        private static void AddBlitPass(string passName, RenderGraph renderGraph, Material material, TextureHandle from, TextureHandle to) {
             using var builder =
-                renderGraph.AddRasterRenderPass<BlurPass>(passName, out var passData);
+                renderGraph.AddRasterRenderPass<BlitPass>(passName, out var passData);
             passData.material = material;
             passData.source = from;
             builder.UseTexture(passData.source);
             builder.SetRenderAttachment(to, 0);
-            builder.SetRenderFunc((BlurPass data, RasterGraphContext context) =>
+            builder.SetRenderFunc((BlitPass data, RasterGraphContext context) =>
                 ExecuteBlurPass(data, context));
         }
-
+        
         private static void AddCopyPass(string passName, RenderGraph renderGraph, TextureHandle from, TextureHandle to) {
             using var builder =
                 renderGraph.AddRasterRenderPass<CopyPassData>(passName, out var passData);
@@ -229,8 +235,8 @@ namespace Neuralizer.NetworkRendering {
             neuronDescriptor.bindMS = false;
             neuronDescriptor.useDynamicScale = false;
             neuronDescriptor.graphicsFormat = GraphicsFormat.R16G16B16A16_SFloat;
-            
-            switch(architecture) {
+
+            switch (architecture) {
                 case Architecture.Perceptron:
                     neuronDescriptor.width /= 2;
                     neuronDescriptor.height /= 2;
@@ -275,18 +281,19 @@ namespace Neuralizer.NetworkRendering {
                     break;
                 }
             }
-            
+
             TextureHandle OutputHandle = Output.SetupRenderTarget(Output_Name, renderGraph, neuronDescriptor);
 
             var paintHandle = UniversalRenderer.CreateRenderGraphTexture(renderGraph, paintDescriptor, Paint_Name,
                 false,
                 FilterMode.Bilinear);
-            
-            var intermediateHandle = UniversalRenderer.CreateRenderGraphTexture(renderGraph, paintDescriptor, Intermediate_Name,
+
+            var intermediateHandle = UniversalRenderer.CreateRenderGraphTexture(renderGraph, paintDescriptor,
+                Intermediate_Name,
                 false,
                 FilterMode.Bilinear);
 
-            switch(architecture) {
+            switch (architecture) {
                 case Architecture.Perceptron:
                     AddInputNeuronPass("Neuron Output", renderGraph, Output, OutputHandle);
                 break;
@@ -299,8 +306,9 @@ namespace Neuralizer.NetworkRendering {
                     AddInputNeuronPass("Neuron AB", renderGraph, AB, BHandle);
                     AddInputNeuronPass("Neuron AC", renderGraph, AC, CHandle);
                     AddInputNeuronPass("Neuron AD", renderGraph, AD, DHandle);
-                    
-                    AddLayeredNeuronPass("Neuron Output", renderGraph, Output, AHandle, BHandle, CHandle, DHandle, OutputHandle);
+
+                    AddLayeredNeuronPass("Neuron Output", renderGraph, Output, AHandle, BHandle, CHandle, DHandle,
+                        OutputHandle);
                 break;
                 case Architecture.TwoLayers:
                     TextureHandle AAHandle = AA.SetupRenderTarget(AA_Name, renderGraph, neuronDescriptor);
@@ -311,17 +319,22 @@ namespace Neuralizer.NetworkRendering {
                     TextureHandle BBHandle = BB.SetupRenderTarget(BB_Name, renderGraph, neuronDescriptor);
                     TextureHandle BCHandle = BC.SetupRenderTarget(BD_Name, renderGraph, neuronDescriptor);
                     TextureHandle BDHandle = BD.SetupRenderTarget(BA_Name, renderGraph, neuronDescriptor);
-                    
+
                     AddInputNeuronPass("Neuron AA", renderGraph, AA, AAHandle);
                     AddInputNeuronPass("Neuron AB", renderGraph, AB, ABHandle);
                     AddInputNeuronPass("Neuron AC", renderGraph, AC, ACHandle);
                     AddInputNeuronPass("Neuron AD", renderGraph, AD, ADHandle);
-                    AddLayeredNeuronPass("Neuron BA", renderGraph, BA, AAHandle, ABHandle, ACHandle, ADHandle, BAHandle);
-                    AddLayeredNeuronPass("Neuron BB", renderGraph, BB, AAHandle, ABHandle, ACHandle, ADHandle, BBHandle);
-                    AddLayeredNeuronPass("Neuron BC", renderGraph, BC, AAHandle, ABHandle, ACHandle, ADHandle, BCHandle);
-                    AddLayeredNeuronPass("Neuron BD", renderGraph, BD, AAHandle, ABHandle, ACHandle, ADHandle, BDHandle);
+                    AddLayeredNeuronPass("Neuron BA", renderGraph, BA, AAHandle, ABHandle, ACHandle, ADHandle,
+                        BAHandle);
+                    AddLayeredNeuronPass("Neuron BB", renderGraph, BB, AAHandle, ABHandle, ACHandle, ADHandle,
+                        BBHandle);
+                    AddLayeredNeuronPass("Neuron BC", renderGraph, BC, AAHandle, ABHandle, ACHandle, ADHandle,
+                        BCHandle);
+                    AddLayeredNeuronPass("Neuron BD", renderGraph, BD, AAHandle, ABHandle, ACHandle, ADHandle,
+                        BDHandle);
 
-                    AddLayeredNeuronPass("Neuron Output", renderGraph, Output, BAHandle, BBHandle, BCHandle, BDHandle, OutputHandle);
+                    AddLayeredNeuronPass("Neuron Output", renderGraph, Output, BAHandle, BBHandle, BCHandle, BDHandle,
+                        OutputHandle);
                 break;
             }
 
@@ -337,13 +350,12 @@ namespace Neuralizer.NetworkRendering {
                 builder.SetRenderFunc((PaintPassData data, RasterGraphContext context) =>
                     ExecutePaintPass(data, context));
             }
-
-            AddBlurPass("Blur", renderGraph, blurMaterial, paintHandle, intermediateHandle);
+            
+            AddBlitPass("Blur", renderGraph, blurMaterial, paintHandle, intermediateHandle);
             
             AddCopyPass("Copy Camera", renderGraph, intermediateHandle, resourceData.cameraColor);
             
             AddCopyPass("Copy Active", renderGraph, intermediateHandle, resourceData.activeColorTexture);
-            
         }
     }
 }
