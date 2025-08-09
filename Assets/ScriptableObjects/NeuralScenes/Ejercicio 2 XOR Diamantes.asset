@@ -15,6 +15,8 @@ MonoBehaviour:
   displayName: "\xA1Diamantes!"
   storageName: diamantes
   scoreboardID: diamantes
+  minTime: 30
+  minMaxScores: {x: 50, y: 1000}
   origin: {x: 0, y: 0, z: 0}
   architecture: 1
   targetPoints:
@@ -47,9 +49,9 @@ MonoBehaviour:
   biasRange: {x: -10, y: 10}
   useOrbitalCamera: 0
   allowEditing: 1
-  allowTraining: 1
+  allowTraining: 0
   allowRandomizeNeuron: 0
-  allowRandomizeNetwork: 1
+  allowRandomizeNetwork: 0
   successThreshold: 0.95
   Output:
     weightX: 1

@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   medals:
   - {fileID: 21300000, guid: 22b4f3bceb2fe814694d3cc7597ee96a, type: 3}
-  - {fileID: 21300000, guid: 25ff94f96bbb09a4895abac6d3897d4a, type: 3}
-  - {fileID: 21300000, guid: ad7438e172fe8a249a6e6e62ca559642, type: 3}
   - {fileID: 21300000, guid: d3344f16c5c90f04cb016440ec28717c, type: 3}
+  - {fileID: 21300000, guid: ad7438e172fe8a249a6e6e62ca559642, type: 3}
+  - {fileID: 21300000, guid: 25ff94f96bbb09a4895abac6d3897d4a, type: 3}
