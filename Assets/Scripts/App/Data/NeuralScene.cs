@@ -6,9 +6,10 @@ namespace Neuralizer.Data {
     public class NeuralScene : ScriptableObject {
         [Header("Scene Settings")] [SerializeField]
         private string displayName;
-
         [SerializeField] private string storageName;
         [SerializeField] private string scoreboardID;
+        public float minTime = 15f;
+        public Vector2 minMaxScores = new(1f, 10f);
         public Vector3 origin;
         [Header("Network Settings")] public Architecture architecture;
         public Vector3[] targetPoints;
@@ -20,6 +21,8 @@ namespace Neuralizer.Data {
         public bool allowTraining = false;
         public bool allowRandomizeNeuron = true;
         public bool allowRandomizeNetwork = true;
+        [Range(0.5f, 1f)]
+        public float successThreshold = 0.95f;
 
         [Header("Output Layer")] public NeuronPrefab Output;
 
@@ -31,6 +34,8 @@ namespace Neuralizer.Data {
         public NeuronPrefab BB;
         public NeuronPrefab BC;
         public NeuronPrefab BD;
+        
+        public event UnityAction OnUpdated;
 
         public string DisplayName => string.IsNullOrEmpty(displayName) ? name : displayName;
 
@@ -40,15 +45,32 @@ namespace Neuralizer.Data {
 
         public bool AllowScoring => !string.IsNullOrEmpty(scoreboardID);
 
-        public event UnityAction<bool> OnIsCompleted;
 
+        private string IsCompletedString => StorageName + ".completed";
+        
+        private string ScoreString => StorageName + ".score";
+        
+        public float GetScore(float time, float multiplier = 1f) {
+            return Mathf.Lerp(minMaxScores.x, minMaxScores.y, Mathf.Clamp01(minTime / Mathf.Max(time, Mathf.Epsilon))) * multiplier;
+        }
+        
         public bool IsCompleted {
-            get => PlayerPrefs.GetInt(StorageName + ".completed", 0) > 0;
+            get => PlayerPrefs.GetInt(IsCompletedString, 0) > 0;
             set {
-                PlayerPrefs.SetInt(StorageName + ".completed", value ? 1 : 0);
-                OnIsCompleted?.Invoke(value);
+                PlayerPrefs.SetInt(IsCompletedString, value ? 1 : 0);
+                OnUpdated?.Invoke();
             }
         }
+
+        public int Score {
+            get => PlayerPrefs.GetInt(ScoreString, 0);
+            set {
+                PlayerPrefs.SetInt(ScoreString, value);
+                OnUpdated?.Invoke();
+            }
+        }
+
+        public float NormalizedScore => Mathf.InverseLerp(minMaxScores.x, minMaxScores.y, (float)Score);
 
         public NeuronPrefab GetTargetNeuron(TargetNeuron target) {
             switch (target) {
@@ -90,6 +112,7 @@ namespace Neuralizer.Data {
                 neuron.weights.Set(weightX, weightY, weightZ, weightW);
                 neuron.bias = bias;
                 neuron.activationFunction = activationFunction;
+                neuron.enabled = displayNeuron;
             }
         }
     }

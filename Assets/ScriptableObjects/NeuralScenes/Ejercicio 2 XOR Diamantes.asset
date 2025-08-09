@@ -47,9 +47,10 @@ MonoBehaviour:
   biasRange: {x: -10, y: 10}
   useOrbitalCamera: 0
   allowEditing: 1
-  allowTraining: 0
+  allowTraining: 1
   allowRandomizeNeuron: 0
-  allowRandomizeNetwork: 0
+  allowRandomizeNetwork: 1
+  successThreshold: 0.95
   Output:
     weightX: 1
     weightY: 1

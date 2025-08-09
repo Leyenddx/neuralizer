@@ -1,11 +1,14 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.Pool;
 
 namespace Neuralizer {
     public class SamplePoint : MonoBehaviour {
         
         private static List<SamplePoint> points = new();
+
+        public static float CountRcp => 1f / (float)points.Count;
 
         public static void UpdatePoints() {
             foreach (SamplePoint point in points) {
@@ -20,14 +23,9 @@ namespace Neuralizer {
             }
         }
 
-        public static bool AreAllValid() {
-            foreach (SamplePoint point in points) {
-                if (!point.Valid) {
-                    return false;
-                }
-            }
-            return true;
-        }
+        public static bool AreAllValid => points.All(point => point.Valid);
+
+        public static float CorrectnessRatio => (float)points.Count(point => point.Valid) / (float)points.Count;
 
         [SerializeField] private Gradient colors;
         [SerializeField] private SpriteRenderer target;

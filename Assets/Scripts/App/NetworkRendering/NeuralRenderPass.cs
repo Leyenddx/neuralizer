@@ -57,7 +57,6 @@ namespace Neuralizer.NetworkRendering {
         public Material neuronMaterial;
         public Material paintMaterial;
         public Material blurMaterial;
-        public Material outputMaterial;
         public Neuron AA, AB, AC, AD, BA, BB, BC, BD, Output;
         public Architecture architecture;
         public bool isPlanar = false;

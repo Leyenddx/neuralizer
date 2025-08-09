@@ -13,18 +13,19 @@ namespace Neuralizer {
         private static readonly ShaderKeyword planarGraph = new("_2D_GRAPH");
         public static NetworkHost Instance { get; private set; }
 
+        [SerializeField] private MedalsAsset medals;
         [SerializeField] private SamplePoint targetPointPrefab;
         [SerializeField] private SamplePoint unwantedPointPrefab;
         [SerializeField] private Material neuronMaterial;
         [SerializeField] private Material paintMaterial;
         [SerializeField] private Material blurMaterial;
-        [SerializeField] private Material outputMaterial;
 
         [SerializeField] private UnityEvent<string> OnDisplayName;
         [SerializeField] private UnityEvent<bool> OnOrbitalCamera;
         [SerializeField] private UnityEvent<bool> OnPlanarCamera;
         [SerializeField] private UnityEvent OnSceneLoaded;
         [SerializeField] private UnityEvent OnSceneUnloaded;
+        [SerializeField] private UnityEvent<bool> OnAllowScoring;
         [SerializeField] private UnityEvent<bool> OnAllowEditing;
         [SerializeField] private UnityEvent<bool> OnAllowTraining;
         [SerializeField] private UnityEvent<bool> OnAllowRandomizeNeuron;
@@ -35,10 +36,13 @@ namespace Neuralizer {
         [SerializeField] private UnityEvent<float> OnWeightSliderMax;
         [SerializeField] private UnityEvent<float> OnBiasSliderMin;
         [SerializeField] private UnityEvent<float> OnBiasSliderMax;
+        [SerializeField] private UnityEvent<string> OnScoreString;
+        [SerializeField] private UnityEvent<Sprite> OnMedalSprite;
         private NeuralScene currentScene;
         private UnityEngine.Pool.ObjectPool<SamplePoint> targetPool;
         private UnityEngine.Pool.ObjectPool<SamplePoint> unwantedPool;
         private NeuralRenderPass networkPass;
+        private float sceneStartTime = 0f;
 
         public NeuralScene Scene {
             get => currentScene;
@@ -55,6 +59,59 @@ namespace Neuralizer {
                     value.BC.ApplyTo(BC);
                     value.BD.ApplyTo(BD);
                     value.Output.ApplyTo(Output);
+                    AA.enableWeightX = true;
+                    AA.enableWeightY = true;
+                    AA.enableWeightZ = value.useOrbitalCamera;
+                    AA.enableWeightW = false;
+                    AB.enableWeightX = true;
+                    AB.enableWeightY = true;
+                    AB.enableWeightZ = value.useOrbitalCamera;
+                    AB.enableWeightW = false;
+                    AC.enableWeightX = true;
+                    AC.enableWeightY = true;
+                    AC.enableWeightZ = value.useOrbitalCamera;
+                    AC.enableWeightW = false;
+                    AD.enableWeightX = true;
+                    AD.enableWeightY = true;
+                    AD.enableWeightZ = value.useOrbitalCamera;
+                    AD.enableWeightW = false;
+                    BA.enableWeightX = AA.enabled;
+                    BA.enableWeightY = AB.enabled;
+                    BA.enableWeightZ = AC.enabled;
+                    BA.enableWeightW = AD.enabled;
+                    BB.enableWeightX = AA.enabled;
+                    BB.enableWeightY = AB.enabled;
+                    BB.enableWeightZ = AC.enabled;
+                    BB.enableWeightW = AD.enabled;
+                    BC.enableWeightX = AA.enabled;
+                    BC.enableWeightY = AB.enabled;
+                    BC.enableWeightZ = AC.enabled;
+                    BC.enableWeightW = AD.enabled;
+                    BD.enableWeightX = AA.enabled;
+                    BD.enableWeightY = AB.enabled;
+                    BD.enableWeightZ = AC.enabled;
+                    BD.enableWeightW = AD.enabled;
+                    switch (value.architecture) {
+                        case Architecture.Perceptron:
+                            Output.enableWeightX = true;
+                            Output.enableWeightY = true;
+                            Output.enableWeightZ = value.useOrbitalCamera;
+                            Output.enableWeightW = true;
+                        break;
+                        case Architecture.OneLayer:
+                            Output.enableWeightX = AA.enabled;
+                            Output.enableWeightY = AB.enabled;
+                            Output.enableWeightZ = AC.enabled;
+                            Output.enableWeightW = AD.enabled;
+                        break;
+                        case Architecture.TwoLayers:
+                            Output.enableWeightX = BA.enabled;
+                            Output.enableWeightY = BB.enabled;
+                            Output.enableWeightZ = BC.enabled;
+                            Output.enableWeightW = BD.enabled;
+                        break;
+                    }
+
                     networkPass.architecture = value.architecture;
                     networkPass.isPlanar = !Scene.useOrbitalCamera;
                     planarGraph.Enabled = networkPass.isPlanar;
@@ -76,6 +133,7 @@ namespace Neuralizer {
                     foreach (Vector3 point in value.targetPoints) {
                         targetPool.Get().transform.position = point;
                     }
+
                     foreach (Vector3 point in value.unwantedPoints) {
                         unwantedPool.Get().transform.position = point;
                     }
@@ -88,11 +146,13 @@ namespace Neuralizer {
                     OnAllowRandomizeNeuron?.Invoke(value.allowRandomizeNeuron);
                     OnAllowRandomizeNetwork?.Invoke(value.allowRandomizeNetwork);
                     OnAllowEditing?.Invoke(value.allowEditing);
+                    OnAllowScoring?.Invoke(value.AllowScoring);
                     OnWeightSliderMin?.Invoke(value.weightRange.x);
                     OnWeightSliderMax?.Invoke(value.weightRange.y);
                     OnBiasSliderMin?.Invoke(value.biasRange.x);
                     OnBiasSliderMax?.Invoke(value.biasRange.y);
                     OnSceneLoaded?.Invoke();
+                    sceneStartTime = Time.time;
                 }
                 else {
                     transform.position = Vector3.zero;
@@ -128,7 +188,6 @@ namespace Neuralizer {
                 neuronMaterial = neuronMaterial,
                 paintMaterial = paintMaterial,
                 blurMaterial = blurMaterial,
-                outputMaterial = outputMaterial,
                 AA = AA,
                 AB = AB,
                 AC = AC,
@@ -226,7 +285,6 @@ namespace Neuralizer {
                 AC.weights.z = 0f;
                 AD.weights.z = 0f;
             }
-
             NotifyChange();
         }
 
@@ -254,7 +312,6 @@ namespace Neuralizer {
                         AC.weights.w = 0f;
                         AD.weights.w = 0f;
                     }
-
                 break;
                 case TargetNeuron.Output:
                     if (Scene.architecture == Architecture.Perceptron) {
@@ -267,10 +324,8 @@ namespace Neuralizer {
                         Output.weights.z = 0f;
                         Output.weights.w = 0f;
                     }
-
                 break;
             }
-
             NotifyChange();
         }
 
@@ -315,9 +370,29 @@ namespace Neuralizer {
             }
         }
 
+        public void TrainEpoch() {
+            //TODO train;
+            NotifyChange();
+        }
+
         public void SubmitResult() {
-            if (SamplePoint.AreAllValid()) {
+            float ratio = SamplePoint.CorrectnessRatio;
+            if (ratio >= Scene.successThreshold) {
                 OnValidNetworkSubmitted?.Invoke();
+                if (Scene.AllowScoring) {
+                    int score = Mathf.FloorToInt(Scene.GetScore(Time.time - sceneStartTime,
+                        Mathf.Lerp(Scene.successThreshold, 1f, ratio)));
+                    if (!Scene.IsCompleted) {
+                        Scene.Score = score;
+                        float t = Mathf.InverseLerp(Scene.minMaxScores.x, Scene.minMaxScores.y, (float)score);
+                        OnMedalSprite?.Invoke(medals.GetFromRatio(t));
+                        OnScoreString?.Invoke(score.ToString());
+                    }
+                    else {
+                        OnMedalSprite?.Invoke(medals.GetFromRatio(Scene.NormalizedScore));
+                        OnScoreString?.Invoke(Scene.Score.ToString());
+                    }
+                }
                 Scene.IsCompleted = true;
             }
             else {
