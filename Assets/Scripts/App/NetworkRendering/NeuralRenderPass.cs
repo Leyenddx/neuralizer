@@ -110,15 +110,15 @@ namespace Neuralizer.NetworkRendering {
         }
 
         public void Initialize() {
-            AA.PrepareForRenderPass(AA_ID, AA_Name, neuronMaterial);
-            AB.PrepareForRenderPass(AB_ID, AB_Name, neuronMaterial);
-            AC.PrepareForRenderPass(AC_ID, AC_Name, neuronMaterial);
-            AD.PrepareForRenderPass(AD_ID, AD_Name, neuronMaterial);
-            BA.PrepareForRenderPass(BA_ID, BA_Name, neuronMaterial);
-            BB.PrepareForRenderPass(BB_ID, BB_Name, neuronMaterial);
-            BC.PrepareForRenderPass(BC_ID, BC_Name, neuronMaterial);
-            BD.PrepareForRenderPass(BD_ID, BD_Name, neuronMaterial);
-            Output.PrepareForRenderPass(Output_ID, Output_Name, neuronMaterial);
+            AA.PrepareForRenderPass(neuronMaterial);
+            AB.PrepareForRenderPass(neuronMaterial);
+            AC.PrepareForRenderPass(neuronMaterial);
+            AD.PrepareForRenderPass(neuronMaterial);
+            BA.PrepareForRenderPass(neuronMaterial);
+            BB.PrepareForRenderPass(neuronMaterial);
+            BC.PrepareForRenderPass(neuronMaterial);
+            BD.PrepareForRenderPass(neuronMaterial);
+            Output.PrepareForRenderPass(neuronMaterial);
         }
 
         public static void SetShaderData(Neuron target) {

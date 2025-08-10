@@ -13,7 +13,16 @@ MonoBehaviour:
   m_Name: MedalsDB
   m_EditorClassIdentifier: 
   medals:
-  - {fileID: 21300000, guid: 22b4f3bceb2fe814694d3cc7597ee96a, type: 3}
-  - {fileID: 21300000, guid: d3344f16c5c90f04cb016440ec28717c, type: 3}
-  - {fileID: 21300000, guid: ad7438e172fe8a249a6e6e62ca559642, type: 3}
-  - {fileID: 21300000, guid: 25ff94f96bbb09a4895abac6d3897d4a, type: 3}
+  - name: Explorador
+    sprite: {fileID: 21300000, guid: 22b4f3bceb2fe814694d3cc7597ee96a, type: 3}
+    description: "Experimentar y tomarte las cosas con calma te llevar\xE1n muy lejos."
+  - name: Destacado
+    sprite: {fileID: 21300000, guid: d3344f16c5c90f04cb016440ec28717c, type: 3}
+    description: "Tu esfuerzo siempre rendir\xE1 frutos."
+  - name: "\xC9lite"
+    sprite: {fileID: 21300000, guid: ad7438e172fe8a249a6e6e62ca559642, type: 3}
+    description: "Sin duda alguna, est\xE1s en lo m\xE1s alto de la tabla."
+  - name: Genio
+    sprite: {fileID: 21300000, guid: 25ff94f96bbb09a4895abac6d3897d4a, type: 3}
+    description: "<b>\xA1Felicidades!</b> Tu habilidad y conocimiento te define como
+      genio."

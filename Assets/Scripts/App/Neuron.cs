@@ -22,8 +22,6 @@ namespace Neuralizer {
         public bool enableWeightW = true;
         public float bias;
         public ActivationFunction activationFunction;
-        // public RTHandle resultTexture;
-        // public TextureHandle resultTexture;
         public Material material;
 
         public const float ReLuOffset = 0f;
@@ -79,8 +77,7 @@ namespace Neuralizer {
         //     return enabled ? EvaluateActivationFunction(Vector2.Dot(value, weights) + bias) : 0f;
         // }
 
-        public void PrepareForRenderPass(int textureId, string textureName, Material baseMaterial) {
-            // resultTexture = RTHandles.Alloc(textureId, textureName);
+        public void PrepareForRenderPass(Material baseMaterial) {
             material = Object.Instantiate(baseMaterial);
         }
 
@@ -89,16 +86,6 @@ namespace Neuralizer {
         }
 
         public TextureHandle SetupRenderTarget(string name, RenderGraph renderGraph, RenderTextureDescriptor descriptor) {
-            // RenderingUtils.ReAllocateHandleIfNeeded(ref resultTexture, descriptor, FilterMode.Point,
-            //     TextureWrapMode.Clamp,
-            //     name: name);
-            // return renderGraph.ImportTexture(resultTexture);
-            
-            // resultTexture = UniversalRenderer.CreateRenderGraphTexture(renderGraph, descriptor, name,
-            //     false,
-            //     FilterMode.Bilinear);
-            // return resultTexture;
-            
             return UniversalRenderer.CreateRenderGraphTexture(renderGraph, descriptor, name,
                 false,
                 FilterMode.Bilinear);

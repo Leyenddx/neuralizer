@@ -62,7 +62,7 @@ namespace Neuralizer {
             delta.x /= Screen.width;
             delta.y /= -Screen.height;
             if (!show2DFunction) {
-                targetComposerShift += delta;
+                targetComposerShift += delta * NetworkHost.Instance.ZoomScale;
                 targetComposerShift.Set(Mathf.Clamp(targetComposerShift.x, -1f, 1f),
                     Mathf.Clamp(targetComposerShift.y, -1f, 1f));
             }

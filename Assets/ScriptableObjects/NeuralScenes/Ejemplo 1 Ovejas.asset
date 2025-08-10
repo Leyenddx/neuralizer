@@ -12,10 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d657411bcaa5491891f4ecd2d0e31d3a, type: 3}
   m_Name: Ejemplo 1 Ovejas
   m_EditorClassIdentifier: 
-  displayName: "\xBFOveja o Lobo?"
+  displayName: "Ejemplo: \xBFOveja o Lobo?"
   storageName: 
   scoreboardID: 
+  minTime: 15
+  minMaxScores: {x: 1, y: 10}
   origin: {x: 0, y: 0, z: 0}
+  zoomFactor: 1
   architecture: 0
   targetPoints:
   - {x: 11, y: 1, z: 3.1415927}
@@ -35,6 +38,7 @@ MonoBehaviour:
   allowTraining: 0
   allowRandomizeNeuron: 0
   allowRandomizeNetwork: 0
+  successThreshold: 0.95
   Output:
     weightX: 2
     weightY: 1

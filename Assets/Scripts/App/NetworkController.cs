@@ -23,6 +23,8 @@ namespace Neuralizer {
         [SerializeField] private UnityEvent<bool> OnShowYWeight;
         [SerializeField] private UnityEvent<bool> OnShowZWeight;
         [SerializeField] private UnityEvent<bool> OnShowWWeight;
+        [SerializeField] private UnityEvent<bool> OnShowRandomizeNeuron;
+        [SerializeField] private UnityEvent<bool> OnShowTraining;
 
         private const float speed = 24f;
 
@@ -145,9 +147,13 @@ namespace Neuralizer {
                 if (CurrentNeuron == null) {
                     targetFlexWidth.Set(restFlexWidth.x, restFlexWidth.y, restFlexWidth.z);
                     OnShowSettings?.Invoke(false);
+                    OnShowRandomizeNeuron?.Invoke(false);
+                    OnShowTraining?.Invoke(false);
                 }
                 else {
                     OnShowSettings?.Invoke(true);
+                    OnShowRandomizeNeuron?.Invoke(network.Scene.allowRandomizeNeuron);
+                    OnShowTraining?.Invoke(network.Scene.allowTraining);
                 }
             }
         }

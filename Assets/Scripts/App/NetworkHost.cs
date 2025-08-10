@@ -1,5 +1,6 @@
 using Neuralizer.Data;
 using Neuralizer.NetworkRendering;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Rendering;
@@ -8,7 +9,9 @@ using UnityEngine.Rendering.Universal;
 namespace Neuralizer {
     public class NetworkHost : MonoBehaviour {
         private const string NetworkRenderingInfo_Name = "_NetworkRenderingInfo";
+        private const string ZoomScale_Name = "_ZoomScale";
         private static readonly int NetworkRenderingInfo_Id = Shader.PropertyToID(NetworkRenderingInfo_Name);
+        private static readonly int ZoomScale_ID = Shader.PropertyToID(ZoomScale_Name);
 
         private static readonly ShaderKeyword planarGraph = new("_2D_GRAPH");
         public static NetworkHost Instance { get; private set; }
@@ -19,6 +22,7 @@ namespace Neuralizer {
         [SerializeField] private Material neuronMaterial;
         [SerializeField] private Material paintMaterial;
         [SerializeField] private Material blurMaterial;
+        [SerializeField] private CinemachineRecomposer[] recomposers;
 
         [SerializeField] private UnityEvent<string> OnDisplayName;
         [SerializeField] private UnityEvent<bool> OnOrbitalCamera;
@@ -36,8 +40,13 @@ namespace Neuralizer {
         [SerializeField] private UnityEvent<float> OnWeightSliderMax;
         [SerializeField] private UnityEvent<float> OnBiasSliderMin;
         [SerializeField] private UnityEvent<float> OnBiasSliderMax;
+        [SerializeField] private UnityEvent<string> OnTimeString;
         [SerializeField] private UnityEvent<string> OnScoreString;
+        [SerializeField] private UnityEvent<string> OnRatioString;
+        [SerializeField] private UnityEvent<string> OnMedalName;
         [SerializeField] private UnityEvent<Sprite> OnMedalSprite;
+        [SerializeField] private UnityEvent<string> OnMedalDescription;
+        
         private NeuralScene currentScene;
         private UnityEngine.Pool.ObjectPool<SamplePoint> targetPool;
         private UnityEngine.Pool.ObjectPool<SamplePoint> unwantedPool;
@@ -115,6 +124,13 @@ namespace Neuralizer {
                     networkPass.architecture = value.architecture;
                     networkPass.isPlanar = !Scene.useOrbitalCamera;
                     planarGraph.Enabled = networkPass.isPlanar;
+
+                    ZoomScale = 1f / value.zoomFactor;
+                    Shader.SetGlobalFloat(ZoomScale_ID, ZoomScale);
+                    foreach (var recomposer in recomposers) {
+                        recomposer.ZoomScale = ZoomScale;
+                    }
+
                     transform.position = value.origin;
                     // Vector3 sum = Vector3.zero;
                     // float weight = 0f;
@@ -131,11 +147,15 @@ namespace Neuralizer {
                     // }
                     // transform.position = sum / weight;
                     foreach (Vector3 point in value.targetPoints) {
-                        targetPool.Get().transform.position = point;
+                        var p = targetPool.Get();
+                        p.transform.position = point;
+                        p.transform.localScale = Vector3.one * ZoomScale;
                     }
 
                     foreach (Vector3 point in value.unwantedPoints) {
-                        unwantedPool.Get().transform.position = point;
+                        var p = unwantedPool.Get();
+                        p.transform.position = point;
+                        p.transform.localScale = Vector3.one * ZoomScale;
                     }
 
                     NotifyChange();
@@ -176,6 +196,8 @@ namespace Neuralizer {
         public Neuron BC { get; } = new();
         public Neuron BD { get; } = new();
         public Neuron Output { get; } = new();
+        
+        public float ZoomScale { get; private set; } = 1f;
 
         private void Awake() {
             Instance = this;
@@ -229,7 +251,7 @@ namespace Neuralizer {
         }
 
         private SamplePoint CreatePoint(SamplePoint prefab, UnityEngine.Pool.ObjectPool<SamplePoint> pool) {
-            SamplePoint created = (Instantiate(prefab, transform)).GetComponent<SamplePoint>();
+            SamplePoint created = Instantiate(prefab).GetComponent<SamplePoint>();
             created.gameObject.SetActive(false);
             created.ParentPool = pool;
             return created;
@@ -285,6 +307,7 @@ namespace Neuralizer {
                 AC.weights.z = 0f;
                 AD.weights.z = 0f;
             }
+
             NotifyChange();
         }
 
@@ -312,6 +335,7 @@ namespace Neuralizer {
                         AC.weights.w = 0f;
                         AD.weights.w = 0f;
                     }
+
                 break;
                 case TargetNeuron.Output:
                     if (Scene.architecture == Architecture.Perceptron) {
@@ -324,8 +348,10 @@ namespace Neuralizer {
                         Output.weights.z = 0f;
                         Output.weights.w = 0f;
                     }
+
                 break;
             }
+
             NotifyChange();
         }
 
@@ -380,19 +406,25 @@ namespace Neuralizer {
             if (ratio >= Scene.successThreshold) {
                 OnValidNetworkSubmitted?.Invoke();
                 if (Scene.AllowScoring) {
-                    int score = Mathf.FloorToInt(Scene.GetScore(Time.time - sceneStartTime,
-                        Mathf.Lerp(Scene.successThreshold, 1f, ratio)));
-                    if (!Scene.IsCompleted) {
-                        Scene.Score = score;
-                        float t = Mathf.InverseLerp(Scene.minMaxScores.x, Scene.minMaxScores.y, (float)score);
-                        OnMedalSprite?.Invoke(medals.GetFromRatio(t));
-                        OnScoreString?.Invoke(score.ToString());
-                    }
-                    else {
-                        OnMedalSprite?.Invoke(medals.GetFromRatio(Scene.NormalizedScore));
-                        OnScoreString?.Invoke(Scene.Score.ToString());
+                    
+                    Scene.SubmitResult(Time.time - sceneStartTime, ratio);
+                    
+                    Medal medal;
+                    medal = medals.GetFromRatio(Scene.NormalizedScore);
+                    OnTimeString?.Invoke(Scene.FormattedTime);
+                    OnScoreString?.Invoke(Scene.Score.ToString());
+                    OnRatioString?.Invoke(Scene.FormattedRatio);
+                    if (medal != null) {
+                        OnMedalName?.Invoke(medal.name);
+                        OnMedalSprite?.Invoke(medal.sprite);
+                        OnMedalDescription?.Invoke(medal.description);
+                    } else {
+                        OnMedalName?.Invoke("");
+                        OnMedalSprite?.Invoke(null);
+                        OnMedalDescription?.Invoke("");
                     }
                 }
+
                 Scene.IsCompleted = true;
             }
             else {

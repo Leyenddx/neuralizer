@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6fb6810ed3748e69eee0875c97c88f7, type: 3}
   m_Name: Data
   m_EditorClassIdentifier: 
-  termsUrl: https://desertharestudios.gitlab.io/neuralizer/terms
-  privacyUrl: https://desertharestudios.gitlab.io/neuralizer/privacy
+  termsUrl: https://desertharestudios.gitlab.io/neuralizer/terms/
+  privacyUrl: https://desertharestudios.gitlab.io/neuralizer/privacy/
   downloadUrl: https://desertharestudios.github.io/techdemos/WaterRingToss/

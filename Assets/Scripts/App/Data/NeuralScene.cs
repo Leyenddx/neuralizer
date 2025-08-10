@@ -2,8 +2,10 @@ using UnityEngine;
 using UnityEngine.Events;
 
 namespace Neuralizer.Data {
+    
     [CreateAssetMenu(fileName = "Neural Scene", menuName = "Neuralizer/Scene")]
     public class NeuralScene : ScriptableObject {
+        
         [Header("Scene Settings")] [SerializeField]
         private string displayName;
         [SerializeField] private string storageName;
@@ -11,6 +13,7 @@ namespace Neuralizer.Data {
         public float minTime = 15f;
         public Vector2 minMaxScores = new(1f, 10f);
         public Vector3 origin;
+        public float zoomFactor = 1f;
         [Header("Network Settings")] public Architecture architecture;
         public Vector3[] targetPoints;
         public Vector3[] unwantedPoints;
@@ -39,21 +42,27 @@ namespace Neuralizer.Data {
 
         public string DisplayName => string.IsNullOrEmpty(displayName) ? name : displayName;
 
-        public string StorageName => string.IsNullOrEmpty(storageName) ? name : storageName;
-
-        public string ScoreboardID => string.IsNullOrEmpty(scoreboardID) ? "" : scoreboardID;
-
         public bool AllowScoring => !string.IsNullOrEmpty(scoreboardID);
+
+        private string StorageName => string.IsNullOrEmpty(storageName) ? name : storageName;
+
+        private string ScoreboardID => string.IsNullOrEmpty(scoreboardID) ? "" : scoreboardID;
 
 
         private string IsCompletedString => StorageName + ".completed";
         
-        private string ScoreString => StorageName + ".score";
-        
-        public float GetScore(float time, float multiplier = 1f) {
-            return Mathf.Lerp(minMaxScores.x, minMaxScores.y, Mathf.Clamp01(minTime / Mathf.Max(time, Mathf.Epsilon))) * multiplier;
+        private string TimeString => ScoreboardID + ".time";
+        private string ScoreString => ScoreboardID + ".score";
+        private string RatioString => ScoreboardID + ".ratio";
+
+        public void SubmitResult(float time, float ratio = 1f) {
+            if (IsCompleted) return;
+            Time = time;
+            Ratio = ratio;
+            Score = Mathf.FloorToInt(Mathf.Lerp(minMaxScores.x, minMaxScores.y, Mathf.Clamp01(minTime / Mathf.Max(time, Mathf.Epsilon))) * Mathf.Lerp(successThreshold, 1f, ratio));
+            OnUpdated?.Invoke();
         }
-        
+
         public bool IsCompleted {
             get => PlayerPrefs.GetInt(IsCompletedString, 0) > 0;
             set {
@@ -62,13 +71,24 @@ namespace Neuralizer.Data {
             }
         }
 
+        public float Time {
+            get => PlayerPrefs.GetFloat(TimeString, 0);
+            private set => PlayerPrefs.SetFloat(TimeString, value);
+        }
+
         public int Score {
             get => PlayerPrefs.GetInt(ScoreString, 0);
-            set {
-                PlayerPrefs.SetInt(ScoreString, value);
-                OnUpdated?.Invoke();
-            }
+            private set => PlayerPrefs.SetInt(ScoreString, value);
         }
+
+        public float Ratio {
+            get => PlayerPrefs.GetFloat(RatioString, 0f);
+            private set => PlayerPrefs.SetFloat(RatioString, value);
+        }
+
+        public string FormattedTime => System.TimeSpan.FromSeconds(Time).ToString(@"mm\:ss");
+        
+        public string FormattedRatio => Mathf.RoundToInt(Ratio * 100f) + "%";
 
         public float NormalizedScore => Mathf.InverseLerp(minMaxScores.x, minMaxScores.y, (float)Score);
 
