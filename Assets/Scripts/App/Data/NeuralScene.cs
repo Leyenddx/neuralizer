@@ -13,6 +13,8 @@ namespace Neuralizer.Data {
         public float minTime = 15f;
         public Vector2 minMaxScores = new(1f, 10f);
         public Vector3 origin;
+        [Range(0f, 1f)]
+        public float manualAutoPositionRatio = 1f / 3f;
         public float zoomFactor = 1f;
         [Header("Network Settings")] public Architecture architecture;
         public Vector3[] targetPoints;
@@ -120,10 +122,10 @@ namespace Neuralizer.Data {
 
         [System.Serializable]
         public class NeuronPrefab {
-            [Range(-10f, 10f)] public float weightX = 0f;
-            [Range(-10f, 10f)] public float weightY = 0f;
-            [Range(-10f, 10f)] public float weightZ = 0f;
-            [Range(-10f, 10f)] public float weightW = 0f;
+            [Range(-50f, 50f)] public float weightX = 0f;
+            [Range(-50f, 50f)] public float weightY = 0f;
+            [Range(-50f, 50f)] public float weightZ = 0f;
+            [Range(-50f, 50f)] public float weightW = 0f;
             [Range(-50f, 50f)] public float bias = 0f;
             public ActivationFunction activationFunction;
             public bool displayNeuron;

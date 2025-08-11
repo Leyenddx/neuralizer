@@ -13,6 +13,11 @@ namespace Neuralizer {
         public static float Sigmoid(float x) {
             return 1f / (1f + Mathf.Exp(-x));
         }
+        
+        public static float Tanh(float x) {
+            float e = Mathf.Exp(2f * x);
+            return (e - 1f) / (e + 1f);
+        }
 
         public bool enabled = true;
         public Vector4 weights;
@@ -24,17 +29,12 @@ namespace Neuralizer {
         public ActivationFunction activationFunction;
         public Material material;
 
-        public const float ReLuOffset = 0f;
-        public const float StepThreshold = 0f;
-        public const float StepMax = 1f;
-        public const float StepMin = 0f;
-
         public float EvaluateActivationFunction(float value) {
             return activationFunction switch {
                 ActivationFunction.Sigmoid => Sigmoid(value),
-                ActivationFunction.TanH => (float)System.Math.Tanh(value),
-                ActivationFunction.ReLu => Mathf.Max(0f, value + ReLuOffset),
-                ActivationFunction.Stepped => value > StepThreshold ? StepMax : StepMin,
+                ActivationFunction.TanH => Tanh(value),
+                ActivationFunction.ReLu => Mathf.Max(0f, value),
+                ActivationFunction.Stepped => value > 0 ? 1f : 0f,
                 _ => value
             };
         }
@@ -42,14 +42,14 @@ namespace Neuralizer {
         public float EvaluateDDXActivationFunction(float value) {
             switch(activationFunction) {
                 case ActivationFunction.Stepped:
-                    return 0f;
+                    return Mathf.Approximately(value, 0f) ? Mathf.Infinity : 0f;
                 case ActivationFunction.ReLu:
-                    return value + ReLuOffset >= 0f ? 1f : 0f;
+                    return value > 0f ? 1f : 0f;
                 case ActivationFunction.Sigmoid:
                     float s = Sigmoid(value);
                     return s + (1f - s);
                 case ActivationFunction.TanH:
-                    float t = (float)System.Math.Tanh(value);
+                    float t = Tanh(value);
                     return 1f - (t * t);
             }
             return 1f;

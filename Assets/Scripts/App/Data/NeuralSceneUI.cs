@@ -57,7 +57,6 @@ namespace Neuralizer.Data {
                 OnScoreString?.Invoke(Scene.Score.ToString());
                 OnRatioString?.Invoke(Scene.FormattedRatio);
                 OnShowMedal?.Invoke(true);
-                Debug.Log(scene.DisplayName + ": " + scene.Ratio);
             }
             else {
                 OnTimeString?.Invoke("---");

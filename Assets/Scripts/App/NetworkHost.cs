@@ -131,30 +131,30 @@ namespace Neuralizer {
                         recomposer.ZoomScale = ZoomScale;
                     }
 
-                    transform.position = value.origin;
-                    // Vector3 sum = Vector3.zero;
-                    // float weight = 0f;
-                    // foreach (Vector3 point in value.targetPoints) {
-                    //     sum += point;
-                    //     weight += 1f;
-                    // }
-                    // foreach (Vector3 point in value.unwantedPoints) {
-                    //     sum += point;
-                    //     weight += 1f;
-                    // }
-                    // if (networkPass.isPlanar) {
-                    //     sum.z = 0f;
-                    // }
-                    // transform.position = sum / weight;
+                    Vector3 sum = Vector3.zero;
+                    float weight = 0f;
+                    foreach (Vector3 point in value.targetPoints) {
+                        sum += point;
+                        weight += 1f;
+                    }
+                    foreach (Vector3 point in value.unwantedPoints) {
+                        sum += point;
+                        weight += 1f;
+                    }
+                    if (networkPass.isPlanar) {
+                        sum.z = 0f;
+                    }
+                    transform.position = Vector3.Lerp(value.origin, sum / weight, value.manualAutoPositionRatio);
+                    
                     foreach (Vector3 point in value.targetPoints) {
                         var p = targetPool.Get();
-                        p.transform.position = point;
+                        p.transform.position = new Vector3(point.x, point.y, networkPass.isPlanar ? Mathf.PI * ZoomScale : point.z);
                         p.transform.localScale = Vector3.one * ZoomScale;
                     }
 
                     foreach (Vector3 point in value.unwantedPoints) {
                         var p = unwantedPool.Get();
-                        p.transform.position = point;
+                        p.transform.position = new Vector3(point.x, point.y, networkPass.isPlanar ? ZoomScale : point.z);
                         p.transform.localScale = Vector3.one * ZoomScale;
                     }
 

@@ -18,6 +18,7 @@ MonoBehaviour:
   minTime: 30
   minMaxScores: {x: 50, y: 1000}
   origin: {x: 0, y: 0, z: 0}
+  manualAutoPositionRatio: 0.33333334
   zoomFactor: 1
   architecture: 1
   targetPoints:
