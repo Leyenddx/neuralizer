@@ -18,6 +18,7 @@ MonoBehaviour:
   minTime: 10
   minMaxScores: {x: 10, y: 500}
   origin: {x: 0, y: 0, z: 0}
+  manualAutoPositionRatio: 0.33333334
   zoomFactor: 1
   architecture: 0
   targetPoints:
@@ -30,9 +31,10 @@ MonoBehaviour:
   - {x: 2, y: 4, z: 1}
   - {x: 2, y: 5, z: 1}
   - {x: 3, y: 3, z: 1}
-  weightRange: {x: -5, y: 5}
-  biasRange: {x: -2, y: 2}
+  weightRange: {x: -1, y: 1}
+  biasRange: {x: -5, y: 5}
   useOrbitalCamera: 0
+  inputs: 2
   allowEditing: 1
   allowTraining: 0
   allowRandomizeNeuron: 0

@@ -108,5 +108,13 @@ namespace Neuralizer {
             target2DRotation.x = Mathf.Round(target2DRotation.x / stepSize) * stepSize;
             targetComposerShift.Set(0f, 0f);
         }
+
+        public void ClearCamera() {
+            targetRotation.x = 0f;
+            targetRotation.y = 0f;
+            target2DRotation.x = 0f;
+            targetComposerShift.Set(0f, 0f);
+        }
+
     }
 }

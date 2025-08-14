@@ -1,13 +1,13 @@
 {
-    "name": "Neuralizer",
-    "short_name": "Neuralizer",
+    "name": "Press Start To learn",
+    "short_name": "Press Start To learn",
     "start_url": "index.html",
     "display": "fullscreen",
     "background_color": "#231F20",
-    "theme_color": "#000",
+    "theme_color": "#745a0a",
     "description": "¡Aprende redes neuronales de forma didáctica!",
     "icons": [{
-      "src": "TemplateData/icons/unity-logo-dark.png",
+      "src": "TemplateData/icons/logo-dark.png",
       "sizes": "144x144",
       "type": "image/png",
       "purpose": "any maskable"

@@ -87,7 +87,7 @@ namespace Neuralizer {
                     case TargetNeuron.AD:
                         OnShowXWeight?.Invoke(true);
                         OnShowYWeight?.Invoke(true);
-                        OnShowZWeight?.Invoke(network.Scene.useOrbitalCamera);
+                        OnShowZWeight?.Invoke(network.Scene.ZInputNeeded);
                         OnShowWWeight?.Invoke(false);
                         targetFlexWidth.Set(restFlexWidth.x * 2f, restFlexWidth.y, restFlexWidth.z);
                     break;
@@ -107,7 +107,7 @@ namespace Neuralizer {
                             case Architecture.Perceptron:
                                 OnShowXWeight?.Invoke(true);
                                 OnShowYWeight?.Invoke(true);
-                                OnShowZWeight?.Invoke(network.Scene.useOrbitalCamera);
+                                OnShowZWeight?.Invoke(network.Scene.ZInputNeeded);
                                 OnShowWWeight?.Invoke(false);
                             break;
                             case Architecture.OneLayer:

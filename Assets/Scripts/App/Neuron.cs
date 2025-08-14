@@ -21,10 +21,6 @@ namespace Neuralizer {
 
         public bool enabled = true;
         public Vector4 weights;
-        public bool enableWeightX = true;
-        public bool enableWeightY = true;
-        public bool enableWeightZ = true;
-        public bool enableWeightW = true;
         public float bias;
         public ActivationFunction activationFunction;
         public Material material;
@@ -39,22 +35,6 @@ namespace Neuralizer {
             };
         }
 
-        public float EvaluateDDXActivationFunction(float value) {
-            switch(activationFunction) {
-                case ActivationFunction.Stepped:
-                    return Mathf.Approximately(value, 0f) ? Mathf.Infinity : 0f;
-                case ActivationFunction.ReLu:
-                    return value > 0f ? 1f : 0f;
-                case ActivationFunction.Sigmoid:
-                    float s = Sigmoid(value);
-                    return s + (1f - s);
-                case ActivationFunction.TanH:
-                    float t = Tanh(value);
-                    return 1f - (t * t);
-            }
-            return 1f;
-        }
-
         public float Sample(Vector3 value) {
             return enabled ? EvaluateActivationFunction(Vector3.Dot(value, weights) + bias) : 0f;
         }
@@ -63,19 +43,9 @@ namespace Neuralizer {
             return enabled ? EvaluateActivationFunction(Vector4.Dot(value, weights) + bias) : 0f;
         }
 
-        public float Error(Vector3 value, float expected) {
-            float output = Vector3.Dot(value, weights) + bias;
-            return (expected - EvaluateActivationFunction(output)) * EvaluateDDXActivationFunction(output);
+        public float Sample(Vector2 value) {
+            return enabled ? EvaluateActivationFunction(Vector2.Dot(value, weights) + bias) : 0f;
         }
-
-        public float Error(Vector4 value, float expected) {
-            float output = Vector4.Dot(value, weights) + bias;
-            return (expected - EvaluateActivationFunction(output)) * EvaluateDDXActivationFunction(output);
-        }
-
-        // public float Sample(Vector2 value) {
-        //     return enabled ? EvaluateActivationFunction(Vector2.Dot(value, weights) + bias) : 0f;
-        // }
 
         public void PrepareForRenderPass(Material baseMaterial) {
             material = Object.Instantiate(baseMaterial);

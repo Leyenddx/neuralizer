@@ -22,6 +22,7 @@ namespace Neuralizer.Data {
         [Header("Scene Constraints")] public Vector2 weightRange = new(-15f, 15f);
         public Vector2 biasRange = new(-30f, 30f);
         public bool useOrbitalCamera = false;
+        public WorldInputs inputs = WorldInputs.XY;
         public bool allowEditing = true;
         public bool allowTraining = false;
         public bool allowRandomizeNeuron = true;
@@ -50,6 +51,8 @@ namespace Neuralizer.Data {
 
         private string ScoreboardID => string.IsNullOrEmpty(scoreboardID) ? "" : scoreboardID;
 
+        public bool ZInputNeeded => useOrbitalCamera && inputs == WorldInputs.XYZ;
+        
 
         private string IsCompletedString => StorageName + ".completed";
         
@@ -57,12 +60,13 @@ namespace Neuralizer.Data {
         private string ScoreString => ScoreboardID + ".score";
         private string RatioString => ScoreboardID + ".ratio";
 
-        public void SubmitResult(float time, float ratio = 1f) {
-            if (IsCompleted) return;
+        public bool SubmitResult(float time, float ratio = 1f) {
+            if (IsCompleted) return false;
             Time = time;
             Ratio = ratio;
             Score = Mathf.FloorToInt(Mathf.Lerp(minMaxScores.x, minMaxScores.y, Mathf.Clamp01(minTime / Mathf.Max(time, Mathf.Epsilon))) * Mathf.Lerp(successThreshold, 1f, ratio));
             OnUpdated?.Invoke();
+            return true;
         }
 
         public bool IsCompleted {
@@ -88,9 +92,17 @@ namespace Neuralizer.Data {
             private set => PlayerPrefs.SetFloat(RatioString, value);
         }
 
-        public string FormattedTime => System.TimeSpan.FromSeconds(Time).ToString(@"mm\:ss");
+        public static string FormatTime(float time) {
+            return System.TimeSpan.FromSeconds(time).ToString(@"mm\:ss");
+        }
+
+        public string FormattedTime => FormatTime(Time);
+
+        public static string FormatRatio(float ratio) {
+            return Mathf.RoundToInt(ratio * 100f) + "%";
+        }
         
-        public string FormattedRatio => Mathf.RoundToInt(Ratio * 100f) + "%";
+        public string FormattedRatio => FormatRatio((Ratio));
 
         public float NormalizedScore => Mathf.InverseLerp(minMaxScores.x, minMaxScores.y, (float)Score);
 
@@ -136,6 +148,14 @@ namespace Neuralizer.Data {
                 neuron.activationFunction = activationFunction;
                 neuron.enabled = displayNeuron;
             }
+        }
+
+        public enum WorldInputs 
+        {
+            [InspectorName("2D XY")]
+            XY = 2,
+            [InspectorName("3D XYZ")]
+            XYZ = 3
         }
     }
 }

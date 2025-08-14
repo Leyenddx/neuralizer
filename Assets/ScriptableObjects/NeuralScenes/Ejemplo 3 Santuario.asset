@@ -265,7 +265,8 @@ MonoBehaviour:
   - {x: 0.9693, y: 0.5231, z: 0.05}
   weightRange: {x: -20, y: 20}
   biasRange: {x: -30, y: 30}
-  useOrbitalCamera: 0
+  useOrbitalCamera: 1
+  inputs: 2
   allowEditing: 1
   allowTraining: 0
   allowRandomizeNeuron: 0

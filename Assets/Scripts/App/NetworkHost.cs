@@ -27,6 +27,7 @@ namespace Neuralizer {
         [SerializeField] private UnityEvent<string> OnDisplayName;
         [SerializeField] private UnityEvent<bool> OnOrbitalCamera;
         [SerializeField] private UnityEvent<bool> OnPlanarCamera;
+        [SerializeField] private UnityEvent<bool> OnZInputNeeded;
         [SerializeField] private UnityEvent OnSceneLoaded;
         [SerializeField] private UnityEvent OnSceneUnloaded;
         [SerializeField] private UnityEvent<bool> OnAllowScoring;
@@ -43,10 +44,11 @@ namespace Neuralizer {
         [SerializeField] private UnityEvent<string> OnTimeString;
         [SerializeField] private UnityEvent<string> OnScoreString;
         [SerializeField] private UnityEvent<string> OnRatioString;
+        [SerializeField] private UnityEvent<bool> OnShowMedal;
         [SerializeField] private UnityEvent<string> OnMedalName;
         [SerializeField] private UnityEvent<Sprite> OnMedalSprite;
         [SerializeField] private UnityEvent<string> OnMedalDescription;
-        
+
         private NeuralScene currentScene;
         private UnityEngine.Pool.ObjectPool<SamplePoint> targetPool;
         private UnityEngine.Pool.ObjectPool<SamplePoint> unwantedPool;
@@ -68,58 +70,6 @@ namespace Neuralizer {
                     value.BC.ApplyTo(BC);
                     value.BD.ApplyTo(BD);
                     value.Output.ApplyTo(Output);
-                    AA.enableWeightX = true;
-                    AA.enableWeightY = true;
-                    AA.enableWeightZ = value.useOrbitalCamera;
-                    AA.enableWeightW = false;
-                    AB.enableWeightX = true;
-                    AB.enableWeightY = true;
-                    AB.enableWeightZ = value.useOrbitalCamera;
-                    AB.enableWeightW = false;
-                    AC.enableWeightX = true;
-                    AC.enableWeightY = true;
-                    AC.enableWeightZ = value.useOrbitalCamera;
-                    AC.enableWeightW = false;
-                    AD.enableWeightX = true;
-                    AD.enableWeightY = true;
-                    AD.enableWeightZ = value.useOrbitalCamera;
-                    AD.enableWeightW = false;
-                    BA.enableWeightX = AA.enabled;
-                    BA.enableWeightY = AB.enabled;
-                    BA.enableWeightZ = AC.enabled;
-                    BA.enableWeightW = AD.enabled;
-                    BB.enableWeightX = AA.enabled;
-                    BB.enableWeightY = AB.enabled;
-                    BB.enableWeightZ = AC.enabled;
-                    BB.enableWeightW = AD.enabled;
-                    BC.enableWeightX = AA.enabled;
-                    BC.enableWeightY = AB.enabled;
-                    BC.enableWeightZ = AC.enabled;
-                    BC.enableWeightW = AD.enabled;
-                    BD.enableWeightX = AA.enabled;
-                    BD.enableWeightY = AB.enabled;
-                    BD.enableWeightZ = AC.enabled;
-                    BD.enableWeightW = AD.enabled;
-                    switch (value.architecture) {
-                        case Architecture.Perceptron:
-                            Output.enableWeightX = true;
-                            Output.enableWeightY = true;
-                            Output.enableWeightZ = value.useOrbitalCamera;
-                            Output.enableWeightW = true;
-                        break;
-                        case Architecture.OneLayer:
-                            Output.enableWeightX = AA.enabled;
-                            Output.enableWeightY = AB.enabled;
-                            Output.enableWeightZ = AC.enabled;
-                            Output.enableWeightW = AD.enabled;
-                        break;
-                        case Architecture.TwoLayers:
-                            Output.enableWeightX = BA.enabled;
-                            Output.enableWeightY = BB.enabled;
-                            Output.enableWeightZ = BC.enabled;
-                            Output.enableWeightW = BD.enabled;
-                        break;
-                    }
 
                     networkPass.architecture = value.architecture;
                     networkPass.isPlanar = !Scene.useOrbitalCamera;
@@ -137,24 +87,29 @@ namespace Neuralizer {
                         sum += point;
                         weight += 1f;
                     }
+
                     foreach (Vector3 point in value.unwantedPoints) {
                         sum += point;
                         weight += 1f;
                     }
+
                     if (networkPass.isPlanar) {
                         sum.z = 0f;
                     }
+
                     transform.position = Vector3.Lerp(value.origin, sum / weight, value.manualAutoPositionRatio);
-                    
+
                     foreach (Vector3 point in value.targetPoints) {
                         var p = targetPool.Get();
-                        p.transform.position = new Vector3(point.x, point.y, networkPass.isPlanar ? Mathf.PI * ZoomScale : point.z);
+                        p.transform.position = new Vector3(point.x, point.y,
+                            networkPass.isPlanar ? Mathf.PI * ZoomScale : point.z);
                         p.transform.localScale = Vector3.one * ZoomScale;
                     }
 
                     foreach (Vector3 point in value.unwantedPoints) {
                         var p = unwantedPool.Get();
-                        p.transform.position = new Vector3(point.x, point.y, networkPass.isPlanar ? ZoomScale : point.z);
+                        p.transform.position =
+                            new Vector3(point.x, point.y, networkPass.isPlanar ? ZoomScale : point.z);
                         p.transform.localScale = Vector3.one * ZoomScale;
                     }
 
@@ -162,6 +117,7 @@ namespace Neuralizer {
                     OnDisplayName?.Invoke(value.DisplayName);
                     OnPlanarCamera?.Invoke(!value.useOrbitalCamera);
                     OnOrbitalCamera?.Invoke(value.useOrbitalCamera);
+                    OnZInputNeeded?.Invoke(value.ZInputNeeded);
                     OnAllowTraining?.Invoke(value.allowTraining);
                     OnAllowRandomizeNeuron?.Invoke(value.allowRandomizeNeuron);
                     OnAllowRandomizeNetwork?.Invoke(value.allowRandomizeNetwork);
@@ -179,6 +135,7 @@ namespace Neuralizer {
                     OnDisplayName?.Invoke("");
                     OnPlanarCamera?.Invoke(true);
                     OnOrbitalCamera?.Invoke(false);
+                    OnZInputNeeded?.Invoke(false);
                     OnAllowTraining?.Invoke(false);
                     OnAllowRandomizeNeuron?.Invoke(false);
                     OnAllowRandomizeNetwork?.Invoke(false);
@@ -196,7 +153,7 @@ namespace Neuralizer {
         public Neuron BC { get; } = new();
         public Neuron BD { get; } = new();
         public Neuron Output { get; } = new();
-        
+
         public float ZoomScale { get; private set; } = 1f;
 
         private void Awake() {
@@ -356,17 +313,39 @@ namespace Neuralizer {
         }
 
         public float EvaluateAt(Vector3 point) {
-            switch (Scene.architecture) {
+            switch (Scene.inputs) {
                 default:
-                case Architecture.Perceptron:
-                    return Output.Sample(point);
-                case Architecture.OneLayer:
-                    return Output.Sample(new Vector4(AA.Sample(point), AB.Sample(point), AC.Sample(point),
-                        AD.Sample(point)));
-                case Architecture.TwoLayers:
-                    Vector4 layer2_1 = new(AA.Sample(point), AB.Sample(point), AC.Sample(point), AD.Sample(point));
-                    return Output.Sample(new Vector4(BA.Sample(layer2_1), BB.Sample(layer2_1), BC.Sample(layer2_1),
-                        BD.Sample(layer2_1)));
+                case NeuralScene.WorldInputs.XY:
+                    Vector2 input = new(point.x, point.y);
+                    switch (Scene.architecture) {
+                        default:
+                        case Architecture.Perceptron:
+                            return Output.Sample(input);
+                        case Architecture.OneLayer:
+                            return Output.Sample(new Vector4(AA.Sample(input), AB.Sample(input), AC.Sample(input),
+                                AD.Sample(input)));
+                        case Architecture.TwoLayers:
+                            Vector4 layer2_1 = new(AA.Sample(input), AB.Sample(input), AC.Sample(input),
+                                AD.Sample(input));
+                            return Output.Sample(new Vector4(BA.Sample(layer2_1), BB.Sample(layer2_1),
+                                BC.Sample(layer2_1),
+                                BD.Sample(layer2_1)));
+                    }
+                case NeuralScene.WorldInputs.XYZ:
+                    switch (Scene.architecture) {
+                        default:
+                        case Architecture.Perceptron:
+                            return Output.Sample(point);
+                        case Architecture.OneLayer:
+                            return Output.Sample(new Vector4(AA.Sample(point), AB.Sample(point), AC.Sample(point),
+                                AD.Sample(point)));
+                        case Architecture.TwoLayers:
+                            Vector4 layer2_1 = new(AA.Sample(point), AB.Sample(point), AC.Sample(point),
+                                AD.Sample(point));
+                            return Output.Sample(new Vector4(BA.Sample(layer2_1), BB.Sample(layer2_1),
+                                BC.Sample(layer2_1),
+                                BD.Sample(layer2_1)));
+                    }
             }
         }
 
@@ -406,29 +385,44 @@ namespace Neuralizer {
             if (ratio >= Scene.successThreshold) {
                 OnValidNetworkSubmitted?.Invoke();
                 if (Scene.AllowScoring) {
-                    
-                    Scene.SubmitResult(Time.time - sceneStartTime, ratio);
-                    
-                    Medal medal;
-                    medal = medals.GetFromRatio(Scene.NormalizedScore);
-                    OnTimeString?.Invoke(Scene.FormattedTime);
-                    OnScoreString?.Invoke(Scene.Score.ToString());
-                    OnRatioString?.Invoke(Scene.FormattedRatio);
-                    if (medal != null) {
-                        OnMedalName?.Invoke(medal.name);
-                        OnMedalSprite?.Invoke(medal.sprite);
-                        OnMedalDescription?.Invoke(medal.description);
+                    bool awardMedal = Scene.SubmitResult(Time.time - sceneStartTime, ratio);
+
+                    OnShowMedal?.Invoke(awardMedal);
+                    if (awardMedal) {
+                        Medal medal;
+                        medal = medals.GetFromRatio(Scene.NormalizedScore);
+                        OnTimeString?.Invoke(Scene.FormattedTime);
+                        OnRatioString?.Invoke(Scene.FormattedRatio);
+                        OnScoreString?.Invoke(Scene.Score.ToString());
+                        if (medal != null) {
+                            OnMedalName?.Invoke(medal.name);
+                            OnMedalSprite?.Invoke(medal.sprite);
+                            OnMedalDescription?.Invoke(medal.description);
+                        }
+                        else {
+                            OnMedalName?.Invoke("");
+                            OnMedalSprite?.Invoke(null);
+                            OnMedalDescription?.Invoke("");
+                        }
                     } else {
+                        OnTimeString?.Invoke(NeuralScene.FormatTime(Time.time - sceneStartTime));
+                        OnRatioString?.Invoke(NeuralScene.FormatRatio(ratio));
                         OnMedalName?.Invoke("");
                         OnMedalSprite?.Invoke(null);
                         OnMedalDescription?.Invoke("");
                     }
+                }
+                else {
+                    OnShowMedal?.Invoke(false);
                 }
 
                 Scene.IsCompleted = true;
             }
             else {
                 OnInvalidNetworkSubmitted?.Invoke();
+                if (Scene.AllowScoring) { 
+                    Scene.IsCompleted = true;
+                }
             }
         }
     }
