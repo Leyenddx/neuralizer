@@ -6,14 +6,10 @@ namespace Neuralizer.UI {
     public class UILine : MonoBehaviour {
         
         [SerializeField] private float thickness = 5f;
-        [SerializeField] private float lengthOffset = 0f;
         [SerializeField] private RectTransform from;
         [SerializeField] private RectTransform to;
         [SerializeField] private RectTransform rectTransform;
-
-        private void Awake() {
-            rectTransform = GetComponent<RectTransform>();
-        }
+        [SerializeField] private Canvas canvas;
 
         private void OnGUI() {
             if (!from) return;
@@ -28,13 +24,14 @@ namespace Neuralizer.UI {
             
             rectTransform.position = (from.position + to.position) / 2f;
             Vector3 dif = to.position - from.position;
-            rectTransform.sizeDelta = new Vector3(dif.magnitude + lengthOffset, thickness);
+            rectTransform.sizeDelta = new Vector3(dif.magnitude / canvas.scaleFactor, thickness);
             rectTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 180f * Mathf.Atan(dif.y / dif.x) / Mathf.PI));
         }
 
 #if UNITY_EDITOR
         private void OnValidate() {
             rectTransform ??= GetComponent<RectTransform>();
+            canvas ??= rectTransform.GetComponentInParent<Canvas>();
         }
 #endif
     }

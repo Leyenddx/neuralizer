@@ -115,9 +115,12 @@ namespace Neuralizer {
                     value.Output.ApplyTo(Output);
 
                     networkPass.architecture = value.architecture;
-                    networkPass.isPlanar = !value.useOrbitalCamera;
+                    var isPlanar = !value.useOrbitalCamera;
+                    networkPass.isPlanar = isPlanar;
                     planarGraph.Enabled = networkPass.isPlanar;
-                    fadeZ.Enabled = value.useOrbitalCamera && value.inputs == NeuralScene.WorldInputs.XY;
+
+					var fz = value.useOrbitalCamera && value.inputs == NeuralScene.WorldInputs.XY;
+                    fadeZ.Enabled = fz;
 
                     ZoomScale = 1f / value.zoomFactor;
                     Shader.SetGlobalFloat(ZoomScale_ID, ZoomScale);
@@ -137,7 +140,7 @@ namespace Neuralizer {
                         weight += 1f;
                     }
 
-                    if (networkPass.isPlanar) {
+                    if (!value.useOrbitalCamera || value.inputs == NeuralScene.WorldInputs.XY) {
                         sum.z = 0f;
                     }
 
@@ -146,14 +149,14 @@ namespace Neuralizer {
                     foreach (Vector3 point in value.targetPoints) {
                         var p = targetPool.Get();
                         p.transform.position = new Vector3(point.x, point.y,
-                            networkPass.isPlanar ? Mathf.PI * ZoomScale : point.z);
+                            isPlanar ? Mathf.PI * ZoomScale : fz ? 0f : point.z);
                         p.transform.localScale = Vector3.one * ZoomScale;
                     }
 
                     foreach (Vector3 point in value.unwantedPoints) {
                         var p = unwantedPool.Get();
                         p.transform.position =
-                            new Vector3(point.x, point.y, networkPass.isPlanar ? ZoomScale : point.z);
+                            new Vector3(point.x, point.y, isPlanar ? ZoomScale : fz ? 0f : point.z);
                         p.transform.localScale = Vector3.one * ZoomScale;
                     }
 

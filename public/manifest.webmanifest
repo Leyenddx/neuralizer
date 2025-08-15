@@ -1,10 +1,10 @@
 {
-    "name": "Press Start To learn",
+    "name": "Press Start To Learn",
     "short_name": "PS2L",
     "start_url": "index.html",
     "display": "fullscreen",
-    "background_color": "#231F20",
-    "theme_color": "#745a0a",
+    "background_color": "#1DB43B",
+    "theme_color": "#24ec75",
     "description": "¡Aprende redes neuronales de forma didáctica!",
     "icons": [
       {

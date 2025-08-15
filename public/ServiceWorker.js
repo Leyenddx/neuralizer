@@ -1,4 +1,4 @@
-const cacheName = "Desert Hare Studios-Press Start To learn-1.0.0";
+const cacheName = "Desert Hare Studios-Press Start To Learn-1.0.0";
 const contentToCache = [
     "Build/public.loader.js",
     "Build/public.framework.js.unityweb",

@@ -1912,7 +1912,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: -876546973899608171, guid: c61f1ea7ab5cd174a921997a4d6d7b19, type: 3}
-  m_Color: {r: 0.6784314, g: 0.09803922, b: 0.12941177, a: 1}
+  m_Color: {r: 0.6784314, g: 0.09803922, b: 0.12941177, a: 0.9490196}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1990,7 +1990,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -4.0408325, y: -95.94769}
-  m_SizeDelta: {x: 53.46936, y: 5}
+  m_SizeDelta: {x: 115.10202, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &123335593
 MonoBehaviour:
@@ -2004,11 +2004,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 875442760}
-  to: {fileID: 1446457418}
+  thickness: 4
+  from: {fileID: 1926340647}
+  to: {fileID: 1863972016}
   rectTransform: {fileID: 123335592}
+  canvas: {fileID: 1757638083}
 --- !u!114 &123335594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2029,7 +2029,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3060,11 +3060,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2078495206}
-  to: {fileID: 601074848}
+  thickness: 4
+  from: {fileID: 1565148568}
+  to: {fileID: 1022128392}
   rectTransform: {fileID: 185580193}
+  canvas: {fileID: 1757638083}
 --- !u!114 &185580191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3085,7 +3085,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3110,7 +3110,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 185580189}
-  m_LocalRotation: {x: -0, y: -0, z: -0.40690804, w: 0.91346914}
+  m_LocalRotation: {x: -0, y: -0, z: -0.40690807, w: 0.91346914}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3120,7 +3120,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -4.0408325, y: 31.982544}
-  m_SizeDelta: {x: 129.452, y: 5}
+  m_SizeDelta: {x: 172.08899, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &185580194
 CanvasGroup:
@@ -3414,11 +3414,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2106303690}
-  to: {fileID: 120787568}
+  thickness: 4
+  from: {fileID: 1027679711}
+  to: {fileID: 2103638627}
   rectTransform: {fileID: 197664451}
+  canvas: {fileID: 1757638083}
 --- !u!114 &197664453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3439,7 +3439,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3656,11 +3656,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1206332575}
-  to: {fileID: 120787568}
+  thickness: 4
+  from: {fileID: 1217310438}
+  to: {fileID: 2103638627}
   rectTransform: {fileID: 206702111}
+  canvas: {fileID: 1757638083}
 --- !u!114 &206702113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3681,7 +3681,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3743,11 +3743,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2133713531}
-  to: {fileID: 1821726111}
+  thickness: 4
+  from: {fileID: 978600830}
+  to: {fileID: 55548103}
   rectTransform: {fileID: 209965523}
+  canvas: {fileID: 1757638083}
 --- !u!114 &209965521
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3768,7 +3768,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3803,7 +3803,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -4.0408325, y: 31.982574}
-  m_SizeDelta: {x: 53.46936, y: 5}
+  m_SizeDelta: {x: 115.10202, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &209965524
 CanvasGroup:
@@ -4397,7 +4397,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 233241516}
-  m_LocalRotation: {x: -0, y: -0, z: 0.3489412, w: 0.93714464}
+  m_LocalRotation: {x: -0, y: -0, z: 0.34894124, w: 0.93714464}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4406,8 +4406,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -117.081604, y: 47.973846}
-  m_SizeDelta: {x: 95.60698, y: 5}
+  m_AnchoredPosition: {x: -117.081635, y: 47.973816}
+  m_SizeDelta: {x: 146.70523, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &233241518
 MonoBehaviour:
@@ -4421,11 +4421,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1206332575}
-  to: {fileID: 2078495206}
+  thickness: 4
+  from: {fileID: 1217310438}
+  to: {fileID: 1565148568}
   rectTransform: {fileID: 233241517}
+  canvas: {fileID: 1757638083}
 --- !u!114 &233241519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4446,7 +4446,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4706,8 +4706,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -117.081604, y: -26.65216}
-  m_SizeDelta: {x: 115.27692, y: 5}
+  m_AnchoredPosition: {x: -117.081604, y: -26.65213}
+  m_SizeDelta: {x: 161.45769, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &236185535
 MonoBehaviour:
@@ -4721,11 +4721,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1486928314}
-  to: {fileID: 2133713531}
+  thickness: 4
+  from: {fileID: 1089946994}
+  to: {fileID: 978600830}
   rectTransform: {fileID: 236185534}
+  canvas: {fileID: 1757638083}
 --- !u!114 &236185536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4746,7 +4746,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5283,7 +5283,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 263926230}
-  m_LocalRotation: {x: -0, y: -0, z: 0.22201905, w: 0.97504234}
+  m_LocalRotation: {x: -0, y: -0, z: 0.222019, w: 0.97504234}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5293,7 +5293,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -117.081604, y: -58.634705}
-  m_SizeDelta: {x: 64.1561, y: 5}
+  m_SizeDelta: {x: 123.11707, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &263926232
 MonoBehaviour:
@@ -5307,11 +5307,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1486928314}
-  to: {fileID: 1165691749}
+  thickness: 4
+  from: {fileID: 1089946994}
+  to: {fileID: 1953154534}
   rectTransform: {fileID: 263926231}
+  canvas: {fileID: 1757638083}
 --- !u!114 &263926233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5332,7 +5332,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7681,11 +7681,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2078495206}
-  to: {fileID: 1446457418}
+  thickness: 4
+  from: {fileID: 1565148568}
+  to: {fileID: 1863972016}
   rectTransform: {fileID: 420482525}
+  canvas: {fileID: 1757638083}
 --- !u!114 &420482523
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7706,7 +7706,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7741,7 +7741,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -4.0408325, y: 0}
-  m_SizeDelta: {x: 198.35791, y: 5}
+  m_SizeDelta: {x: 223.76843, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &420482526
 CanvasGroup:
@@ -8201,11 +8201,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1446457418}
-  to: {fileID: 120787568}
+  thickness: 4
+  from: {fileID: 1863972016}
+  to: {fileID: 2103638627}
   rectTransform: {fileID: 474669782}
+  canvas: {fileID: 1757638083}
 --- !u!114 &474669780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8226,7 +8226,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8251,7 +8251,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 474669778}
-  m_LocalRotation: {x: -0, y: -0, z: 0.34065995, w: 0.94018656}
+  m_LocalRotation: {x: -0, y: -0, z: 0.34066, w: 0.94018656}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -8260,8 +8260,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 111.02042, y: -47.973877}
-  m_SizeDelta: {x: 99.71385, y: 5}
+  m_AnchoredPosition: {x: 111.020386, y: -47.973846}
+  m_SizeDelta: {x: 149.78539, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &474669783
 CanvasGroup:
@@ -8794,7 +8794,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -4.0408325, y: 0}
-  m_SizeDelta: {x: 75.57532, y: 5}
+  m_SizeDelta: {x: 131.68149, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &508259472
 MonoBehaviour:
@@ -8808,11 +8808,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1165691749}
-  to: {fileID: 1821726111}
+  thickness: 4
+  from: {fileID: 1953154534}
+  to: {fileID: 55548103}
   rectTransform: {fileID: 508259471}
+  canvas: {fileID: 1757638083}
 --- !u!114 &508259473
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8833,7 +8833,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -9065,7 +9065,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 541588841}
-  m_LocalRotation: {x: -0, y: -0, z: 0.13518915, w: 0.9908198}
+  m_LocalRotation: {x: -0, y: -0, z: 0.1351892, w: 0.9908198}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -9075,7 +9075,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 111.02042, y: -15.991272}
-  m_SizeDelta: {x: 59.17894, y: 5}
+  m_SizeDelta: {x: 119.3842, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &541588843
 MonoBehaviour:
@@ -9089,11 +9089,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 601074848}
-  to: {fileID: 120787568}
+  thickness: 4
+  from: {fileID: 1022128392}
+  to: {fileID: 2103638627}
   rectTransform: {fileID: 541588842}
+  canvas: {fileID: 1757638083}
 --- !u!114 &541588844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9114,7 +9114,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -9252,11 +9252,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1165691749}
-  to: {fileID: 1446457418}
+  thickness: 4
+  from: {fileID: 1953154534}
+  to: {fileID: 1863972016}
   rectTransform: {fileID: 572243900}
+  canvas: {fileID: 1757638083}
 --- !u!114 &572243898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9277,7 +9277,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -9302,7 +9302,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 572243896}
-  m_LocalRotation: {x: -0, y: -0, z: -0.25090417, w: 0.968012}
+  m_LocalRotation: {x: -0, y: -0, z: -0.2509041, w: 0.968012}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -9312,7 +9312,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -4.0408325, y: -63.96515}
-  m_SizeDelta: {x: 75.5753, y: 5}
+  m_SizeDelta: {x: 131.68147, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &572243901
 CanvasGroup:
@@ -10443,11 +10443,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2078495206}
-  to: {fileID: 220692717}
+  thickness: 4
+  from: {fileID: 1565148568}
+  to: {fileID: 858682691}
   rectTransform: {fileID: 607716352}
+  canvas: {fileID: 1757638083}
 --- !u!114 &607716350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10468,7 +10468,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -10503,7 +10503,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -4.0408325, y: 95.94769}
-  m_SizeDelta: {x: 53.46936, y: 5}
+  m_SizeDelta: {x: 115.10202, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &607716353
 CanvasGroup:
@@ -10851,11 +10851,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2133713531}
-  to: {fileID: 120787568}
+  thickness: 4
+  from: {fileID: 978600830}
+  to: {fileID: 2103638627}
   rectTransform: {fileID: 620652660}
+  canvas: {fileID: 1757638083}
 --- !u!114 &620652658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10876,7 +10876,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -11111,11 +11111,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 875442760}
-  to: {fileID: 120787568}
+  thickness: 4
+  from: {fileID: 1926340647}
+  to: {fileID: 2103638627}
   rectTransform: {fileID: 629089503}
+  canvas: {fileID: 1757638083}
 --- !u!114 &629089501
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11136,7 +11136,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12491,7 +12491,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 692836516}
-  m_LocalRotation: {x: -0, y: -0, z: 0.25090408, w: 0.968012}
+  m_LocalRotation: {x: -0, y: -0, z: 0.2509041, w: 0.968012}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -12501,7 +12501,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -4.0408325, y: 63.96512}
-  m_SizeDelta: {x: 75.57529, y: 5}
+  m_SizeDelta: {x: 131.68146, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &692836518
 MonoBehaviour:
@@ -12515,11 +12515,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2133713531}
-  to: {fileID: 220692717}
+  thickness: 4
+  from: {fileID: 978600830}
+  to: {fileID: 858682691}
   rectTransform: {fileID: 692836517}
+  canvas: {fileID: 1757638083}
 --- !u!114 &692836519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12540,7 +12540,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12597,7 +12597,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 695020672}
-  m_LocalRotation: {x: -0, y: -0, z: -0.3489413, w: 0.93714464}
+  m_LocalRotation: {x: -0, y: -0, z: -0.34894124, w: 0.93714464}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -12606,8 +12606,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -117.081604, y: -47.973877}
-  m_SizeDelta: {x: 95.606995, y: 5}
+  m_AnchoredPosition: {x: -117.081604, y: -47.973846}
+  m_SizeDelta: {x: 146.70525, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &695020674
 MonoBehaviour:
@@ -12621,11 +12621,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1206332575}
-  to: {fileID: 875442760}
+  thickness: 4
+  from: {fileID: 1217310438}
+  to: {fileID: 1926340647}
   rectTransform: {fileID: 695020673}
+  canvas: {fileID: 1757638083}
 --- !u!114 &695020675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12646,7 +12646,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -12808,7 +12808,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 709933361}
-  m_LocalRotation: {x: -0, y: -0, z: -0.25090408, w: 0.968012}
+  m_LocalRotation: {x: -0, y: -0, z: -0.2509041, w: 0.968012}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -12818,7 +12818,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -4.0408325, y: 63.96512}
-  m_SizeDelta: {x: 75.57529, y: 5}
+  m_SizeDelta: {x: 131.68146, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &709933363
 MonoBehaviour:
@@ -12832,11 +12832,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2078495206}
-  to: {fileID: 1821726111}
+  thickness: 4
+  from: {fileID: 1565148568}
+  to: {fileID: 55548103}
   rectTransform: {fileID: 709933362}
+  canvas: {fileID: 1757638083}
 --- !u!114 &709933364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12857,7 +12857,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -14619,7 +14619,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -4.0408325, y: 0}
-  m_SizeDelta: {x: 198.35791, y: 5}
+  m_SizeDelta: {x: 223.76843, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &717987188
 MonoBehaviour:
@@ -14633,11 +14633,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 875442760}
-  to: {fileID: 220692717}
+  thickness: 4
+  from: {fileID: 1926340647}
+  to: {fileID: 858682691}
   rectTransform: {fileID: 717987187}
+  canvas: {fileID: 1757638083}
 --- !u!114 &717987189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14658,7 +14658,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -15996,7 +15996,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 858119218}
-  m_LocalRotation: {x: -0, y: -0, z: 0.047865286, w: 0.9988538}
+  m_LocalRotation: {x: -0, y: -0, z: 0.047865357, w: 0.9988538}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -16006,7 +16006,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -117.081604, y: 90.61728}
-  m_SizeDelta: {x: 48.65393, y: 5}
+  m_SizeDelta: {x: 111.49045, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &858119220
 MonoBehaviour:
@@ -16020,11 +16020,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2106303690}
-  to: {fileID: 2078495206}
+  thickness: 4
+  from: {fileID: 1027679711}
+  to: {fileID: 1565148568}
   rectTransform: {fileID: 858119219}
+  canvas: {fileID: 1757638083}
 --- !u!114 &858119221
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16045,7 +16045,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -16778,7 +16778,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 892970905}
-  m_LocalRotation: {x: -0, y: -0, z: 0.25090417, w: 0.968012}
+  m_LocalRotation: {x: -0, y: -0, z: 0.2509041, w: 0.968012}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -16788,7 +16788,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -4.0408325, y: -63.96515}
-  m_SizeDelta: {x: 75.5753, y: 5}
+  m_SizeDelta: {x: 131.68147, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &892970907
 MonoBehaviour:
@@ -16802,11 +16802,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 875442760}
-  to: {fileID: 601074848}
+  thickness: 4
+  from: {fileID: 1926340647}
+  to: {fileID: 1022128392}
   rectTransform: {fileID: 892970906}
+  canvas: {fileID: 1757638083}
 --- !u!114 &892970908
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16827,7 +16827,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -17556,7 +17556,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -4.0408325, y: 0}
-  m_SizeDelta: {x: 75.57532, y: 5}
+  m_SizeDelta: {x: 131.68149, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &915541236
 MonoBehaviour:
@@ -17570,11 +17570,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2133713531}
-  to: {fileID: 601074848}
+  thickness: 4
+  from: {fileID: 978600830}
+  to: {fileID: 1022128392}
   rectTransform: {fileID: 915541235}
+  canvas: {fileID: 1757638083}
 --- !u!114 &915541237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17595,7 +17595,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -18577,7 +18577,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -117.081604, y: 15.991272}
-  m_SizeDelta: {x: 53.994827, y: 5}
+  m_SizeDelta: {x: 115.49612, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &946482808
 MonoBehaviour:
@@ -18591,11 +18591,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1206332575}
-  to: {fileID: 2133713531}
+  thickness: 4
+  from: {fileID: 1217310438}
+  to: {fileID: 978600830}
   rectTransform: {fileID: 946482807}
+  canvas: {fileID: 1757638083}
 --- !u!114 &946482809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18616,7 +18616,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -21694,7 +21694,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: -876546973899608171, guid: c61f1ea7ab5cd174a921997a4d6d7b19, type: 3}
-  m_Color: {r: 0.043137256, g: 0.41960785, b: 0.45490196, a: 0.9019608}
+  m_Color: {r: 0.043137256, g: 0.41960785, b: 0.45490196, a: 0.9490196}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -23195,7 +23195,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -117.081604, y: -15.991272}
-  m_SizeDelta: {x: 53.994827, y: 5}
+  m_SizeDelta: {x: 115.49612, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1255211957
 MonoBehaviour:
@@ -23209,11 +23209,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1206332575}
-  to: {fileID: 1165691749}
+  thickness: 4
+  from: {fileID: 1217310438}
+  to: {fileID: 1953154534}
   rectTransform: {fileID: 1255211956}
+  canvas: {fileID: 1757638083}
 --- !u!114 &1255211958
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23234,7 +23234,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -23649,11 +23649,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1486928314}
-  to: {fileID: 120787568}
+  thickness: 4
+  from: {fileID: 1089946994}
+  to: {fileID: 2103638627}
   rectTransform: {fileID: 1285241378}
+  canvas: {fileID: 1757638083}
 --- !u!114 &1285241380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23674,7 +23674,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -24016,7 +24016,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -117.081604, y: 58.63472}
-  m_SizeDelta: {x: 64.15611, y: 5}
+  m_SizeDelta: {x: 123.11708, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1326669609
 MonoBehaviour:
@@ -24030,11 +24030,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2106303690}
-  to: {fileID: 2133713531}
+  thickness: 4
+  from: {fileID: 1027679711}
+  to: {fileID: 978600830}
   rectTransform: {fileID: 1326669608}
+  canvas: {fileID: 1757638083}
 --- !u!114 &1326669610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -24055,7 +24055,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -25863,7 +25863,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1436480324}
-  m_LocalRotation: {x: -0, y: -0, z: -0.34065986, w: 0.9401866}
+  m_LocalRotation: {x: -0, y: -0, z: -0.34066, w: 0.94018656}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -25872,8 +25872,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 111.02042, y: 47.973846}
-  m_SizeDelta: {x: 99.71384, y: 5}
+  m_AnchoredPosition: {x: 111.020386, y: 47.973816}
+  m_SizeDelta: {x: 149.78537, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1436480326
 MonoBehaviour:
@@ -25887,11 +25887,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 220692717}
-  to: {fileID: 120787568}
+  thickness: 4
+  from: {fileID: 858682691}
+  to: {fileID: 2103638627}
   rectTransform: {fileID: 1436480325}
+  canvas: {fileID: 1757638083}
 --- !u!114 &1436480327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25912,7 +25912,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -26587,7 +26587,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: -876546973899608171, guid: c61f1ea7ab5cd174a921997a4d6d7b19, type: 3}
-  m_Color: {r: 0.043137256, g: 0.41960785, b: 0.45490196, a: 0.9019608}
+  m_Color: {r: 0.043137256, g: 0.41960785, b: 0.45490196, a: 0.9490196}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -27299,11 +27299,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2133713531}
-  to: {fileID: 1446457418}
+  thickness: 4
+  from: {fileID: 978600830}
+  to: {fileID: 1863972016}
   rectTransform: {fileID: 1533535532}
+  canvas: {fileID: 1757638083}
 --- !u!114 &1533535530
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27324,7 +27324,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -27358,8 +27358,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -4.0408325, y: -31.982574}
-  m_SizeDelta: {x: 129.45203, y: 5}
+  m_AnchoredPosition: {x: -4.0408325, y: -31.982544}
+  m_SizeDelta: {x: 172.08902, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &1533535533
 CanvasGroup:
@@ -28190,8 +28190,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -117.081604, y: -5.3304443}
-  m_SizeDelta: {x: 183.35275, y: 5}
+  m_AnchoredPosition: {x: -117.081604, y: -5.330414}
+  m_SizeDelta: {x: 212.51456, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1597707476
 MonoBehaviour:
@@ -28205,11 +28205,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2106303690}
-  to: {fileID: 875442760}
+  thickness: 4
+  from: {fileID: 1027679711}
+  to: {fileID: 1926340647}
   rectTransform: {fileID: 1597707475}
+  canvas: {fileID: 1757638083}
 --- !u!114 &1597707477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28230,7 +28230,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -28738,7 +28738,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -117.081604, y: 5.3304443}
-  m_SizeDelta: {x: 183.35269, y: 5}
+  m_SizeDelta: {x: 212.51451, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1630286488
 MonoBehaviour:
@@ -28752,11 +28752,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1486928314}
-  to: {fileID: 2078495206}
+  thickness: 4
+  from: {fileID: 1089946994}
+  to: {fileID: 1565148568}
   rectTransform: {fileID: 1630286487}
+  canvas: {fileID: 1757638083}
 --- !u!114 &1630286489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28777,7 +28777,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -28843,8 +28843,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -117.081604, y: -90.61728}
-  m_SizeDelta: {x: 48.653946, y: 5}
+  m_AnchoredPosition: {x: -117.081604, y: -90.61725}
+  m_SizeDelta: {x: 111.490456, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1638068710
 MonoBehaviour:
@@ -28858,11 +28858,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1486928314}
-  to: {fileID: 875442760}
+  thickness: 4
+  from: {fileID: 1089946994}
+  to: {fileID: 1926340647}
   rectTransform: {fileID: 1638068709}
+  canvas: {fileID: 1757638083}
 --- !u!114 &1638068711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28883,7 +28883,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -29107,7 +29107,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -117.081604, y: 26.65216}
-  m_SizeDelta: {x: 115.27693, y: 5}
+  m_SizeDelta: {x: 161.45769, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1644684504
 MonoBehaviour:
@@ -29121,11 +29121,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2106303690}
-  to: {fileID: 1165691749}
+  thickness: 4
+  from: {fileID: 1027679711}
+  to: {fileID: 1953154534}
   rectTransform: {fileID: 1644684503}
+  canvas: {fileID: 1757638083}
 --- !u!114 &1644684505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29146,7 +29146,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -31144,7 +31144,7 @@ Canvas:
   m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
-  m_PixelPerfect: 1
+  m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
@@ -31994,11 +31994,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1165691749}
-  to: {fileID: 601074848}
+  thickness: 4
+  from: {fileID: 1953154534}
+  to: {fileID: 1022128392}
   rectTransform: {fileID: 1779934363}
+  canvas: {fileID: 1757638083}
 --- !u!114 &1779934361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -32019,7 +32019,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -32054,7 +32054,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -4.0408325, y: -31.982574}
-  m_SizeDelta: {x: 53.46936, y: 5}
+  m_SizeDelta: {x: 115.10202, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &1779934364
 CanvasGroup:
@@ -32974,7 +32974,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1828537105}
-  m_LocalRotation: {x: -0, y: -0, z: -0.13518915, w: 0.9908198}
+  m_LocalRotation: {x: -0, y: -0, z: -0.1351892, w: 0.9908198}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -32983,8 +32983,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 111.02042, y: 15.991272}
-  m_SizeDelta: {x: 59.17894, y: 5}
+  m_AnchoredPosition: {x: 111.020355, y: 15.991272}
+  m_SizeDelta: {x: 119.3842, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1828537107
 MonoBehaviour:
@@ -32998,11 +32998,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1821726111}
-  to: {fileID: 120787568}
+  thickness: 4
+  from: {fileID: 55548103}
+  to: {fileID: 2103638627}
   rectTransform: {fileID: 1828537106}
+  canvas: {fileID: 1757638083}
 --- !u!114 &1828537108
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33023,7 +33023,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -35004,11 +35004,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1165691749}
-  to: {fileID: 120787568}
+  thickness: 4
+  from: {fileID: 1953154534}
+  to: {fileID: 2103638627}
   rectTransform: {fileID: 1964829789}
+  canvas: {fileID: 1757638083}
 --- !u!114 &1964829791
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35029,7 +35029,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -35697,8 +35697,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -4.0408325, y: -31.982574}
-  m_SizeDelta: {x: 129.45203, y: 5}
+  m_AnchoredPosition: {x: -4.0408325, y: -31.982544}
+  m_SizeDelta: {x: 172.08902, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2000156184
 MonoBehaviour:
@@ -35712,11 +35712,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 875442760}
-  to: {fileID: 1821726111}
+  thickness: 4
+  from: {fileID: 1926340647}
+  to: {fileID: 55548103}
   rectTransform: {fileID: 2000156183}
+  canvas: {fileID: 1757638083}
 --- !u!114 &2000156185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35737,7 +35737,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -35794,7 +35794,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2000414895}
-  m_LocalRotation: {x: -0, y: -0, z: 0.40690804, w: 0.91346914}
+  m_LocalRotation: {x: -0, y: -0, z: 0.40690807, w: 0.91346914}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -35804,7 +35804,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -4.0408325, y: 31.982544}
-  m_SizeDelta: {x: 129.452, y: 5}
+  m_SizeDelta: {x: 172.08899, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2000414897
 MonoBehaviour:
@@ -35818,11 +35818,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 1165691749}
-  to: {fileID: 220692717}
+  thickness: 4
+  from: {fileID: 1953154534}
+  to: {fileID: 858682691}
   rectTransform: {fileID: 2000414896}
+  canvas: {fileID: 1757638083}
 --- !u!114 &2000414898
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35843,7 +35843,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -37861,7 +37861,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: -876546973899608171, guid: c61f1ea7ab5cd174a921997a4d6d7b19, type: 3}
-  m_Color: {r: 0.043137256, g: 0.41960785, b: 0.45490196, a: 0.9019608}
+  m_Color: {r: 0.043137256, g: 0.41960785, b: 0.45490196, a: 0.9490196}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -37918,11 +37918,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdebbcaf25d4370a2f2f88cfcbaa90a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Neuralizer::Neuralizer.UI.UILine
-  thickness: 5
-  lengthOffset: -100
-  from: {fileID: 2078495206}
-  to: {fileID: 120787568}
+  thickness: 4
+  from: {fileID: 1565148568}
+  to: {fileID: 2103638627}
   rectTransform: {fileID: 2109401575}
+  canvas: {fileID: 1757638083}
 --- !u!114 &2109401573
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -37943,7 +37943,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5ab731bd68afbbc42b1203befb8f56c2, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
