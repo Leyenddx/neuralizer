@@ -58,13 +58,17 @@ namespace Neuralizer.Data {
         
         private string TimeString => ScoreboardID + ".time";
         private string ScoreString => ScoreboardID + ".score";
+        private string NormalizedScoreString => ScoreboardID + ".normalizedScore";
         private string RatioString => ScoreboardID + ".ratio";
 
         public bool SubmitResult(float time, float ratio = 1f) {
             if (IsCompleted) return false;
+            float normalizedScore = Mathf.Clamp01(minTime / Mathf.Max(time, Mathf.Epsilon)) * Mathf.Lerp(
+                successThreshold, 1f, ratio);
+            NormalizedScore = normalizedScore;
             Time = time;
             Ratio = ratio;
-            Score = Mathf.FloorToInt(Mathf.Lerp(minMaxScores.x, minMaxScores.y, Mathf.Clamp01(minTime / Mathf.Max(time, Mathf.Epsilon))) * Mathf.Lerp(successThreshold, 1f, ratio));
+            Score = Mathf.FloorToInt(Mathf.Lerp(minMaxScores.x, minMaxScores.y, normalizedScore));
             OnUpdated?.Invoke();
             return true;
         }
@@ -104,8 +108,12 @@ namespace Neuralizer.Data {
         
         public string FormattedRatio => FormatRatio((Ratio));
 
-        public float NormalizedScore => Mathf.InverseLerp(minMaxScores.x, minMaxScores.y, (float)Score);
 
+        public float NormalizedScore {
+            get => PlayerPrefs.GetFloat(NormalizedScoreString, 0f);
+            private set => PlayerPrefs.SetFloat(NormalizedScoreString, value);
+        }
+        
         public NeuronPrefab GetTargetNeuron(TargetNeuron target) {
             switch (target) {
                 default:

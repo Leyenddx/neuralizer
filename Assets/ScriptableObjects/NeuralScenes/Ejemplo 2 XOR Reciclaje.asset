@@ -126,34 +126,35 @@ MonoBehaviour:
   weightRange: {x: -10, y: 10}
   biasRange: {x: -10, y: 10}
   useOrbitalCamera: 0
+  inputs: 2
   allowEditing: 1
   allowTraining: 0
   allowRandomizeNeuron: 0
   allowRandomizeNetwork: 0
   successThreshold: 0.6666667
   Output:
-    weightX: 10
-    weightY: -10
+    weightX: 0
+    weightY: 0
     weightZ: 0
     weightW: 0
-    bias: -10
+    bias: 0
     activationFunction: 2
     displayNeuron: 1
   AA:
-    weightX: 3.5
-    weightY: -3.5
+    weightX: 0
+    weightY: 0
     weightZ: 0
     weightW: 0
-    bias: 1.5
-    activationFunction: 3
+    bias: 0
+    activationFunction: 2
     displayNeuron: 1
   AB:
-    weightX: 3.5
-    weightY: -3.5
+    weightX: 0
+    weightY: 0
     weightZ: 0
     weightW: 0
-    bias: -1.5
-    activationFunction: 3
+    bias: 0
+    activationFunction: 2
     displayNeuron: 1
   AC:
     weightX: 0
@@ -161,7 +162,7 @@ MonoBehaviour:
     weightZ: 0
     weightW: 0
     bias: 0
-    activationFunction: 0
+    activationFunction: 2
     displayNeuron: 0
   AD:
     weightX: 0

@@ -16,6 +16,9 @@
     "m_Keywords": [
         {
             "m_Id": "1ea06cb4e8334c71b450f59cfefa9a1b"
+        },
+        {
+            "m_Id": "e62beca4566049938d9ee256f23141e8"
         }
     ],
     "m_Dropdowns": [],
@@ -3905,10 +3908,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -8291.0,
-            "y": 958.9999389648438,
-            "width": 131.00048828125,
-            "height": 149.00006103515626
+            "x": -8226.0,
+            "y": 919.0000610351563,
+            "width": 131.0,
+            "height": 148.99993896484376
         }
     },
     "m_Slots": [
@@ -4964,6 +4967,9 @@
         },
         {
             "m_Id": "a4566d98317a4c5aac45bfbf79098ee6"
+        },
+        {
+            "m_Id": "e62beca4566049938d9ee256f23141e8"
         }
     ]
 }
@@ -5284,6 +5290,8 @@
     "overrideHLSLDeclaration": true,
     "hlslDeclarationOverride": 1,
     "m_Hidden": false,
+    "m_PerRendererData": false,
+    "m_customAttributes": [],
     "m_Value": {
         "x": 0.0,
         "y": 0.0,
@@ -5360,6 +5368,8 @@
     "overrideHLSLDeclaration": false,
     "hlslDeclarationOverride": 0,
     "m_Hidden": false,
+    "m_PerRendererData": false,
+    "m_customAttributes": [],
     "m_Value": {
         "r": 0.0,
         "g": 0.27450981736183169,
@@ -6749,6 +6759,31 @@
 }
 
 {
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.ShaderKeyword",
+    "m_ObjectId": "e62beca4566049938d9ee256f23141e8",
+    "m_Guid": {
+        "m_GuidSerialized": "9b3cabe3-ba59-4628-8836-2bd975db791f"
+    },
+    "m_Name": "Fade Z",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Fade Z",
+    "m_DefaultReferenceName": "_FADE_Z",
+    "m_OverrideReferenceName": "_FADEZ",
+    "m_GeneratePropertyBlock": false,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_KeywordType": 0,
+    "m_KeywordDefinition": 1,
+    "m_KeywordScope": 1,
+    "m_KeywordStages": 63,
+    "m_Entries": [],
+    "m_Value": 0,
+    "m_IsEditable": true
+}
+
+{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "e67f13b727f4469cb500786cebf86828",
@@ -7239,6 +7274,8 @@
     "overrideHLSLDeclaration": true,
     "hlslDeclarationOverride": 1,
     "m_Hidden": false,
+    "m_PerRendererData": false,
+    "m_customAttributes": [],
     "m_Value": {
         "m_SerializedTexture": "",
         "m_Guid": ""

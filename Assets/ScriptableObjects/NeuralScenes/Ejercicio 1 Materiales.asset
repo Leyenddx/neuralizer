@@ -15,8 +15,8 @@ MonoBehaviour:
   displayName: "Materiales de Construcci\xF3n"
   storageName: materiales
   scoreboardID: materiales
-  minTime: 10
-  minMaxScores: {x: 10, y: 500}
+  minTime: 25
+  minMaxScores: {x: 100, y: 1000}
   origin: {x: 0, y: 0, z: 0}
   manualAutoPositionRatio: 0.33333334
   zoomFactor: 1
@@ -55,7 +55,7 @@ MonoBehaviour:
     weightW: 0
     bias: 0
     activationFunction: 0
-    displayNeuron: 1
+    displayNeuron: 0
   AB:
     weightX: 0
     weightY: 0
@@ -63,7 +63,7 @@ MonoBehaviour:
     weightW: 0
     bias: 0
     activationFunction: 0
-    displayNeuron: 1
+    displayNeuron: 0
   AC:
     weightX: 0
     weightY: 0
@@ -71,7 +71,7 @@ MonoBehaviour:
     weightW: 0
     bias: 0
     activationFunction: 0
-    displayNeuron: 1
+    displayNeuron: 0
   AD:
     weightX: 0
     weightY: 0
@@ -79,7 +79,7 @@ MonoBehaviour:
     weightW: 0
     bias: 0
     activationFunction: 0
-    displayNeuron: 1
+    displayNeuron: 0
   BA:
     weightX: 0
     weightY: 0

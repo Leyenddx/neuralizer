@@ -14,6 +14,7 @@ namespace Neuralizer {
         private static readonly int ZoomScale_ID = Shader.PropertyToID(ZoomScale_Name);
 
         private static readonly ShaderKeyword planarGraph = new("_2D_GRAPH");
+        private static readonly ShaderKeyword fadeZ = new("_FADEZ");
         public static NetworkHost Instance { get; private set; }
 
         [SerializeField] private MedalsAsset medals;
@@ -49,6 +50,48 @@ namespace Neuralizer {
         [SerializeField] private UnityEvent<Sprite> OnMedalSprite;
         [SerializeField] private UnityEvent<string> OnMedalDescription;
 
+        [Header("Lines Weight Alpha Events")]
+        [SerializeField] private UnityEvent<float> OnAA_X_Alpha;
+        [SerializeField] private UnityEvent<float> OnAA_Y_Alpha;
+        [SerializeField] private UnityEvent<float> OnAA_Z_Alpha;
+        
+        [SerializeField] private UnityEvent<float> OnAB_X_Alpha;
+        [SerializeField] private UnityEvent<float> OnAB_Y_Alpha;
+        [SerializeField] private UnityEvent<float> OnAB_Z_Alpha;
+        
+        [SerializeField] private UnityEvent<float> OnAC_X_Alpha;
+        [SerializeField] private UnityEvent<float> OnAC_Y_Alpha;
+        [SerializeField] private UnityEvent<float> OnAC_Z_Alpha;
+        
+        [SerializeField] private UnityEvent<float> OnAD_X_Alpha;
+        [SerializeField] private UnityEvent<float> OnAD_Y_Alpha;
+        [SerializeField] private UnityEvent<float> OnAD_Z_Alpha;
+        
+        [SerializeField] private UnityEvent<float> OnBA_X_Alpha;
+        [SerializeField] private UnityEvent<float> OnBA_Y_Alpha;
+        [SerializeField] private UnityEvent<float> OnBA_Z_Alpha;
+        [SerializeField] private UnityEvent<float> OnBA_W_Alpha;
+        
+        [SerializeField] private UnityEvent<float> OnBB_X_Alpha;
+        [SerializeField] private UnityEvent<float> OnBB_Y_Alpha;
+        [SerializeField] private UnityEvent<float> OnBB_Z_Alpha;
+        [SerializeField] private UnityEvent<float> OnBB_W_Alpha;
+        
+        [SerializeField] private UnityEvent<float> OnBC_X_Alpha;
+        [SerializeField] private UnityEvent<float> OnBC_Y_Alpha;
+        [SerializeField] private UnityEvent<float> OnBC_Z_Alpha;
+        [SerializeField] private UnityEvent<float> OnBC_W_Alpha;
+        
+        [SerializeField] private UnityEvent<float> OnBD_X_Alpha;
+        [SerializeField] private UnityEvent<float> OnBD_Y_Alpha;
+        [SerializeField] private UnityEvent<float> OnBD_Z_Alpha;
+        [SerializeField] private UnityEvent<float> OnBD_W_Alpha;
+        
+        [SerializeField] private UnityEvent<float> OnOutput_X_Alpha;
+        [SerializeField] private UnityEvent<float> OnOutput_Y_Alpha;
+        [SerializeField] private UnityEvent<float> OnOutput_Z_Alpha;
+        [SerializeField] private UnityEvent<float> OnOutput_W_Alpha;
+
         private NeuralScene currentScene;
         private UnityEngine.Pool.ObjectPool<SamplePoint> targetPool;
         private UnityEngine.Pool.ObjectPool<SamplePoint> unwantedPool;
@@ -72,8 +115,9 @@ namespace Neuralizer {
                     value.Output.ApplyTo(Output);
 
                     networkPass.architecture = value.architecture;
-                    networkPass.isPlanar = !Scene.useOrbitalCamera;
+                    networkPass.isPlanar = !value.useOrbitalCamera;
                     planarGraph.Enabled = networkPass.isPlanar;
+                    fadeZ.Enabled = value.useOrbitalCamera && value.inputs == NeuralScene.WorldInputs.XY;
 
                     ZoomScale = 1f / value.zoomFactor;
                     Shader.SetGlobalFloat(ZoomScale_ID, ZoomScale);
@@ -236,6 +280,47 @@ namespace Neuralizer {
 
         public void NotifyChange() {
             SamplePoint.UpdatePoints();
+
+            OnAA_X_Alpha?.Invoke(AA.IntensityX);
+            OnAA_Y_Alpha?.Invoke(AA.IntensityY);
+            OnAA_Z_Alpha?.Invoke(AA.IntensityZ);
+
+            OnAB_X_Alpha?.Invoke(AB.IntensityX);
+            OnAB_Y_Alpha?.Invoke(AB.IntensityY);
+            OnAB_Z_Alpha?.Invoke(AB.IntensityZ);
+
+            OnAC_X_Alpha?.Invoke(AC.IntensityX);
+            OnAC_Y_Alpha?.Invoke(AC.IntensityY);
+            OnAC_Z_Alpha?.Invoke(AC.IntensityZ);
+
+            OnAD_X_Alpha?.Invoke(AD.IntensityX);
+            OnAD_Y_Alpha?.Invoke(AD.IntensityY);
+            OnAD_Z_Alpha?.Invoke(AD.IntensityZ);
+
+            OnBA_X_Alpha?.Invoke(BA.IntensityX);
+            OnBA_Y_Alpha?.Invoke(BA.IntensityY);
+            OnBA_Z_Alpha?.Invoke(BA.IntensityZ);
+            OnBA_W_Alpha?.Invoke(BA.IntensityW);
+
+            OnBB_X_Alpha?.Invoke(BB.IntensityX);
+            OnBB_Y_Alpha?.Invoke(BB.IntensityY);
+            OnBB_Z_Alpha?.Invoke(BB.IntensityZ);
+            OnBB_W_Alpha?.Invoke(BB.IntensityW);
+
+            OnBC_X_Alpha?.Invoke(BC.IntensityX);
+            OnBC_Y_Alpha?.Invoke(BC.IntensityY);
+            OnBC_Z_Alpha?.Invoke(BC.IntensityZ);
+            OnBC_W_Alpha?.Invoke(BC.IntensityW);
+
+            OnBD_X_Alpha?.Invoke(BD.IntensityX);
+            OnBD_Y_Alpha?.Invoke(BD.IntensityY);
+            OnBD_Z_Alpha?.Invoke(BD.IntensityZ);
+            OnBD_W_Alpha?.Invoke(BD.IntensityW);
+
+            OnOutput_X_Alpha?.Invoke(Output.IntensityX);
+            OnOutput_Y_Alpha?.Invoke(Output.IntensityY);
+            OnOutput_Z_Alpha?.Invoke(Output.IntensityZ);
+            OnOutput_W_Alpha?.Invoke(Output.IntensityW);
         }
 
         public void Randomize() {
@@ -420,7 +505,7 @@ namespace Neuralizer {
             }
             else {
                 OnInvalidNetworkSubmitted?.Invoke();
-                if (Scene.AllowScoring) { 
+                if (!Scene.AllowScoring) { 
                     Scene.IsCompleted = true;
                 }
             }

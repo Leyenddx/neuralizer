@@ -273,43 +273,43 @@ MonoBehaviour:
   allowRandomizeNetwork: 0
   successThreshold: 0.95
   Output:
-    weightX: 10
-    weightY: 10
-    weightZ: 10
-    weightW: 10
-    bias: -35
+    weightX: 0
+    weightY: 0
+    weightZ: 0
+    weightW: 0
+    bias: 0
     activationFunction: 2
     displayNeuron: 1
   AA:
-    weightX: 20
-    weightY: 20
+    weightX: 0
+    weightY: 0
     weightZ: 0
     weightW: 0
-    bias: -12
+    bias: 0
     activationFunction: 2
     displayNeuron: 1
   AB:
-    weightX: -20
-    weightY: -20
+    weightX: 0
+    weightY: 0
     weightZ: 0
     weightW: 0
-    bias: 28
+    bias: 0
     activationFunction: 2
     displayNeuron: 1
   AC:
-    weightX: 20
-    weightY: -20
+    weightX: 0
+    weightY: 0
     weightZ: 0
     weightW: 0
-    bias: 8
+    bias: 0
     activationFunction: 2
     displayNeuron: 1
   AD:
-    weightX: -20
-    weightY: 20
+    weightX: 0
+    weightY: 0
     weightZ: 0
     weightW: 0
-    bias: 8
+    bias: 0
     activationFunction: 2
     displayNeuron: 1
   BA:
@@ -318,7 +318,7 @@ MonoBehaviour:
     weightZ: 0
     weightW: 0
     bias: 0
-    activationFunction: 0
+    activationFunction: 2
     displayNeuron: 0
   BB:
     weightX: 0
@@ -326,7 +326,7 @@ MonoBehaviour:
     weightZ: 0
     weightW: 0
     bias: 0
-    activationFunction: 0
+    activationFunction: 2
     displayNeuron: 0
   BC:
     weightX: 0
@@ -334,7 +334,7 @@ MonoBehaviour:
     weightZ: 0
     weightW: 0
     bias: 0
-    activationFunction: 0
+    activationFunction: 2
     displayNeuron: 0
   BD:
     weightX: 0
@@ -342,5 +342,5 @@ MonoBehaviour:
     weightZ: 0
     weightW: 0
     bias: 0
-    activationFunction: 0
+    activationFunction: 2
     displayNeuron: 0

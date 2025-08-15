@@ -9,7 +9,7 @@ namespace Neuralizer.Data {
 
         public Medal GetFromRatio(float ratio) {
             try {
-                return medals[Mathf.FloorToInt(ratio * ((float)medals.Count - 1f))];
+                return medals[Mathf.RoundToInt(ratio * ((float)medals.Count - 1f))];
             }
             catch {
                 return null;

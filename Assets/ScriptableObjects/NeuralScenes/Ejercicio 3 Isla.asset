@@ -15,10 +15,10 @@ MonoBehaviour:
   displayName: Isla
   storageName: isla
   scoreboardID: isla
-  minTime: 60
-  minMaxScores: {x: 100, y: 2000}
+  minTime: 188.49556
+  minMaxScores: {x: 100, y: 1000}
   origin: {x: 0.5, y: 0.5, z: 0}
-  manualAutoPositionRatio: 0.33333334
+  manualAutoPositionRatio: 1
   zoomFactor: 20
   architecture: 1
   targetPoints:
@@ -269,9 +269,9 @@ MonoBehaviour:
   inputs: 2
   allowEditing: 1
   allowTraining: 0
-  allowRandomizeNeuron: 1
+  allowRandomizeNeuron: 0
   allowRandomizeNetwork: 0
-  successThreshold: 0.95
+  successThreshold: 0.9
   Output:
     weightX: 10
     weightY: 10

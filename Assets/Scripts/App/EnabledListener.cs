@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.Events;
 
 namespace Neuralizer {
+    
+    [ExecuteInEditMode]
     public class EnabledListener : MonoBehaviour {
 
         [SerializeField] private UnityEvent<bool> OnEnabledChanged;

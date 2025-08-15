@@ -25,6 +25,19 @@ namespace Neuralizer {
         public ActivationFunction activationFunction;
         public Material material;
 
+        public float GetIntensity(float value) {
+            float abs = Mathf.Abs(value);
+            return Mathf.LerpUnclamped(0.15f, 1f, abs / (abs + 1.618f));
+        }
+        
+        public float IntensityX => GetIntensity(weights.x);
+        
+        public float IntensityY => GetIntensity(weights.y);
+        
+        public float IntensityZ => GetIntensity(weights.z);
+        
+        public float IntensityW => GetIntensity(weights.w);
+        
         public float EvaluateActivationFunction(float value) {
             return activationFunction switch {
                 ActivationFunction.Sigmoid => Sigmoid(value),
