@@ -32,12 +32,11 @@ MonoBehaviour:
   - {x: 3, y: -5, z: 1}
   - {x: 4, y: -9, z: 1}
   - {x: 7, y: -9, z: 1}
-  weightRange: {x: -5, y: 5}
-  biasRange: {x: -20, y: 20}
+  weightRange: {x: -3, y: 3}
+  biasRange: {x: -15, y: 10}
   useOrbitalCamera: 0
   inputs: 2
   allowEditing: 1
-  allowTraining: 0
   allowRandomizeNeuron: 0
   allowRandomizeNetwork: 0
   successThreshold: 0.95

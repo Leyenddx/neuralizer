@@ -33,7 +33,6 @@ namespace Neuralizer {
         [SerializeField] private UnityEvent OnSceneUnloaded;
         [SerializeField] private UnityEvent<bool> OnAllowScoring;
         [SerializeField] private UnityEvent<bool> OnAllowEditing;
-        [SerializeField] private UnityEvent<bool> OnAllowTraining;
         [SerializeField] private UnityEvent<bool> OnAllowRandomizeNeuron;
         [SerializeField] private UnityEvent<bool> OnAllowRandomizeNetwork;
         [SerializeField] private UnityEvent OnInvalidNetworkSubmitted;
@@ -165,15 +164,14 @@ namespace Neuralizer {
                     OnPlanarCamera?.Invoke(!value.useOrbitalCamera);
                     OnOrbitalCamera?.Invoke(value.useOrbitalCamera);
                     OnZInputNeeded?.Invoke(value.ZInputNeeded);
-                    OnAllowTraining?.Invoke(value.allowTraining);
                     OnAllowRandomizeNeuron?.Invoke(value.allowRandomizeNeuron);
                     OnAllowRandomizeNetwork?.Invoke(value.allowRandomizeNetwork);
                     OnAllowEditing?.Invoke(value.allowEditing);
                     OnAllowScoring?.Invoke(value.AllowScoring);
-                    OnWeightSliderMin?.Invoke(value.weightRange.x);
-                    OnWeightSliderMax?.Invoke(value.weightRange.y);
-                    OnBiasSliderMin?.Invoke(value.biasRange.x);
-                    OnBiasSliderMax?.Invoke(value.biasRange.y);
+                    OnWeightSliderMin?.Invoke(Mathf.Floor(value.weightRange.x * 4f));
+                    OnWeightSliderMax?.Invoke(Mathf.Ceil(value.weightRange.y * 4f));
+                    OnBiasSliderMin?.Invoke(Mathf.Floor(value.biasRange.x * 4f));
+                    OnBiasSliderMax?.Invoke(Mathf.Ceil(value.biasRange.y * 4f));
                     OnSceneLoaded?.Invoke();
                     sceneStartTime = Time.time;
                 }
@@ -183,7 +181,6 @@ namespace Neuralizer {
                     OnPlanarCamera?.Invoke(true);
                     OnOrbitalCamera?.Invoke(false);
                     OnZInputNeeded?.Invoke(false);
-                    OnAllowTraining?.Invoke(false);
                     OnAllowRandomizeNeuron?.Invoke(false);
                     OnAllowRandomizeNetwork?.Invoke(false);
                     OnSceneUnloaded?.Invoke();

@@ -285,7 +285,6 @@ MonoBehaviour:
   useOrbitalCamera: 1
   inputs: 2
   allowEditing: 1
-  allowTraining: 0
   allowRandomizeNeuron: 0
   allowRandomizeNetwork: 0
   successThreshold: 0.9166667

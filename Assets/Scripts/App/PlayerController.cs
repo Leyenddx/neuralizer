@@ -103,8 +103,10 @@ namespace Neuralizer {
         
         public void ResetCamera() {
             const float stepSize = 45f;
-            targetRotation.x = Mathf.Round(targetRotation.x / stepSize) * stepSize;
-            targetRotation.y = Mathf.Round(targetRotation.y / stepSize) * stepSize;
+            // targetRotation.x = Mathf.Round(targetRotation.x / stepSize) * stepSize;
+            // targetRotation.y = Mathf.Round(targetRotation.y / stepSize) * stepSize;
+            targetRotation.x = 0f;
+            targetRotation.y = 0f;
             target2DRotation.x = Mathf.Round(target2DRotation.x / stepSize) * stepSize;
             targetComposerShift.Set(0f, 0f);
         }

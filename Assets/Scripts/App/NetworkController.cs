@@ -24,7 +24,6 @@ namespace Neuralizer {
         [SerializeField] private UnityEvent<bool> OnShowZWeight;
         [SerializeField] private UnityEvent<bool> OnShowWWeight;
         [SerializeField] private UnityEvent<bool> OnShowRandomizeNeuron;
-        [SerializeField] private UnityEvent<bool> OnShowTraining;
 
         private const float speed = 24f;
 
@@ -74,11 +73,11 @@ namespace Neuralizer {
             if (value) {
                 CurrentNeuron = targetNeuron;
                 CurrentTargetNeuron = button.Target;
-                OnWeightXLoaded?.Invoke(CurrentNeuron.weights.x);
-                OnWeightYLoaded?.Invoke(CurrentNeuron.weights.y);
-                OnWeightZLoaded?.Invoke(CurrentNeuron.weights.z);
-                OnWeightWLoaded?.Invoke(CurrentNeuron.weights.w);
-                OnBiasLoaded?.Invoke(CurrentNeuron.bias);
+                OnWeightXLoaded?.Invoke(CurrentNeuron.weights.x * 4f);
+                OnWeightYLoaded?.Invoke(CurrentNeuron.weights.y * 4f);
+                OnWeightZLoaded?.Invoke(CurrentNeuron.weights.z * 4f);
+                OnWeightWLoaded?.Invoke(CurrentNeuron.weights.w * 4f);
+                OnBiasLoaded?.Invoke(CurrentNeuron.bias * 4f);
                 OnActivationFunctionLoaded?.Invoke((int)CurrentNeuron.activationFunction);
                 switch (button.Target) {
                     case TargetNeuron.AA:
@@ -148,43 +147,41 @@ namespace Neuralizer {
                     targetFlexWidth.Set(restFlexWidth.x, restFlexWidth.y, restFlexWidth.z);
                     OnShowSettings?.Invoke(false);
                     OnShowRandomizeNeuron?.Invoke(false);
-                    OnShowTraining?.Invoke(false);
                 }
                 else {
                     OnShowSettings?.Invoke(true);
                     OnShowRandomizeNeuron?.Invoke(network.Scene.allowRandomizeNeuron);
-                    OnShowTraining?.Invoke(network.Scene.allowTraining);
                 }
             }
         }
 
         public void OnWeightXChanged(float value) {
             if (CurrentNeuron == null) return;
-            CurrentNeuron.weights.x = value;
+            CurrentNeuron.weights.x = value / 4f;
             network.NotifyChange();
         }
 
         public void OnWeightYChanged(float value) {
             if (CurrentNeuron == null) return;
-            CurrentNeuron.weights.y = value;
+            CurrentNeuron.weights.y = value / 4f;
             network.NotifyChange();
         }
 
         public void OnWeightZChanged(float value) {
             if (CurrentNeuron == null) return;
-            CurrentNeuron.weights.z = value;
+            CurrentNeuron.weights.z = value / 4f;
             network.NotifyChange();
         }
 
         public void OnWeightWChanged(float value) {
             if (CurrentNeuron == null) return;
-            CurrentNeuron.weights.w = value;
+            CurrentNeuron.weights.w = value / 4f;
             network.NotifyChange();
         }
 
         public void OnBiasChanged(float value) {
             if (CurrentNeuron == null) return;
-            CurrentNeuron.bias = value;
+            CurrentNeuron.bias = value / 4f;
             network.NotifyChange();
         }
 

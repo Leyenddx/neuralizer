@@ -7,13 +7,28 @@ using Random = UnityEngine.Random;
 
 namespace Neuralizer {
 
+    /// <summary>
+    /// Definición de una neurona dentro de la red
+    /// </summary>
     [System.Serializable]
     public class Neuron {
 
+        /// <summary>
+        /// Evalua la función sigmoide en <b>x</b>
+        /// </summary>
+        /// <param name="x">Valor a evaluar</param>
+        /// <returns>Resultado de la evaluación de la función sigmoide</returns>
+        /// <seealso href="https://es.wikipedia.org/wiki/Funci%C3%B3n_sigmoide"/>
         public static float Sigmoid(float x) {
             return 1f / (1f + Mathf.Exp(-x));
         }
         
+        /// <summary>
+        /// Evalua la función de tangente hiperbólica en <b>x</b>
+        /// </summary>
+        /// <param name="x">Valor a evaluar</param>
+        /// <returns>Resultado de la evaluación de la función de tangente hiperbólica</returns>
+        /// <seealso href="https://es.wikipedia.org/wiki/Tangente_hiperb%C3%B3lica"/>
         public static float Tanh(float x) {
             float e = Mathf.Exp(2f * x);
             return (e - 1f) / (e + 1f);
