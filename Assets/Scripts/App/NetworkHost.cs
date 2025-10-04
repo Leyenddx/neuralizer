@@ -8,6 +8,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace Neuralizer {
     public class NetworkHost : MonoBehaviour {
+        
         private const string NetworkRenderingInfo_Name = "_NetworkRenderingInfo";
         private const string ZoomScale_Name = "_ZoomScale";
         private static readonly int NetworkRenderingInfo_Id = Shader.PropertyToID(NetworkRenderingInfo_Name);
@@ -458,11 +459,6 @@ namespace Neuralizer {
                 case TargetNeuron.Output:
                     return Output;
             }
-        }
-
-        public void TrainEpoch() {
-            //TODO train;
-            NotifyChange();
         }
 
         public void SubmitResult() {

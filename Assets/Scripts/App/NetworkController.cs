@@ -1,28 +1,105 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Neuralizer {
+    /// <summary>
+    /// Componente que permite la manipulación de la red neuronal activa al usuario
+    /// </summary>
     public class NetworkController : MonoBehaviour {
+        /// <summary>
+        /// Referencia al anfitrión de red que contiene la red que queremos manipular
+        /// </summary>
         [SerializeField] private NetworkHost network;
+
+        /// <summary>
+        /// Propiedades de interfaz para la primera capa de la red
+        /// </summary>
         [SerializeField] private LayoutElement aLayer;
+
+        /// <summary>
+        /// Propiedades de interfaz para la segunda capa de la red
+        /// </summary>
         [SerializeField] private LayoutElement bLayer;
+
+        /// <summary>
+        /// Propiedades de interfaz para la neurona de salida
+        /// </summary>
         [SerializeField] private LayoutElement outputLayer;
+
+        /// <summary>
+        /// Lista de botones conmutadores
+        /// </summary>
         [SerializeField] private NeuronToggleButton[] toggles;
+
+        /// <summary>
+        /// Evento que transmite el primer peso de la neurona objetivo
+        /// </summary>
         [SerializeField] private UnityEvent<float> OnWeightXLoaded;
+
+        /// <summary>
+        /// Evento que transmite el segundo peso de la neurona objetivo
+        /// </summary>
         [SerializeField] private UnityEvent<float> OnWeightYLoaded;
+
+        /// <summary>
+        /// Evento que transmite el tercer peso de la neurona objetivo
+        /// </summary>
         [SerializeField] private UnityEvent<float> OnWeightZLoaded;
+
+        /// <summary>
+        /// Evento que transmite el cuarto peso de la neurona objetivo
+        /// </summary>
         [SerializeField] private UnityEvent<float> OnWeightWLoaded;
+
+        /// <summary>
+        /// Evento que transmite el sesgo de la neurona objetivo
+        /// </summary>
         [SerializeField] private UnityEvent<float> OnBiasLoaded;
+
+        /// <summary>
+        /// Evento que transmite el índice de la función de activación de la neurona objetivo
+        /// </summary>
         [SerializeField] private UnityEvent<int> OnActivationFunctionLoaded;
+
+        /// <summary>
+        /// Evento que se llama cuando es apropiado mostrar los ajustes de la neurona
+        /// </summary>
         [SerializeField] private UnityEvent<bool> OnShowSettings;
+
+        /// <summary>
+        /// Evento que índica si se debe mostrar la primera capa de neuronas
+        /// </summary>
         [SerializeField] private UnityEvent<bool> OnShowLayerA;
+
+        /// <summary>
+        /// Evento que índica si se debe mostrar la segunda capa de neuronas
+        /// </summary>
         [SerializeField] private UnityEvent<bool> OnShowLayerB;
+
+        /// <summary>
+        /// EVento que índica si se debe mostrar el primer peso de la neurona objetivo
+        /// </summary>
         [SerializeField] private UnityEvent<bool> OnShowXWeight;
+
+        /// <summary>
+        /// EVento que índica si se debe mostrar el segundo peso de la neurona objetivo
+        /// </summary>
         [SerializeField] private UnityEvent<bool> OnShowYWeight;
+
+        /// <summary>
+        /// EVento que índica si se debe mostrar el tercer peso de la neurona objetivo
+        /// </summary>
         [SerializeField] private UnityEvent<bool> OnShowZWeight;
+
+        /// <summary>
+        /// EVento que índica si se debe mostrar el cuarto peso de la neurona objetivo
+        /// </summary>
         [SerializeField] private UnityEvent<bool> OnShowWWeight;
+
+        /// <summary>
+        /// EVento que índica si se permite aleatorizar la neurona objetivo
+        /// </summary>
         [SerializeField] private UnityEvent<bool> OnShowRandomizeNeuron;
 
         private const float speed = 24f;
@@ -34,13 +111,25 @@ namespace Neuralizer {
 
         private LayoutElement targetFlex;
 
+        /// <summary>
+        /// La neurona objetivo que se va a manipular
+        /// </summary>
         public Neuron CurrentNeuron { get; set; }
+
+        /// <summary>
+        /// Localizador de la neurona objetivo que queremos manipular
+        /// </summary>
         public TargetNeuron CurrentTargetNeuron { get; set; }
 
+        /// <seealso href="https://docs.unity3d.com/ScriptReference/MonoBehaviour.Start.html"/>
         private void Start() {
             restFlexWidth.Set(aLayer.flexibleWidth, bLayer.flexibleWidth, outputLayer.flexibleWidth);
         }
 
+        /// <summary>
+        /// Evento llamado cuando una nueva escena ha sido cargada. Este debe ser explicitamente ligado a <see cref="Neuralizer.NetworkHost"/> desde el editor de Unity
+        /// </summary>
+        /// <seealso cref="Neuralizer.Data.NeuralScene"/>
         public void SceneLoaded() {
             switch (network.Scene.architecture) {
                 case Architecture.Perceptron:
@@ -68,6 +157,11 @@ namespace Neuralizer {
             isDirty = true;
         }
 
+        /// <summary>
+        /// Localiza y prepara la interfaz cuando hay un cambio de neurona objetivo. Esta función debe ser llamada por cada <see cref="Neuralizer.NeuronToggleButton"/> cuando su valor cambia
+        /// </summary>
+        /// <param name="button">El botón que llamó esta función</param>
+        /// <param name="value">El valor del botón</param>
         public void OnTargetNeuronChanged(NeuronToggleButton button, bool value) {
             Neuron targetNeuron = network.GetTargetNeuron(button.Target);
             if (value) {
@@ -133,6 +227,7 @@ namespace Neuralizer {
             isDirty = true;
         }
 
+        /// <seealso href="https://docs.unity3d.com/ScriptReference/MonoBehaviour.Update.html"/>
         private void Update() {
             flexT = Mathf.Exp(-speed * Time.unscaledDeltaTime);
             aLayer.flexibleWidth = Mathf.Lerp(targetFlexWidth.x, aLayer.flexibleWidth, flexT);
@@ -140,6 +235,7 @@ namespace Neuralizer {
             outputLayer.flexibleWidth = Mathf.Lerp(targetFlexWidth.z, outputLayer.flexibleWidth, flexT);
         }
 
+        /// <seealso href="https://docs.unity3d.com/ScriptReference/MonoBehaviour.LateUpdate.html"/>
         private void LateUpdate() {
             if (isDirty) {
                 isDirty = false;
@@ -155,42 +251,69 @@ namespace Neuralizer {
             }
         }
 
+        /// <summary>
+        /// Función para cambiar el primer peso de la neurona objetivo desde la interfaz
+        /// </summary>
+        /// <param name="value">El nuevo peso</param>
         public void OnWeightXChanged(float value) {
             if (CurrentNeuron == null) return;
             CurrentNeuron.weights.x = value / 4f;
             network.NotifyChange();
         }
 
+        /// <summary>
+        /// Función para cambiar el segundo peso de la neurona objetivo desde la interfaz
+        /// </summary>
+        /// <param name="value">El nuevo peso</param>
         public void OnWeightYChanged(float value) {
             if (CurrentNeuron == null) return;
             CurrentNeuron.weights.y = value / 4f;
             network.NotifyChange();
         }
 
+        /// <summary>
+        /// Función para cambiar el tercer peso de la neurona objetivo desde la interfaz
+        /// </summary>
+        /// <param name="value">El nuevo peso</param>
         public void OnWeightZChanged(float value) {
             if (CurrentNeuron == null) return;
             CurrentNeuron.weights.z = value / 4f;
             network.NotifyChange();
         }
 
+        /// <summary>
+        /// Función para cambiar el cuarto peso de la neurona objetivo desde la interfaz
+        /// </summary>
+        /// <param name="value">El nuevo peso</param>
         public void OnWeightWChanged(float value) {
             if (CurrentNeuron == null) return;
             CurrentNeuron.weights.w = value / 4f;
             network.NotifyChange();
         }
-
+        
+        /// <summary>
+        /// Función para cambiar el sesgo primer peso de la neurona objetivo desde la interfaz
+        /// </summary>
+        /// <param name="value">El nuevo sesgo</param>
         public void OnBiasChanged(float value) {
             if (CurrentNeuron == null) return;
             CurrentNeuron.bias = value / 4f;
             network.NotifyChange();
         }
-
+        
+        /// <summary>
+        /// Función para cambiar la función de activación de la neurona objetivo desde la interfaz
+        /// </summary>
+        /// <param name="value">El índice de la función de activación</param>
         public void OnActivationFunctionChanged(int i) {
             if (CurrentNeuron == null) return;
             CurrentNeuron.activationFunction = (ActivationFunction)i;
             network.NotifyChange();
         }
 
+        /// <summary>
+        /// Aleatoriza la neurona objetivo
+        /// </summary>
         public void RandomizeCurrentNeuron() {
             if (CurrentNeuron == null) return;
             network.RandomizeNeuron(CurrentTargetNeuron);
