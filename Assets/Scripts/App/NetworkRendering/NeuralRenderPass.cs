@@ -346,7 +346,7 @@ namespace Neuralizer.NetworkRendering {
         /// </summary>
         public NeuralRenderPass() {
             ConfigureInput(ScriptableRenderPassInput.Color);
-            renderPassEvent = RenderPassEvent.AfterRenderingPostProcessing;
+            renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
         }
 
         /// <summary>
