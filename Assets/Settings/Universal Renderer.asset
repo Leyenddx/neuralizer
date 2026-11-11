@@ -53,7 +53,7 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
-  m_TileOnlyMode: 1
+  m_TileOnlyMode: 0
 --- !u!114 &6063611787765127338
 MonoBehaviour:
   m_ObjectHideFlags: 1

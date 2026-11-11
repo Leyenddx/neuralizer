@@ -81,6 +81,12 @@ namespace Neuralizer.NetworkRendering {
         /// Nombre del parametro de shader "_Bias"
         /// </summary>
         private const string Bias_Name = "_Bias";
+        /// <summary>
+        /// Nombre del parametro de shader "_Shape" — parámetros extra (a,b,c,d) para activaciones tipo
+        /// Trapezoidal/Gaussiana que no alcanzan con <see cref="Weights_Name"/>/<see cref="Bias_Name"/>.
+        /// Sin efecto para el resto de las funciones de activación. Ver <see cref="Neuron.shape"/>.
+        /// </summary>
+        private const string Shape_Name = "_Shape";
 
         /// <summary>
         /// ID único del parametro de shader <see cref="A_Name"/>
@@ -167,6 +173,11 @@ namespace Neuralizer.NetworkRendering {
         /// </summary>
         /// <seealso href="https://docs.unity3d.com/ScriptReference/Shader.PropertyToID.html"/>
         private static readonly int Bias_ID = Shader.PropertyToID(Bias_Name);
+        /// <summary>
+        /// ID único del parametro de shader <see cref="Shape_Name"/>
+        /// </summary>
+        /// <seealso href="https://docs.unity3d.com/ScriptReference/Shader.PropertyToID.html"/>
+        private static readonly int Shape_ID = Shader.PropertyToID(Shape_Name);
 
         /// <summary>
         /// Keyword de shader que índica si se utilizará la función de activación linear
@@ -189,6 +200,15 @@ namespace Neuralizer.NetworkRendering {
         /// Keyword de shader que índica si se utilizará la función de activación TanH
         /// </summary>
         private static readonly ShaderKeyword activationFunction_TanH = new("_ACTIVATIONFUNCTION_TANH");
+        /// <summary>
+        /// Keyword de shader que índica si se utilizará la función de pertenencia trapezoidal/triangular
+        /// (ver <see cref="Neuralizer.Fuzzy.MembershipFunction"/> para la misma fórmula del lado CPU).
+        /// </summary>
+        private static readonly ShaderKeyword activationFunction_Trapezoidal = new("_ACTIVATIONFUNCTION_TRAPEZOIDAL");
+        /// <summary>
+        /// Keyword de shader que índica si se utilizará la campana gaussiana.
+        /// </summary>
+        private static readonly ShaderKeyword activationFunction_Gaussiana = new("_ACTIVATIONFUNCTION_GAUSSIANA");
 
         /// <summary>
         /// Keyword de shader que índica si las entradas de la neurona son la posición del punto
@@ -371,6 +391,7 @@ namespace Neuralizer.NetworkRendering {
         public static void SetShaderData(Neuron target) {
             target.material.SetVector(Weights_ID, target.weights);
             target.material.SetFloat(Bias_ID, target.bias);
+            target.material.SetVector(Shape_ID, target.shape);
             activationFunction_Linear.SetMaterial(target.material,
                 target.activationFunction == ActivationFunction.Linear);
             activationFunction_Stepped.SetMaterial(target.material,
@@ -379,6 +400,10 @@ namespace Neuralizer.NetworkRendering {
             activationFunction_Sigmoid.SetMaterial(target.material,
                 target.activationFunction == ActivationFunction.Sigmoid);
             activationFunction_TanH.SetMaterial(target.material, target.activationFunction == ActivationFunction.TanH);
+            activationFunction_Trapezoidal.SetMaterial(target.material,
+                target.activationFunction == ActivationFunction.Trapezoidal);
+            activationFunction_Gaussiana.SetMaterial(target.material,
+                target.activationFunction == ActivationFunction.Gaussiana);
         }
 
         /// <summary>

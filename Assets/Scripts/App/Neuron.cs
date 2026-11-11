@@ -34,9 +34,40 @@ namespace Neuralizer {
             return (e - 1f) / (e + 1f);
         }
 
+        /// <summary>
+        /// Evalua la función de pertenencia trapezoidal/triangular en <b>x</b> — misma fórmula que
+        /// <see cref="Neuralizer.Fuzzy.MembershipFunction"/>, duplicada acá a propósito para que el
+        /// lado CPU (<see cref="Sample"/>) y el lado GPU (shader) den exactamente el mismo resultado.
+        /// </summary>
+        /// <param name="x">Valor a evaluar</param>
+        /// <param name="a">Punto donde empieza a subir desde 0</param>
+        /// <param name="b">Punto donde llega a 1 subiendo</param>
+        /// <param name="c">Punto donde empieza a bajar desde 1</param>
+        /// <param name="d">Punto donde vuelve a 0</param>
+        public static float Trapezoidal(float x, float a, float b, float c, float d) {
+            if (x <= a || x >= d) return 0f;
+            if (x < b) return b > a ? (x - a) / (b - a) : 1f;
+            if (x <= c) return 1f;
+            return d > c ? (d - x) / (d - c) : 1f;
+        }
+
+        /// <summary>Campana gaussiana centrada en <paramref name="center"/> con ancho <paramref name="spread"/> — misma fórmula que <see cref="Neuralizer.Fuzzy.MembershipFunction"/>.</summary>
+        public static float Gaussiana(float x, float center, float spread) {
+            float s = Mathf.Approximately(spread, 0f) ? 0.0001f : spread;
+            float t = (x - center) / s;
+            return Mathf.Exp(-0.5f * t * t);
+        }
+
         public bool enabled = true;
         public Vector4 weights;
         public float bias;
+        /// <summary>
+        /// Parámetros extra para formas de activación que necesitan más que "pendiente + sesgo"
+        /// (ver <see cref="ActivationFunction.Trapezoidal"/>/<see cref="ActivationFunction.Gaussiana"/>):
+        /// (a, b, c, d) para trapezoidal, (centro, ancho, _, _) para gaussiana. Sin efecto en el resto
+        /// de las funciones de activación.
+        /// </summary>
+        public Vector4 shape;
         public ActivationFunction activationFunction;
         public Material material;
 
@@ -59,6 +90,8 @@ namespace Neuralizer {
                 ActivationFunction.TanH => Tanh(value),
                 ActivationFunction.ReLu => Mathf.Max(0f, value),
                 ActivationFunction.Stepped => value > 0 ? 1f : 0f,
+                ActivationFunction.Trapezoidal => Trapezoidal(value, shape.x, shape.y, shape.z, shape.w),
+                ActivationFunction.Gaussiana => Gaussiana(value, shape.x, shape.y),
                 _ => value
             };
         }
