@@ -148,7 +148,7 @@ namespace Neuralizer.EditorTools {
         // -----------------------------------------------------------------------------------------
 
         private static void CleanupPreviousHud() {
-            foreach (Module2HudMarker marker in Object.FindObjectsByType<Module2HudMarker>(FindObjectsSortMode.None)) {
+            foreach (Module2HudMarker marker in Object.FindObjectsByType<Module2HudMarker>()) {
                 Undo.DestroyObjectImmediate(marker.gameObject);
             }
         }

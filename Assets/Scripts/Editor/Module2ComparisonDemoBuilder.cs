@@ -97,10 +97,10 @@ namespace Neuralizer.EditorTools {
         }
 
         private static void CleanupPrevious() {
-            foreach (Module2ComparisonDemoMarker marker in Object.FindObjectsByType<Module2ComparisonDemoMarker>(FindObjectsSortMode.None)) {
+            foreach (Module2ComparisonDemoMarker marker in Object.FindObjectsByType<Module2ComparisonDemoMarker>()) {
                 Undo.DestroyObjectImmediate(marker.gameObject);
             }
-            foreach (Canvas c in Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None)) {
+            foreach (Canvas c in Object.FindObjectsByType<Canvas>()) {
                 if (c.gameObject.name == "Canvas") Object.DestroyImmediate(c.gameObject);
             }
         }

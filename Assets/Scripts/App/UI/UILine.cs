@@ -47,7 +47,13 @@ namespace Neuralizer.UI {
             rectTransform.position = (from.position + to.position) / 2f;
             Vector3 dif = to.position - from.position;
             rectTransform.sizeDelta = new Vector3(dif.magnitude / canvas.scaleFactor, thickness);
-            rectTransform.rotation = Quaternion.Euler(new Vector3(0f, 0f, 180f * Mathf.Atan(dif.y / dif.x) / Mathf.PI));
+
+            // Si ambos extremos coinciden (p. ej. antes de que el layout se calcule), el ángulo
+            // no está definido: Atan(0/0) daba NaN y Quaternion.Euler(NaN) disparaba una aserción.
+            if (dif.sqrMagnitude < 1e-6f) return;
+
+            // Atan2 da el mismo ángulo que Atan(y/x) para x >= 0, pero sin dividir entre cero.
+            rectTransform.rotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(dif.y, dif.x) * Mathf.Rad2Deg);
         }
 
 #if UNITY_EDITOR

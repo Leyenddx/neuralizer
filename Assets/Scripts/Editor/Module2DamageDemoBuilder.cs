@@ -97,13 +97,13 @@ namespace Neuralizer.EditorTools {
         }
 
         private static void CleanupPrevious() {
-            foreach (Module2DamageDemoMarker marker in Object.FindObjectsByType<Module2DamageDemoMarker>(FindObjectsSortMode.None)) {
+            foreach (Module2DamageDemoMarker marker in Object.FindObjectsByType<Module2DamageDemoMarker>()) {
                 Undo.DestroyObjectImmediate(marker.gameObject);
             }
             // Las corridas anteriores de esta misma herramienta dejaban el Canvas/EventSystem sueltos
             // (antes de que existiera este marcador) — una pasada defensiva por si hay que reconstruir
             // sobre una escena armada con una versión vieja de este script.
-            foreach (Canvas c in Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None)) {
+            foreach (Canvas c in Object.FindObjectsByType<Canvas>()) {
                 if (c.gameObject.name == "Canvas") Object.DestroyImmediate(c.gameObject);
             }
         }
