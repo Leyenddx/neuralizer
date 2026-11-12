@@ -285,16 +285,29 @@ namespace Neuralizer.Fuzzy {
 
             weightSlider.onValueChanged.AddListener(OnWeightChanged);
 
+            // Si el builder le puso M2Popup al fondo, el popup entra/sale animado (modal: 240 ms / 150 ms);
+            // si no, se comporta como antes (mostrar/ocultar de golpe).
+            Neuralizer.UI.M2Popup popup = resultBackdrop.GetComponent<Neuralizer.UI.M2Popup>();
+            void OpenResult() {
+                if (popup) popup.Open();
+                else resultBackdrop.gameObject.SetActive(true);
+            }
+            void CloseResult() {
+                if (popup) popup.Close();
+                else resultBackdrop.gameObject.SetActive(false);
+            }
+
             evaluarButton.onClick.AddListener(() => {
                 host.SubmitResult();
-                resultBackdrop.gameObject.SetActive(true);
+                OpenResult();
             });
 
             if (resultBackdropButton) {
-                resultBackdropButton.onClick.AddListener(() => resultBackdrop.gameObject.SetActive(false));
+                resultBackdropButton.onClick.AddListener(CloseResult);
             }
-            resultCloseButton.onClick.AddListener(() => resultBackdrop.gameObject.SetActive(false));
-            resultBackdrop.gameObject.SetActive(false);
+            resultCloseButton.onClick.AddListener(CloseResult);
+            if (popup) popup.HideImmediate();
+            else resultBackdrop.gameObject.SetActive(false);
 
             Canvas.ForceUpdateCanvases();
             LayoutRebuilder.ForceRebuildLayoutImmediate(canvasRoot);
@@ -456,21 +469,43 @@ namespace Neuralizer.Fuzzy {
         }
 
         /// <summary>
-        /// Muestra el resultado como una escala continua (0-100%) en vez de un simple correcto/incorrecto
-        /// — coherente con que, en lógica difusa, la respuesta casi nunca es blanco o negro sino un gris
-        /// en algún punto del rango. El color del panel también se interpola sobre esa escala.
+        /// Muestra el resultado con las prioridades reales que calculó el sistema y el margen entre
+        /// ambos (en puntos de Prioridad), en vez de un porcentaje de "calidad".
         /// </summary>
+        /// <remarks>
+        /// Antes el veredicto salía de la calidad continua (0.5 + diferencia / rango), pero en este
+        /// ejercicio Reinhardt siempre vale ~75 y D.Va como mucho ~90: la calidad máxima alcanzable es
+        /// ~65 %, así que "¡Excelente!" (≥ 85 %) era imposible aun resuelto. El margen en puntos es lo que
+        /// de verdad explica la decisión ("D.Va va primero por 15 puntos") y se lee sin fórmulas.
+        /// <paramref name="quality"/> se sigue recibiendo para respetar la firma del evento.
+        /// </remarks>
         private void OnQualityEvaluated(float quality) {
-            Color accent = Color.Lerp(EsportsTheme.NeonRed, EsportsTheme.NeonGreen, quality);
+            float pr = host.EvaluateSingle(scene.cases[0].inputValues); // Reinhardt
+            float pd = host.EvaluateSingle(scene.cases[1].inputValues); // D.Va
+            float margin = pd - pr;
+
+            Color accent;
+            string verdict;
+            if (margin >= 10f) {
+                accent = EsportsTheme.NeonGreen;
+                verdict = "¡Excelente! El sistema prioriza claramente a D.Va.";
+            }
+            else if (margin >= 0.01f) {
+                accent = EsportsTheme.NeonGreen;
+                verdict = "¡Correcto! D.Va va primero, aunque por poco margen.";
+            }
+            else if (margin > -0.01f) {
+                accent = EsportsTheme.Accent;
+                verdict = "Empate: el sistema no sabe a quién curar. Sube el peso de la regla.";
+            }
+            else {
+                accent = EsportsTheme.NeonRed;
+                verdict = "El sistema sigue priorizando a Reinhardt. Sube el peso de la regla.";
+            }
+
             resultBorder.color = accent;
             resultText.color = accent;
-
-            int percent = Mathf.RoundToInt(quality * 100f);
-            string verdict = quality >= 0.85f ? "¡Excelente! El sistema prioriza claramente a D.Va."
-                : quality >= 0.6f ? "Vas bien encaminado — el sistema ya se inclina por D.Va."
-                : quality >= 0.4f ? "Está parejo todavía — sube más el peso de la regla."
-                : "El sistema sigue priorizando a Reinhardt. Sube el peso de la regla.";
-            resultText.text = $"Qué tan bien resuelto está: {percent}%\n{verdict}";
+            resultText.text = $"Prioridad — D.Va {pd:0.0} · Reinhardt {pr:0.0}\n{verdict}";
         }
     }
 }

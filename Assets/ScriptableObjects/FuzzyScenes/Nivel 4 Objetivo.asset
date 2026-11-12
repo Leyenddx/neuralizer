@@ -1,0 +1,177 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3bb567751d5a964e8b5a825b0724e4d, type: 3}
+  m_Name: Nivel 4 Objetivo
+  m_EditorClassIdentifier: Neuralizer::Neuralizer.Data.FuzzyScene
+  displayName: Prioridad de Objetivo
+  storageName: m2_nivel4_objetivo
+  scoreboardID: 
+  minTime: 15
+  minMaxScores: {x: 1, y: 10}
+  successThreshold: 0.95
+  narrativeContext: "Focus fire: \xBFa qui\xE9n ataca primero el equipo? Hoy el equipo ignora a los enemigos fr\xE1giles pero peligrosos. Ajusta las reglas y mira c\xF3mo cambia la superficie de control."
+  system:
+    inputs:
+    - variableName: VidaRestante
+      range: {x: 0, y: 100}
+      labels:
+      - label: Baja
+        membership:
+          shape: 0
+          a: 0
+          b: 0
+          c: 30
+          d: 50
+          center: 0
+          spread: 1
+        displayColor: {r: 0.85, g: 0.3, b: 0.38, a: 1}
+      - label: Alta
+        membership:
+          shape: 0
+          a: 30
+          b: 70
+          c: 100
+          d: 100
+          center: 0
+          spread: 1
+        displayColor: {r: 0.18, g: 0.77, b: 1, a: 1}
+    - variableName: Amenaza
+      range: {x: 0, y: 100}
+      labels:
+      - label: Baja
+        membership:
+          shape: 0
+          a: 0
+          b: 0
+          c: 30
+          d: 50
+          center: 0
+          spread: 1
+        displayColor: {r: 0.18, g: 0.77, b: 1, a: 1}
+      - label: Alta
+        membership:
+          shape: 0
+          a: 30
+          b: 70
+          c: 100
+          d: 100
+          center: 0
+          spread: 1
+        displayColor: {r: 0.85, g: 0.3, b: 0.38, a: 1}
+    outputs:
+    - variableName: PrioridadObjetivo
+      range: {x: 0, y: 100}
+      labels:
+      - label: Baja
+        membership:
+          shape: 0
+          a: 0
+          b: 0
+          c: 25
+          d: 50
+          center: 0
+          spread: 1
+        displayColor: {r: 0.18, g: 0.77, b: 1, a: 1}
+      - label: Media
+        membership:
+          shape: 0
+          a: 25
+          b: 50
+          c: 50
+          d: 75
+          center: 0
+          spread: 1
+        displayColor: {r: 0.61, g: 0.36, b: 1, a: 1}
+      - label: Alta
+        membership:
+          shape: 0
+          a: 50
+          b: 75
+          c: 75
+          d: 100
+          center: 0
+          spread: 1
+        displayColor: {r: 0.85, g: 0.3, b: 0.38, a: 1}
+      - label: MuyAlta
+        membership:
+          shape: 0
+          a: 75
+          b: 90
+          c: 100
+          d: 100
+          center: 0
+          spread: 1
+        displayColor: {r: 1, g: 0.3, b: 0.43, a: 1}
+    rules:
+    - description: SI VidaRestante es Baja Y Amenaza es Alta ENTONCES PrioridadObjetivo es MuyAlta
+      conditions:
+      - inputIndex: 0
+        label: Baja
+      - inputIndex: 1
+        label: Alta
+      combineWith: 0
+      outputIndex: 0
+      outputLabel: MuyAlta
+      weight: 0
+    - description: SI VidaRestante es Baja Y Amenaza es Baja ENTONCES PrioridadObjetivo es Media
+      conditions:
+      - inputIndex: 0
+        label: Baja
+      - inputIndex: 1
+        label: Baja
+      combineWith: 0
+      outputIndex: 0
+      outputLabel: Media
+      weight: 1
+    - description: SI VidaRestante es Alta Y Amenaza es Alta ENTONCES PrioridadObjetivo es Alta
+      conditions:
+      - inputIndex: 0
+        label: Alta
+      - inputIndex: 1
+        label: Alta
+      combineWith: 0
+      outputIndex: 0
+      outputLabel: Alta
+      weight: 1
+    - description: SI VidaRestante es Alta Y Amenaza es Baja ENTONCES PrioridadObjetivo es Baja
+      conditions:
+      - inputIndex: 0
+        label: Alta
+      - inputIndex: 1
+        label: Baja
+      combineWith: 0
+      outputIndex: 0
+      outputLabel: Baja
+      weight: 1
+  cases:
+  - label: Tanque
+    inputValues:
+    - 80
+    - 70
+    expectedRank: 1
+    expectedLabel: 
+  - label: Support
+    inputValues:
+    - 35
+    - 20
+    expectedRank: 2
+    expectedLabel: 
+  - label: Tirador
+    inputValues:
+    - 25
+    - 85
+    expectedRank: 0
+    expectedLabel: 
+  mode: 0
+  editableRuleWeights: 1
+  editableMemberships: 0
+  showControlSurface: 1

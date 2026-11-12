@@ -53,7 +53,15 @@ namespace Neuralizer.UI {
             return img;
         }
 
-        /// <summary>Texto genérico pensado para vivir directo dentro de un VerticalLayoutGroup.</summary>
+        /// <summary>
+        /// Texto genérico pensado para vivir directo dentro de un VerticalLayoutGroup.
+        /// <paramref name="size"/> debería ser un token de <see cref="EsportsTheme.TextSize"/>.
+        /// </summary>
+        /// <remarks>
+        /// <paramref name="preferredHeight"/> se aplica como ALTURA MÍNIMA, no fija: si el texto
+        /// necesita más líneas, el layout le da el alto que pide (preferred height de TMP) en vez de
+        /// dejarlo desbordarse encima del elemento de abajo — esa era la causa de los textos encimados.
+        /// </remarks>
         public static TextMeshProUGUI CreateText(Transform parent, string text, float size, Color color,
             FontStyles style, TextAlignmentOptions alignment, float preferredHeight) {
             RectTransform rt = CreateRect("Text", parent);
@@ -63,14 +71,21 @@ namespace Neuralizer.UI {
             tmp.color = color;
             tmp.fontStyle = style;
             tmp.alignment = alignment;
+            EsportsSkin.ApplyFont(tmp, EsportsSkin.InferRole(size, style));
             tmp.textWrappingMode = TextWrappingModes.Normal;
+            tmp.raycastTarget = false;
             if (preferredHeight > 0f) {
-                rt.gameObject.AddComponent<LayoutElement>().preferredHeight = preferredHeight;
+                rt.gameObject.AddComponent<LayoutElement>().minHeight = preferredHeight;
             }
             return tmp;
         }
 
-        /// <summary>Texto que se estira para llenar por completo su padre (p. ej. el Content de una tarjeta).</summary>
+        /// <summary>
+        /// Texto que se estira para llenar por completo su padre (p. ej. el Content de una tarjeta).
+        /// Como el contenedor tiene tamaño fijo, el texto se autoajusta para no desbordarse: arranca en
+        /// <paramref name="size"/> y solo se achica hasta <see cref="EsportsTheme.TextSize.Caption"/>
+        /// (12 px reales) — nunca a un tamaño ilegible.
+        /// </summary>
         public static TextMeshProUGUI CreateTextFill(Transform parent, string text, float size, Color color,
             FontStyles style, TextAlignmentOptions alignment) {
             RectTransform rt = CreateRect("Text", parent);
@@ -81,7 +96,12 @@ namespace Neuralizer.UI {
             tmp.color = color;
             tmp.fontStyle = style;
             tmp.alignment = alignment;
+            EsportsSkin.ApplyFont(tmp, EsportsSkin.InferRole(size, style));
             tmp.textWrappingMode = TextWrappingModes.Normal;
+            tmp.raycastTarget = false;
+            tmp.enableAutoSizing = true;
+            tmp.fontSizeMax = size;
+            tmp.fontSizeMin = Mathf.Min(size, EsportsTheme.TextSize.Caption);
             return tmp;
         }
 
@@ -98,8 +118,10 @@ namespace Neuralizer.UI {
             tmp.color = Color.white;
             tmp.enableVertexGradient = true;
             tmp.colorGradient = new VertexGradient(colorLeft, colorRight, colorLeft, colorRight);
+            EsportsSkin.ApplyFont(tmp, TypeRole.Display);
+            tmp.raycastTarget = false;
             if (preferredHeight > 0f) {
-                rt.gameObject.AddComponent<LayoutElement>().preferredHeight = preferredHeight;
+                rt.gameObject.AddComponent<LayoutElement>().minHeight = preferredHeight;
             }
             return tmp;
         }
@@ -142,20 +164,32 @@ namespace Neuralizer.UI {
             root.anchorMax = Vector2.zero;
             root.sizeDelta = new Vector2(size, size);
 
+            // Con el sprite radial del generador los halos son luz suave y redonda; sin él se cae a los
+            // cuadrados semitransparentes de antes. La estructura (3 halos + núcleo) se mantiene porque
+            // los demos tiñen cada capa conservando su alpha relativo.
+            Sprite radial = EsportsSkin.GlowDot;
             for (int i = 3; i >= 1; i--) {
                 float spread = glowSpread * i / 3f;
                 float alpha = 0.16f * i;
                 Image halo = CreateImage($"Glow{i}", root, new Color(color.r, color.g, color.b, alpha));
                 halo.rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
                 halo.rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
-                halo.rectTransform.sizeDelta = new Vector2(size + spread, size + spread);
+                // El sprite radial se desvanece hacia el borde: se agranda para que el halo llegue igual de lejos.
+                float haloSize = radial ? size + spread * 2.4f : size + spread;
+                halo.rectTransform.sizeDelta = new Vector2(haloSize, haloSize);
                 halo.rectTransform.anchoredPosition = Vector2.zero;
                 halo.raycastTarget = false;
+                if (radial) halo.sprite = radial;
             }
 
             Image core = CreateImage("Core", root, color);
             Stretch(core.rectTransform);
             core.raycastTarget = false;
+            if (radial) {
+                core.sprite = radial;
+                // El sprite radial es suave: el núcleo un poco más grande para que el centro se lea sólido.
+                EsportsUIKit.Stretch(core.rectTransform, -size * 0.35f, -size * 0.35f, -size * 0.35f, -size * 0.35f);
+            }
             return root;
         }
 
@@ -222,35 +256,51 @@ namespace Neuralizer.UI {
         /// site que ya lo pasaba.
         /// </remarks>
         public static RectTransform CreateNeonCard(Transform parent, string name, float borderThickness = 1f, float glowSpread = 0f) {
-            RectTransform root = CreateRect(name, parent);
-
-            Image border = CreateImage("Border", root, new Color(EsportsTheme.NeonBlend.r, EsportsTheme.NeonBlend.g, EsportsTheme.NeonBlend.b, 0.3f));
-            Stretch(border.rectTransform);
-            border.raycastTarget = false;
-
-            Image bg = CreateImage("Bg", root, EsportsTheme.BgPanel);
-            Stretch(bg.rectTransform, borderThickness, borderThickness, borderThickness, borderThickness);
-
-            RectTransform content = CreateRect("Content", bg.rectTransform);
-            Stretch(content, 14f, 14f, 12f, 12f);
+            RectTransform content = CreatePanel(parent, name, EsportsTheme.NeonBlend, 0.35f, borderThickness, out _);
+            Stretch(content, 16f, 16f, 14f, 14f);
             return content;
         }
 
         /// <summary>Como <see cref="CreateNeonCard"/> pero con un color de acento en vez del degradado (p. ej. para diferenciar dos equipos/opciones) — mismo hairline sutil, sin halo.</summary>
         public static RectTransform CreateAccentCard(Transform parent, string name, Color accent, out Image border,
             float borderThickness = 1f, float glowSpread = 0f) {
-            RectTransform root = CreateRect(name, parent);
+            RectTransform content = CreatePanel(parent, name, accent, 0.45f, borderThickness, out border);
+            Stretch(content, 14f, 14f, 12f, 12f);
+            return content;
+        }
 
-            border = CreateImage("Border", root, new Color(accent.r, accent.g, accent.b, 0.4f));
+        /// <summary>
+        /// Panel base del sistema "Tactical Neon": relleno oscuro con esquinas recortadas y contorno
+        /// fino del color de acento ENCIMA del relleno (con los sprites del generador). Sin los sprites
+        /// cae al rectángulo + hairline anterior. Mantiene la jerarquía Border/Bg/Content de siempre
+        /// porque otras herramientas buscan esos nombres. Devuelve "Content".
+        /// </summary>
+        private static RectTransform CreatePanel(Transform parent, string name, Color accent, float borderAlpha,
+            float borderThickness, out Image border) {
+            RectTransform root = CreateRect(name, parent);
+            bool skinned = EsportsSkin.HasSprites;
+
+            border = skinned
+                ? CreateSpriteImage("Border", root, EsportsSkin.ChamferLine, Image.Type.Sliced)
+                : CreateImage("Border", root, Color.white);
+            border.color = EsportsTheme.WithAlpha(accent, borderAlpha);
             Stretch(border.rectTransform);
             border.raycastTarget = false;
 
-            Image bg = CreateImage("Bg", root, EsportsTheme.BgPanel);
-            Stretch(bg.rectTransform, borderThickness, borderThickness, borderThickness, borderThickness);
+            Image bg = skinned
+                ? CreateSpriteImage("Bg", root, EsportsSkin.ChamferFill, Image.Type.Sliced)
+                : CreateImage("Bg", root, Color.white);
+            bg.color = EsportsTheme.BgPanel;
+            if (skinned) {
+                Stretch(bg.rectTransform);
+                // El contorno va encima del relleno (mismo contorno exterior: debajo quedaría tapado).
+                border.transform.SetAsLastSibling();
+            }
+            else {
+                Stretch(bg.rectTransform, borderThickness, borderThickness, borderThickness, borderThickness);
+            }
 
-            RectTransform content = CreateRect("Content", bg.rectTransform);
-            Stretch(content, 12f, 12f, 10f, 10f);
-            return content;
+            return CreateRect("Content", bg.rectTransform);
         }
 
         public static RectTransform CreateAccentCard(Transform parent, string name, Color accent,
@@ -322,6 +372,7 @@ namespace Neuralizer.UI {
             if (!string.IsNullOrEmpty(label)) {
                 CreateTextFill(root, label, textSize, textColor, FontStyles.Bold, TextAlignmentOptions.Center);
             }
+            AddPressMotion(button);
             return button;
         }
 
@@ -338,21 +389,32 @@ namespace Neuralizer.UI {
 
             Button button = root.gameObject.AddComponent<Button>();
             button.targetGraphic = icon;
+            AddPressMotion(button, 0.92f);
             return button;
         }
 
         public static Button CreateGradientButton(Transform parent, string label, float preferredHeight = 64f) {
             RectTransform root = CreateRect("Button", parent);
-            root.gameObject.AddComponent<LayoutElement>().preferredHeight = preferredHeight;
+            root.gameObject.AddComponent<LayoutElement>().preferredHeight = Mathf.Max(preferredHeight, EsportsTheme.Metrics.TouchTarget);
 
             Image bg = root.gameObject.AddComponent<Image>();
+            if (EsportsSkin.HasSprites) {
+                bg.sprite = EsportsSkin.ChamferFill;
+                bg.type = Image.Type.Sliced;
+            }
             bg.color = Color.white;
             AddGradient(bg, EsportsTheme.NeonBlue, EsportsTheme.NeonPurple, UIGradient.Direction.Horizontal);
 
             Button button = root.gameObject.AddComponent<Button>();
             button.targetGraphic = bg;
 
-            TextMeshProUGUI text = CreateTextFill(root, label, 24f, Color.white, FontStyles.Bold, TextAlignmentOptions.Center);
+            // Texto oscuro sobre el degradado brillante: blanco sobre cian no llega a 3:1 de contraste.
+            TextMeshProUGUI text = CreateTextFill(root, label, EsportsTheme.TextSize.Subtitle, EsportsTheme.BgDeep, FontStyles.Bold, TextAlignmentOptions.Center);
+            text.rectTransform.offsetMin = new Vector2(12f, 0f);
+            text.rectTransform.offsetMax = new Vector2(-12f, 0f);
+            text.characterSpacing = 4f;
+            text.fontStyle |= FontStyles.UpperCase;
+            AddPressMotion(button);
             return button;
         }
 
@@ -361,6 +423,7 @@ namespace Neuralizer.UI {
         /// ejemplo, para elegir el tipo de curva (función de pertenencia) de un ejercicio en vivo.
         /// </summary>
         public static TMP_Dropdown CreateDropdown(Transform parent, string[] options, int startIndex, float preferredHeight = 40f) {
+            preferredHeight = Mathf.Max(preferredHeight, EsportsTheme.Metrics.TouchTarget);
             RectTransform root = CreateRect("Dropdown", parent);
             root.gameObject.AddComponent<LayoutElement>().preferredHeight = preferredHeight;
 
@@ -383,7 +446,7 @@ namespace Neuralizer.UI {
             TMP_Dropdown dropdown = root.gameObject.AddComponent<TMP_Dropdown>();
             dropdown.targetGraphic = bg;
 
-            TextMeshProUGUI label = CreateTextFill(root, options.Length > 0 ? options[startIndex] : "", 18f, EsportsTheme.TextPrimary, FontStyles.Bold, TextAlignmentOptions.Left);
+            TextMeshProUGUI label = CreateTextFill(root, options.Length > 0 ? options[startIndex] : "", EsportsTheme.TextSize.Body, EsportsTheme.TextPrimary, FontStyles.Bold, TextAlignmentOptions.Left);
             label.rectTransform.offsetMin = new Vector2(14f, 0f);
             label.rectTransform.offsetMax = new Vector2(-14f, 0f);
             dropdown.captionText = label;
@@ -420,7 +483,7 @@ namespace Neuralizer.UI {
             Image itemBg = CreateImage("ItemBg", item, EsportsTheme.BgPanelLight);
             Stretch(itemBg.rectTransform);
             itemToggle.targetGraphic = itemBg;
-            TextMeshProUGUI itemLabel = CreateTextFill(item, "Option", 17f, EsportsTheme.TextPrimary, FontStyles.Normal, TextAlignmentOptions.Left);
+            TextMeshProUGUI itemLabel = CreateTextFill(item, "Option", EsportsTheme.TextSize.Body, EsportsTheme.TextPrimary, FontStyles.Normal, TextAlignmentOptions.Left);
             itemLabel.rectTransform.offsetMin = new Vector2(14f, 0f);
 
             dropdown.template = template;
@@ -439,15 +502,31 @@ namespace Neuralizer.UI {
             RectTransform root = CreateRect("GhostButton", parent);
             LayoutElement le = root.gameObject.AddComponent<LayoutElement>();
             le.preferredWidth = preferredWidth;
-            le.preferredHeight = preferredHeight;
+            le.preferredHeight = Mathf.Max(preferredHeight, EsportsTheme.Metrics.TouchTarget);
+            le.minHeight = EsportsTheme.Metrics.TouchTarget;
 
             Image bg = root.gameObject.AddComponent<Image>();
             bg.color = EsportsTheme.BgPanelLight;
+            if (EsportsSkin.HasSprites) {
+                bg.sprite = EsportsSkin.ChamferFill;
+                bg.type = Image.Type.Sliced;
+                // Esquinas más chicas que en los paneles: en un botón de 60 de alto el recorte grande
+                // se comería la mitad de la altura.
+                bg.pixelsPerUnitMultiplier = 1.6f;
+                Image line = CreateSpriteImage("Line", root, EsportsSkin.ChamferLine, Image.Type.Sliced);
+                line.pixelsPerUnitMultiplier = 1.6f;
+                line.color = EsportsTheme.Stroke;
+                line.raycastTarget = false;
+                Stretch(line.rectTransform);
+            }
 
             Button button = root.gameObject.AddComponent<Button>();
             button.targetGraphic = bg;
 
-            CreateTextFill(root, label, 16f, EsportsTheme.TextPrimary, FontStyles.Bold, TextAlignmentOptions.Center);
+            TextMeshProUGUI text = CreateTextFill(root, label, EsportsTheme.TextSize.Body, EsportsTheme.TextPrimary, FontStyles.Bold, TextAlignmentOptions.Center);
+            text.rectTransform.offsetMin = new Vector2(10f, 0f);
+            text.rectTransform.offsetMax = new Vector2(-10f, 0f);
+            AddPressMotion(button);
             return button;
         }
 
@@ -506,35 +585,50 @@ namespace Neuralizer.UI {
             root.anchorMax = new Vector2(1f, 0.5f);
             root.pivot = new Vector2(0.5f, 0.5f);
             root.anchoredPosition = Vector2.zero;
-            root.sizeDelta = new Vector2(0f, 40f);
+            root.sizeDelta = new Vector2(0f, EsportsTheme.Metrics.SliderHeight);
             Slider slider = root.gameObject.AddComponent<Slider>();
+
+            // Fondo transparente en toda el área: hace que tocar cualquier punto de la franja (no solo
+            // el handle) mueva el slider — área táctil de 44 px reales aunque la línea sea delgada.
+            Image hitArea = root.gameObject.AddComponent<Image>();
+            hitArea.color = new Color(0f, 0f, 0f, 0f);
 
             RectTransform trackRT = CreateRect("Track", root);
             trackRT.anchorMin = new Vector2(0f, 0.5f);
             trackRT.anchorMax = new Vector2(1f, 0.5f);
             trackRT.pivot = new Vector2(0.5f, 0.5f);
-            trackRT.sizeDelta = new Vector2(0f, 2f);
+            trackRT.sizeDelta = new Vector2(-24f, 4f);
             trackRT.anchoredPosition = Vector2.zero;
             Image track = trackRT.gameObject.AddComponent<Image>();
-            track.color = EsportsTheme.TextPrimary;
+            track.color = EsportsTheme.WithAlpha(EsportsTheme.TextPrimary, 0.22f);
             track.raycastTarget = false;
 
-            // El componente Slider exige un fillRect válido aunque acá no se pinte — ancla completa,
-            // sin Image visible (alpha 0) encima del track.
+            // Tramo recorrido en cian sobre el riel tenue: el valor se lee de un vistazo sin mirar el número.
             RectTransform fillArea = CreateRect("Fill Area", root);
-            Stretch(fillArea, 10f, 10f, 18f, 18f);
+            fillArea.anchorMin = new Vector2(0f, 0.5f);
+            fillArea.anchorMax = new Vector2(1f, 0.5f);
+            fillArea.pivot = new Vector2(0.5f, 0.5f);
+            fillArea.sizeDelta = new Vector2(-24f, 4f);
+            fillArea.anchoredPosition = Vector2.zero;
             RectTransform fillRT = CreateRect("Fill", fillArea);
             fillRT.anchorMin = Vector2.zero;
             fillRT.anchorMax = Vector2.one;
             fillRT.sizeDelta = Vector2.zero;
             Image fill = fillRT.gameObject.AddComponent<Image>();
-            fill.color = new Color(0f, 0f, 0f, 0f);
+            fill.color = EsportsTheme.NeonBlue;
             fill.raycastTarget = false;
 
             RectTransform handleArea = CreateRect("Handle Slide Area", root);
-            Stretch(handleArea, 10f, 10f, 0f, 0f);
-            Image handle = CreateImage("Handle", handleArea, new Color(0.07f, 0.1f, 0.24f, 1f));
-            handle.rectTransform.sizeDelta = new Vector2(10f, 26f);
+            Stretch(handleArea, 12f, 12f, 0f, 0f);
+            // Handle más grande y con borde claro: antes era 10×26 unidades (≈7×20 px reales), difícil
+            // de ver y de agarrar sobre el fondo oscuro.
+            Image handle = CreateImage("Handle", handleArea, EsportsTheme.TextPrimary);
+            // El Slider estira el handle a toda la altura del área (anclas Y 0→1), así que sizeDelta.y
+            // SE SUMA a esa altura: -16 deja el handle en 44 (60 − 16) en vez de 104.
+            handle.rectTransform.sizeDelta = new Vector2(24f, -16f);
+            Image handleCore = CreateImage("Core", handle.rectTransform, EsportsTheme.NeonBlend);
+            Stretch(handleCore.rectTransform, 3f, 3f, 3f, 3f);
+            handleCore.raycastTarget = false;
 
             slider.targetGraphic = handle;
             slider.fillRect = fillRT;
@@ -544,6 +638,141 @@ namespace Neuralizer.UI {
             slider.maxValue = max;
             slider.value = value;
             return slider;
+        }
+
+        // ---------------------------------------------------------------
+        // Sistema "Tactical Neon" (ver MODULO2_DISENO.md)
+        // ---------------------------------------------------------------
+
+        /// <summary>Feedback de presión (escala 0.97, 120 ms ease-out) para cualquier botón.</summary>
+        public static M2Motion AddPressMotion(Button button, float scale = 0.97f) {
+            M2Motion motion = button.GetComponent<M2Motion>();
+            if (!motion) motion = button.gameObject.AddComponent<M2Motion>();
+            motion.SetPressFeedback(true, scale);
+            return motion;
+        }
+
+        /// <summary>
+        /// Overline: etiqueta corta en mayúsculas, mono y con tracking amplio, encima de un título
+        /// ("MÓDULO 2", "NIVEL 03"). Da el tono de HUD sin restar legibilidad al título.
+        /// </summary>
+        public static TextMeshProUGUI CreateOverline(Transform parent, string text, Color color, float size = EsportsTheme.TextSize.Caption) {
+            TextMeshProUGUI tmp = CreateText(parent, text, size, color, FontStyles.Normal, TextAlignmentOptions.Left, 0f);
+            EsportsSkin.ApplyFont(tmp, TypeRole.Mono);
+            tmp.fontStyle = FontStyles.UpperCase;
+            tmp.characterSpacing = 8f;
+            tmp.textWrappingMode = TextWrappingModes.NoWrap;
+            return tmp;
+        }
+
+        /// <summary>Chip de estado ("DEMO", "COMPLETADO"): texto mono pequeño sobre una píldora tenue del color dado.</summary>
+        public static RectTransform CreateChip(Transform parent, string text, Color color, float size = EsportsTheme.TextSize.Caption) {
+            RectTransform root = CreateRect("Chip", parent);
+            Image bg = root.gameObject.AddComponent<Image>();
+            if (EsportsSkin.HasSprites) {
+                bg.sprite = EsportsSkin.ChamferFill;
+                bg.type = Image.Type.Sliced;
+                bg.pixelsPerUnitMultiplier = 3f;
+            }
+            bg.color = EsportsTheme.WithAlpha(color, 0.16f);
+            bg.raycastTarget = false;
+
+            HorizontalLayoutGroup h = root.gameObject.AddComponent<HorizontalLayoutGroup>();
+            h.padding = new RectOffset(10, 10, 3, 3);
+            h.childControlWidth = true;
+            h.childControlHeight = true;
+            h.childForceExpandWidth = false;
+            h.childForceExpandHeight = false;
+            ContentSizeFitter fit = root.gameObject.AddComponent<ContentSizeFitter>();
+            fit.horizontalFit = ContentSizeFitter.FitMode.PreferredSize;
+            fit.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+            TextMeshProUGUI label = CreateText(root, text, size, color, FontStyles.Normal, TextAlignmentOptions.Center, 0f);
+            EsportsSkin.ApplyFont(label, TypeRole.Mono);
+            label.fontStyle = FontStyles.UpperCase | FontStyles.Bold;
+            label.characterSpacing = 4f;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            return root;
+        }
+
+        /// <summary>Ícono generado (chevron, check, play…) teñido, de tamaño fijo dentro de un layout.</summary>
+        public static Image CreateIcon(Transform parent, Sprite sprite, Color color, float size) {
+            Image icon = CreateSpriteImage("Icon", parent, sprite);
+            icon.color = color;
+            icon.preserveAspect = true;
+            icon.raycastTarget = false;
+            LayoutElement le = icon.gameObject.AddComponent<LayoutElement>();
+            le.preferredWidth = size;
+            le.preferredHeight = size;
+            le.minWidth = size;
+            icon.rectTransform.sizeDelta = new Vector2(size, size);
+            return icon;
+        }
+
+        /// <summary>
+        /// Encabezado de sección: overline en cian + línea fina que llena el resto del ancho
+        /// ("NIVELES ───────"). Separa grupos sin agregar cajas extra.
+        /// </summary>
+        public static RectTransform CreateSectionHeader(Transform parent, string text, Color color) {
+            RectTransform row = CreateRect("Section_" + text, parent);
+            HorizontalLayoutGroup h = row.gameObject.AddComponent<HorizontalLayoutGroup>();
+            h.spacing = 12f;
+            h.childAlignment = TextAnchor.MiddleLeft;
+            h.childControlWidth = true;
+            h.childControlHeight = true;
+            h.childForceExpandWidth = false;
+            h.childForceExpandHeight = false;
+            row.gameObject.AddComponent<LayoutElement>().minHeight = 28f;
+
+            CreateOverline(row, text, color, EsportsTheme.TextSize.Small);
+            Image line = CreateImage("Rule", row, EsportsTheme.WithAlpha(color, 0.3f));
+            line.raycastTarget = false;
+            LayoutElement le = line.gameObject.AddComponent<LayoutElement>();
+            le.flexibleWidth = 1f;
+            le.preferredHeight = 1f;
+            le.minHeight = 1f;
+            return row;
+        }
+
+        /// <summary>
+        /// Fondo ambiental del Módulo 2, a pantalla completa dentro de <paramref name="parent"/>:
+        /// base azul noche con degradado hacia violeta, retícula sutil, dos luces (cian y violeta) que
+        /// derivan muy lento y viñeta en los bordes para centrar la mirada. Todo sin raycast.
+        /// </summary>
+        public static RectTransform CreateAmbientBackground(Transform parent, string name = "Background") {
+            RectTransform root = CreateRect(name, parent);
+            Stretch(root);
+
+            Image baseImg = CreateImage("Base", root, Color.white);
+            Stretch(baseImg.rectTransform);
+            baseImg.raycastTarget = false;
+            AddGradient(baseImg, EsportsTheme.BgDeep, Color.Lerp(EsportsTheme.BgDeep, EsportsTheme.NeonPurple, 0.16f),
+                UIGradient.Direction.Vertical);
+
+            if (EsportsSkin.HasSprites) {
+                Light(root, "LightCyan", EsportsTheme.NeonBlue, new Vector2(0.15f, 0.82f), 760f, 0f);
+                Light(root, "LightViolet", EsportsTheme.NeonPurple, new Vector2(0.9f, 0.25f), 900f, 0.45f);
+
+                Image grid = CreateSpriteImage("Grid", root, EsportsSkin.Grid, Image.Type.Tiled);
+                Stretch(grid.rectTransform);
+                grid.color = EsportsTheme.WithAlpha(EsportsTheme.TextPrimary, 0.045f);
+                grid.raycastTarget = false;
+
+                Image vignette = CreateSpriteImage("Vignette", root, EsportsSkin.Vignette);
+                Stretch(vignette.rectTransform);
+                vignette.color = new Color(0f, 0f, 0f, 0.75f);
+                vignette.raycastTarget = false;
+            }
+            return root;
+        }
+
+        private static void Light(RectTransform parent, string name, Color color, Vector2 anchor, float size, float phase) {
+            Image light = CreateSpriteImage(name, parent, EsportsSkin.GlowDot);
+            light.rectTransform.anchorMin = light.rectTransform.anchorMax = anchor;
+            light.rectTransform.sizeDelta = new Vector2(size, size);
+            light.color = EsportsTheme.WithAlpha(color, 0.25f);
+            light.raycastTarget = false;
+            light.gameObject.AddComponent<M2Ambient>().Configure(new Vector2(60f, 45f), 18f, phase, 0.16f, 0.3f);
         }
     }
 }

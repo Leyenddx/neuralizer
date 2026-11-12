@@ -75,10 +75,33 @@ namespace Neuralizer {
         /// </summary>
         public event Action<float> OnQualityEvaluated;
 
+        /// <summary>
+        /// Solo en niveles <see cref="FuzzyExerciseMode.Classification"/>: se dispara cada vez que se
+        /// re-evalúa, con el índice de etiqueta (de la primera variable de entrada) que ganó para cada
+        /// caso, en el mismo orden que <see cref="FuzzyScene.cases"/>. -1 si ninguna etiqueta tiene
+        /// pertenencia o hay empate.
+        /// </summary>
+        public event Action<int[]> OnClassificationChanged;
+
+        /// <summary>
+        /// Diferencia mínima (en unidades de la salida) para que dos casos cuenten como "ordenados":
+        /// un empate exacto significa que el sistema no sabe decidir, así que no se acepta como correcto.
+        /// </summary>
+        private const float TieEpsilon = 0.01f;
+
         private FuzzyScene currentScene;
         private float sceneStartTime;
         private float[] rankedScores = Array.Empty<float>();
         private int[] rankOrder = Array.Empty<int>();
+        private int[] classIndex = Array.Empty<int>();
+
+        /// <summary>Salida defuzzificada actual del caso <paramref name="caseIndex"/> (modo Ranking).</summary>
+        public float ScoreOf(int caseIndex) => rankedScores[caseIndex];
+
+        /// <summary>Etiqueta ganadora actual del caso <paramref name="caseIndex"/>, o -1 (modo Classification).</summary>
+        public int ClassificationOf(int caseIndex) => classIndex[caseIndex];
+
+        private bool IsClassification => currentScene && currentScene.mode == FuzzyExerciseMode.Classification;
 
         /// <summary>
         /// El nivel de lógica difusa actualmente cargado. Asignar dispara todos los eventos de carga.
@@ -91,6 +114,7 @@ namespace Neuralizer {
                     int caseCount = value.cases.Length;
                     rankedScores = new float[caseCount];
                     rankOrder = new int[caseCount];
+                    classIndex = new int[caseCount];
 
                     OnDisplayName?.Invoke(value.DisplayName);
                     OnNarrativeContext?.Invoke(value.narrativeContext);
@@ -125,6 +149,14 @@ namespace Neuralizer {
             if (!currentScene) return;
             FuzzySystem system = currentScene.system;
             FuzzyCase[] cases = currentScene.cases;
+
+            if (IsClassification) {
+                for (int i = 0; i < cases.Length; i++) {
+                    classIndex[i] = Classify(cases[i], out _, out _);
+                }
+                OnClassificationChanged?.Invoke(classIndex);
+                return;
+            }
 
             for (int i = 0; i < cases.Length; i++) {
                 rankedScores[i] = system.EvaluateSingle(cases[i].inputValues);
@@ -165,7 +197,22 @@ namespace Neuralizer {
         /// peso de una regla "a medias" ya se refleja como una mejora parcial, no como un fallo seco.
         /// </summary>
         public float EvaluateQuality() {
-            if (!currentScene || rankOrder.Length < 2) return 1f;
+            if (!currentScene) return 1f;
+
+            if (IsClassification) {
+                // Por caso: 0.5 + la mitad del margen entre la pertenencia a la etiqueta esperada y la
+                // mejor de las demás. 1 = totalmente dentro de la esperada, 0 = totalmente en otra.
+                FuzzyCase[] cls = currentScene.cases;
+                if (cls.Length == 0) return 1f;
+                float total = 0f;
+                for (int i = 0; i < cls.Length; i++) {
+                    Classify(cls[i], out float expectedDegree, out float bestOtherDegree);
+                    total += Mathf.Clamp01(0.5f + 0.5f * (expectedDegree - bestOtherDegree));
+                }
+                return total / cls.Length;
+            }
+
+            if (rankOrder.Length < 2 || currentScene.system.outputs.Length == 0) return 1f;
 
             FuzzyCase[] cases = currentScene.cases;
             int n = cases.Length;
@@ -193,13 +240,8 @@ namespace Neuralizer {
         /// para que la UI pueda mostrar matices además del resultado binario de calificación.
         /// </summary>
         public void SubmitResult() {
-            bool correct = rankOrder.Length > 0;
-            for (int i = 0; i < rankOrder.Length; i++) {
-                if (currentScene.cases[rankOrder[i]].expectedRank != i) {
-                    correct = false;
-                    break;
-                }
-            }
+            if (!currentScene) return;
+            bool correct = IsCurrentResultCorrect();
 
             OnQualityEvaluated?.Invoke(EvaluateQuality());
             OnResultEvaluated?.Invoke(correct);
@@ -221,11 +263,72 @@ namespace Neuralizer {
                 currentScene.IsCompleted = true;
             }
             else {
+                // Un intento fallido nunca marca el nivel como completado. (La versión heredada de
+                // NetworkHost lo hacía para ejercicios sin tabla de puntuación, y el menú del Módulo 2
+                // mostraba "Completado" después de fallar.)
                 OnInvalidSubmitted?.Invoke();
-                if (!currentScene.AllowScoring) {
-                    currentScene.IsCompleted = true;
+            }
+        }
+
+        /// <summary>
+        /// <b>true</b> si el resultado actual resolvería el nivel. Ranking: el orden calculado coincide
+        /// con <see cref="FuzzyCase.expectedRank"/> y no hay empates entre posiciones consecutivas.
+        /// Classification: cada caso cae en su <see cref="FuzzyCase.expectedLabel"/> sin empate.
+        /// </summary>
+        public bool IsCurrentResultCorrect() {
+            if (!currentScene) return false;
+            FuzzyCase[] cases = currentScene.cases;
+            if (cases.Length == 0) return false;
+
+            if (IsClassification) {
+                FuzzyLabel[] labels = currentScene.system.inputs.Length > 0
+                    ? currentScene.system.inputs[0].Labels
+                    : Array.Empty<FuzzyLabel>();
+                for (int i = 0; i < cases.Length; i++) {
+                    int got = classIndex[i];
+                    if (got < 0 || labels[got].Label != cases[i].expectedLabel) return false;
+                }
+                return true;
+            }
+
+            for (int i = 0; i < rankOrder.Length; i++) {
+                if (cases[rankOrder[i]].expectedRank != i) return false;
+                if (i > 0 && rankedScores[rankOrder[i - 1]] - rankedScores[rankOrder[i]] < TieEpsilon) return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Etiqueta de la primera variable de entrada con mayor pertenencia para el caso dado (-1 si
+        /// ninguna pertenece o hay empate en el máximo). También devuelve la pertenencia a la etiqueta
+        /// esperada del caso y la mejor pertenencia entre las demás, para el puntaje continuo.
+        /// </summary>
+        private int Classify(FuzzyCase fuzzyCase, out float expectedDegree, out float bestOtherDegree) {
+            expectedDegree = 0f;
+            bestOtherDegree = 0f;
+            FuzzyVariable[] inputs = currentScene.system.inputs;
+            if (inputs.Length == 0 || fuzzyCase.inputValues.Length == 0) return -1;
+
+            FuzzyLabel[] labels = inputs[0].Labels;
+            float x = fuzzyCase.inputValues[0];
+            int best = -1;
+            float bestDegree = 0f;
+            float secondDegree = 0f;
+            for (int l = 0; l < labels.Length; l++) {
+                float degree = labels[l].Evaluate(x);
+                if (labels[l].Label == fuzzyCase.expectedLabel) expectedDegree = degree;
+                else if (degree > bestOtherDegree) bestOtherDegree = degree;
+
+                if (degree > bestDegree) {
+                    secondDegree = bestDegree;
+                    bestDegree = degree;
+                    best = l;
+                }
+                else if (degree > secondDegree) {
+                    secondDegree = degree;
                 }
             }
+            return bestDegree - secondDegree < TieEpsilon ? -1 : best;
         }
     }
 }

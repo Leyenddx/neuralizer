@@ -159,6 +159,13 @@ namespace Neuralizer.EditorTools {
         }
 
         private static void BuildBackground(RectTransform canvasRoot) {
+            // Fondo ambiental común del sistema "Tactical Neon" (MODULO2_DISENO.md): mismo fondo en
+            // menú y ejercicios para que el módulo se sienta una sola app. El fondo del mockup queda
+            // como respaldo si todavía no se generaron los recursos.
+            if (EsportsSkin.HasSprites) {
+                EsportsUIKit.CreateAmbientBackground(canvasRoot);
+                return;
+            }
             Sprite backgroundSprite = LoadSprite("Module2_Background");
             if (backgroundSprite) {
                 Image bgImg = EsportsUIKit.CreateSpriteImage("Background", canvasRoot, backgroundSprite);
@@ -192,7 +199,7 @@ namespace Neuralizer.EditorTools {
 
             RectTransform titleRT = EsportsUIKit.CreateRect("Title", topBar);
             titleRT.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
-            EsportsUIKit.CreateTextFill(titleRT, "LECTURA VISUAL DEL DAÑO", 16f, EsportsTheme.TextPrimary,
+            EsportsUIKit.CreateTextFill(titleRT, "LECTURA VISUAL DEL DAÑO", EsportsTheme.TextSize.Subtitle, EsportsTheme.TextPrimary,
                 FontStyles.Bold, TextAlignmentOptions.Center);
         }
 
@@ -246,7 +253,7 @@ namespace Neuralizer.EditorTools {
             root.anchorMin = new Vector2(0f, 0f);
             root.anchorMax = new Vector2(1f, 0f);
             root.pivot = new Vector2(0.5f, 0f);
-            root.sizeDelta = new Vector2(-22f, 140f);
+            root.sizeDelta = new Vector2(-22f, 240f);
             root.anchoredPosition = new Vector2(0f, 20f);
 
             VerticalLayoutGroup v = container.gameObject.AddComponent<VerticalLayoutGroup>();
@@ -257,14 +264,14 @@ namespace Neuralizer.EditorTools {
             v.childForceExpandHeight = false;
             v.childAlignment = TextAnchor.MiddleCenter;
 
-            EsportsUIKit.CreateText(container, "Deslizá para ver cómo cambia el estado — sin números, solo mirá.",
-                13f, EsportsTheme.TextSecondary, FontStyles.Normal, TextAlignmentOptions.Center, 32f);
+            EsportsUIKit.CreateText(container, "Desliza y observa cómo cambia el estado: sin números, solo mira.",
+                EsportsTheme.TextSize.Body, EsportsTheme.TextSecondary, FontStyles.Normal, TextAlignmentOptions.Center, 0f);
 
             RectTransform sliderHolder = EsportsUIKit.CreateRect("SliderHolder", container);
-            sliderHolder.gameObject.AddComponent<LayoutElement>().preferredHeight = 40f;
+            sliderHolder.gameObject.AddComponent<LayoutElement>().preferredHeight = EsportsTheme.Metrics.SliderHeight;
             refs.damageSlider = EsportsUIKit.CreateGradientSlider(sliderHolder, 0f, 100f, 0f);
 
-            refs.revealButton = EsportsUIKit.CreateGhostButton(container, "Revelar la curva real", 240f, 36f);
+            refs.revealButton = EsportsUIKit.CreateGhostButton(container, "Revelar la curva real", 300f, EsportsTheme.Metrics.TouchTarget);
         }
 
         // -----------------------------------------------------------------------------------------
@@ -277,7 +284,7 @@ namespace Neuralizer.EditorTools {
             refs.curvePanel.anchorMin = new Vector2(0.5f, 0.5f);
             refs.curvePanel.anchorMax = new Vector2(0.5f, 0.5f);
             refs.curvePanel.pivot = new Vector2(0.5f, 0.5f);
-            refs.curvePanel.sizeDelta = new Vector2(560f, 420f);
+            refs.curvePanel.sizeDelta = new Vector2(620f, 560f);
             refs.curvePanel.anchoredPosition = Vector2.zero;
 
             VerticalLayoutGroup v = content.gameObject.AddComponent<VerticalLayoutGroup>();
@@ -287,8 +294,8 @@ namespace Neuralizer.EditorTools {
             v.childControlHeight = true;
             v.childForceExpandWidth = true;
 
-            EsportsUIKit.CreateText(content, "μ_Crítico(x) — grado de pertenencia", 16f, EsportsTheme.TextPrimary,
-                FontStyles.Bold, TextAlignmentOptions.Center, 24f);
+            EsportsUIKit.CreateText(content, "μ_Crítico(x) — grado de pertenencia", EsportsTheme.TextSize.Subtitle, EsportsTheme.TextPrimary,
+                FontStyles.Bold, TextAlignmentOptions.Center, 0f);
 
             RectTransform plotHolder = EsportsUIKit.CreateRect("PlotHolder", content);
             plotHolder.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1f;
@@ -304,13 +311,16 @@ namespace Neuralizer.EditorTools {
             refs.curveLine = EsportsUIKit.CreatePolyline(refs.curveArea, EsportsTheme.NeonRed, 3f);
             refs.curveMarker = EsportsUIKit.CreateGlowDot(refs.curveArea, EsportsTheme.CurveIntersection, 14f, 16f);
 
-            refs.formulaText = EsportsUIKit.CreateText(content, "", 14f, EsportsTheme.TextSecondary,
-                FontStyles.Normal, TextAlignmentOptions.Center, 20f);
-            refs.valueReadout = EsportsUIKit.CreateText(content, "0%", 28f, EsportsTheme.TextPrimary,
-                FontStyles.Bold, TextAlignmentOptions.Center, 36f);
+            refs.formulaText = EsportsUIKit.CreateText(content, "", EsportsTheme.TextSize.Small, EsportsTheme.TextSecondary,
+                FontStyles.Normal, TextAlignmentOptions.Center, 0f);
+            refs.valueReadout = EsportsUIKit.CreateText(content, "0%", EsportsTheme.TextSize.Title, EsportsTheme.TextPrimary,
+                FontStyles.Bold, TextAlignmentOptions.Center, 0f);
 
-            Button closeButton = EsportsUIKit.CreateGhostButton(content, "Cerrar", 140f, 36f);
-            closeButton.onClick.AddListener(() => refs.curvePanel.gameObject.SetActive(false));
+            Button closeButton = EsportsUIKit.CreateGhostButton(content, "Cerrar", 180f, EsportsTheme.Metrics.TouchTarget);
+            // Listener PERSISTENTE: un AddListener con lambda hecho desde el editor no se guarda en la
+            // escena — por eso el panel "Revelar la curva" no se cerraba en Play.
+            UnityEditor.Events.UnityEventTools.AddBoolPersistentListener(closeButton.onClick,
+                refs.curvePanel.gameObject.SetActive, false);
         }
 
         // -----------------------------------------------------------------------------------------

@@ -104,12 +104,13 @@ namespace Neuralizer.EditorTools {
             FuzzyHealerDemo demo = Object.FindAnyObjectByType<FuzzyHealerDemo>();
             if (!demo) {
                 EditorUtility.DisplayDialog("Reconstruir HUD del Ejercicio (Módulo 2)",
-                    "No se encontró ningún FuzzyHealerDemo en la escena abierta. Abrí FuzzyDemo.unity y volvé a intentar.",
+                    "No se encontró ningún FuzzyHealerDemo en la escena abierta. Abre FuzzyDemo.unity y vuelve a intentarlo.",
                     "OK");
                 return;
             }
 
-            if (!EditorUtility.DisplayDialog("Reconstruir HUD del Ejercicio (Módulo 2)",
+            // En modo batch (Module2BatchPipeline) no hay quien conteste el diálogo: se asume "sí".
+            if (!Application.isBatchMode && !EditorUtility.DisplayDialog("Reconstruir HUD del Ejercicio (Módulo 2)",
                     "Esto borra el Canvas/EventSystem generados por una corrida anterior de esta herramienta " +
                     "(si existen) y arma todo de nuevo con las medidas base del mockup. Cualquier ajuste manual " +
                     "que hayas hecho en el Inspector sobre esos objetos se pierde. ¿Continuar?",
@@ -184,6 +185,13 @@ namespace Neuralizer.EditorTools {
             // Fondo del mockup (degradado radial azul) — si falta el Sprite (no se corrió todavía
             // Tools/Neuralizer/Configurar Sprites del Módulo 2) cae de vuelta a un color sólido para
             // que la pantalla no quede vacía/rosa.
+            // Fondo ambiental común del sistema "Tactical Neon" (MODULO2_DISENO.md): mismo fondo en
+            // menú y ejercicios para que el módulo se sienta una sola app. El fondo del mockup queda
+            // como respaldo si todavía no se generaron los recursos.
+            if (EsportsSkin.HasSprites) {
+                EsportsUIKit.CreateAmbientBackground(canvasRoot);
+                return;
+            }
             Sprite backgroundSprite = LoadSprite("Module2_Background");
             if (backgroundSprite) {
                 Image bgImg = EsportsUIKit.CreateSpriteImage("Background", canvasRoot, backgroundSprite);
@@ -236,7 +244,7 @@ namespace Neuralizer.EditorTools {
                 titleRT = EsportsUIKit.CreateRect("Title", topBar);
                 titleRT.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
             }
-            EsportsUIKit.CreateTextFill(titleRT, "Ejercicio 1", 22f, EsportsTheme.TextPrimary, FontStyles.Bold, TextAlignmentOptions.Center);
+            EsportsUIKit.CreateTextFill(titleRT, "Ejercicio 1", EsportsTheme.TextSize.Title, EsportsTheme.TextPrimary, FontStyles.Bold, TextAlignmentOptions.Center);
 
             Sprite fullscreenSprite = LoadSprite("Module2_ButtonFullscreen");
             if (fullscreenSprite) {
@@ -335,11 +343,11 @@ namespace Neuralizer.EditorTools {
             xLetterRT.anchorMin = Vector2.zero;
             xLetterRT.anchorMax = Vector2.zero;
             xLetterRT.pivot = new Vector2(0f, 1f);
-            xLetterRT.sizeDelta = new Vector2(24f, 22f);
+            xLetterRT.sizeDelta = new Vector2(30f, 28f);
             xLetterRT.anchoredPosition = new Vector2(-18f, -10f);
             TextMeshProUGUI xLetter = xLetterRT.gameObject.AddComponent<TextMeshProUGUI>();
             xLetter.text = "X";
-            xLetter.fontSize = 18f;
+            xLetter.fontSize = EsportsTheme.TextSize.Small;
             xLetter.color = axisColor;
             xLetter.fontStyle = FontStyles.Bold;
             xLetter.alignment = TextAlignmentOptions.Center;
@@ -349,11 +357,11 @@ namespace Neuralizer.EditorTools {
             yLetterRT.anchorMin = Vector2.zero;
             yLetterRT.anchorMax = Vector2.zero;
             yLetterRT.pivot = new Vector2(0f, 1f);
-            yLetterRT.sizeDelta = new Vector2(24f, 22f);
+            yLetterRT.sizeDelta = new Vector2(30f, 28f);
             yLetterRT.anchoredPosition = new Vector2(-10f, -28f);
             TextMeshProUGUI yLetter = yLetterRT.gameObject.AddComponent<TextMeshProUGUI>();
             yLetter.text = "Y";
-            yLetter.fontSize = 15f;
+            yLetter.fontSize = EsportsTheme.TextSize.Small;
             yLetter.color = axisColor;
             yLetter.fontStyle = FontStyles.Bold;
             yLetter.alignment = TextAlignmentOptions.Center;
@@ -403,7 +411,7 @@ namespace Neuralizer.EditorTools {
             Button evaluarButton = EsportsUIKit.CreateGradientButton(sheetContent, "Evaluar", 64f);
             evaluarButton.GetComponent<LayoutElement>().preferredWidth = contentWidth * EvaluarWidthFrac;
             TextMeshProUGUI evaluarLabel = evaluarButton.GetComponentInChildren<TextMeshProUGUI>();
-            if (evaluarLabel) evaluarLabel.fontSize = 18f; // botón angosto — 24pt (default) no entraba
+            if (evaluarLabel) evaluarLabel.fontSizeMax = EsportsTheme.TextSize.Subtitle; // botón angosto: autoajuste con piso legible (ver CreateTextFill)
             refs.evaluarButton = evaluarButton;
         }
 
@@ -425,10 +433,10 @@ namespace Neuralizer.EditorTools {
             minLabelRT.anchorMin = new Vector2(0f, 0.5f);
             minLabelRT.anchorMax = new Vector2(0f, 0.5f);
             minLabelRT.pivot = new Vector2(0f, 0.5f);
-            minLabelRT.sizeDelta = new Vector2(40f, 22f);
+            minLabelRT.sizeDelta = new Vector2(52f, 28f);
             TextMeshProUGUI minLabel = minLabelRT.gameObject.AddComponent<TextMeshProUGUI>();
             minLabel.text = "0";
-            minLabel.fontSize = 15f;
+            minLabel.fontSize = EsportsTheme.TextSize.Small;
             minLabel.color = EsportsTheme.TextPrimary;
             minLabel.alignment = TextAlignmentOptions.Left;
 
@@ -436,10 +444,10 @@ namespace Neuralizer.EditorTools {
             maxLabelRT.anchorMin = new Vector2(1f, 0.5f);
             maxLabelRT.anchorMax = new Vector2(1f, 0.5f);
             maxLabelRT.pivot = new Vector2(1f, 0.5f);
-            maxLabelRT.sizeDelta = new Vector2(40f, 22f);
+            maxLabelRT.sizeDelta = new Vector2(52f, 28f);
             TextMeshProUGUI maxLabel = maxLabelRT.gameObject.AddComponent<TextMeshProUGUI>();
             maxLabel.text = "1";
-            maxLabel.fontSize = 15f;
+            maxLabel.fontSize = EsportsTheme.TextSize.Small;
             maxLabel.color = EsportsTheme.TextPrimary;
             maxLabel.alignment = TextAlignmentOptions.Right;
 
@@ -459,7 +467,7 @@ namespace Neuralizer.EditorTools {
 
             RectTransform valueHolder = EsportsUIKit.CreateRect("ValueHolder", bottomRow);
             valueHolder.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
-            refs.weightLabel = EsportsUIKit.CreateTextFill(valueHolder, "0.0000", 26f, EsportsTheme.TextPrimary, FontStyles.Bold, TextAlignmentOptions.Center);
+            refs.weightLabel = EsportsUIKit.CreateTextFill(valueHolder, "0.0000", EsportsTheme.TextSize.Title, EsportsTheme.TextPrimary, FontStyles.Bold, TextAlignmentOptions.Center);
 
             refs.dvaRing = BuildHeroIcon(bottomRow, "D");
         }
@@ -468,18 +476,19 @@ namespace Neuralizer.EditorTools {
         private static TextMeshProUGUI BuildFormulaBox(Transform parent, float preferredWidth) {
             RectTransform box = EsportsUIKit.CreateRect("FormulaBox", parent);
             LayoutElement boxLE = box.gameObject.AddComponent<LayoutElement>();
-            boxLE.preferredHeight = 44f;
+            boxLE.preferredHeight = 52f;
             boxLE.preferredWidth = preferredWidth;
             Image bg = box.gameObject.AddComponent<Image>();
             bg.color = new Color(0.06f, 0.07f, 0.09f, 1f);
 
-            TextMeshProUGUI text = EsportsUIKit.CreateTextFill(box, "", 17f, EsportsTheme.TextSecondary, FontStyles.Normal, TextAlignmentOptions.Center);
+            TextMeshProUGUI text = EsportsUIKit.CreateTextFill(box, "", EsportsTheme.TextSize.Small, EsportsTheme.TextSecondary, FontStyles.Normal, TextAlignmentOptions.Center);
             // La caja es angosta a propósito — con fórmulas largas como "trapezoidal(a, b, c, d)" el
-            // texto a tamaño fijo se saldría de la caja. Autosize con piso bajo (8pt) deja que se
+            // texto a tamaño fijo se saldría de la caja. Autosize con piso legible (Caption, 12 px reales) deja que se
             // achique solo lo necesario para entrar, en vez de desbordar.
             text.enableAutoSizing = true;
-            text.fontSizeMin = 8f;
-            text.fontSizeMax = 17f;
+            text.textWrappingMode = TextWrappingModes.NoWrap; // una sola línea: se achica antes que partirse
+            text.fontSizeMin = EsportsTheme.TextSize.Caption;
+            text.fontSizeMax = EsportsTheme.TextSize.Small;
             return text;
         }
 
@@ -502,7 +511,7 @@ namespace Neuralizer.EditorTools {
 
             EsportsUIKit.CreateOutline(icon, EsportsTheme.TextPrimary, 1.5f);
 
-            TextMeshProUGUI label = EsportsUIKit.CreateTextFill(icon, letter, 18f, EsportsTheme.TextPrimary, FontStyles.Bold, TextAlignmentOptions.Center);
+            TextMeshProUGUI label = EsportsUIKit.CreateTextFill(icon, letter, EsportsTheme.TextSize.Subtitle, EsportsTheme.TextPrimary, FontStyles.Bold, TextAlignmentOptions.Center);
             label.raycastTarget = false;
 
             return ring;
@@ -524,10 +533,12 @@ namespace Neuralizer.EditorTools {
             RectTransform popupContent = EsportsUIKit.CreateAccentCard(backdrop, "ResultPopupCard", EsportsTheme.NeonBlend, out Image resultBorder, 3f, 16f);
             refs.resultBorder = resultBorder;
             RectTransform popupRoot = (RectTransform)popupContent.parent.parent;
+            backdrop.gameObject.AddComponent<CanvasGroup>();
+            backdrop.gameObject.AddComponent<M2Popup>().SetCard(popupRoot);
             popupRoot.anchorMin = new Vector2(0.5f, 0.5f);
             popupRoot.anchorMax = new Vector2(0.5f, 0.5f);
             popupRoot.pivot = new Vector2(0.5f, 0.5f);
-            popupRoot.sizeDelta = new Vector2(560f, 220f);
+            popupRoot.sizeDelta = new Vector2(600f, 300f);
             popupRoot.anchoredPosition = Vector2.zero;
 
             VerticalLayoutGroup popupLayout = popupContent.gameObject.AddComponent<VerticalLayoutGroup>();
@@ -537,7 +548,7 @@ namespace Neuralizer.EditorTools {
             popupLayout.childForceExpandWidth = true;
             popupLayout.childAlignment = TextAnchor.MiddleCenter;
 
-            refs.resultText = EsportsUIKit.CreateText(popupContent, "Sin evaluar", 20f, EsportsTheme.TextPrimary, FontStyles.Bold, TextAlignmentOptions.Center, 120f);
+            refs.resultText = EsportsUIKit.CreateText(popupContent, "Sin evaluar", EsportsTheme.TextSize.Subtitle, EsportsTheme.TextPrimary, FontStyles.Bold, TextAlignmentOptions.Center, 120f);
             refs.resultCloseButton = EsportsUIKit.CreateGradientButton(popupContent, "Cerrar", 50f);
 
             // Arranca oculto — FuzzyHealerDemo.WireUI() también lo fuerza a oculto al entrar a Play,

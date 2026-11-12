@@ -17,5 +17,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/FuzzyComparisonDemo.unity
     guid: a58651d5e01d5304097a88d14b6d6f3e
+  - enabled: 1
+    path: Assets/Scenes/FuzzyLevel.unity
+    guid: 2b7a73f6b3d997d4b98b51bfd4c5ced2
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

@@ -28,6 +28,8 @@ namespace Neuralizer {
         [Header("Resaltado de la pestaña activa")]
         [SerializeField] private Image tab1Background;
         [SerializeField] private Image tab2Background;
+        [Tooltip("Opcional: indicador que se desliza bajo la pestaña activa.")]
+        [SerializeField] private UI.M2TabIndicator tabIndicator;
 
         [Header("Barra inferior (Puntuaciones/Info) — tema del Módulo 2")]
         [Tooltip("Fondos (pill) de los botones de la barra inferior.")]
@@ -76,6 +78,7 @@ namespace Neuralizer {
             if (module1Logo) module1Logo.SetActive(true);
             if (module2Logo) module2Logo.SetActive(false);
             SetTabSelected(tab1Background, tab2Background);
+            if (tabIndicator && tab1Background) tabIndicator.MoveTo(tab1Background.rectTransform);
             ApplyColors(appBarSurfaces, _appBarSurfacesOriginal);
             ApplyColors(appBarIcons, _appBarIconsOriginal);
         }
@@ -87,11 +90,19 @@ namespace Neuralizer {
             if (module1Logo) module1Logo.SetActive(false);
             if (module2Logo) module2Logo.SetActive(true);
             SetTabSelected(tab2Background, tab1Background);
+            if (tabIndicator && tab2Background) tabIndicator.MoveTo(tab2Background.rectTransform);
             ApplyColor(appBarSurfaces, UI.EsportsTheme.BgPanelLight);
             ApplyColor(appBarIcons, UI.EsportsTheme.TextPrimary);
         }
 
-        private static void SetTabSelected(Image selected, Image other) {
+        private void SetTabSelected(Image selected, Image other) {
+            if (tabIndicator) {
+                // Con indicador deslizante, el resaltado lo da el indicador: los fondos quedan tenues
+                // (el activo transparente, para que se vea el indicador debajo).
+                if (selected) selected.color = new Color(0f, 0f, 0f, 0f);
+                if (other) other.color = UI.EsportsTheme.WithAlpha(UI.EsportsTheme.BgPanelLight, 0.7f);
+                return;
+            }
             if (selected) selected.color = UI.EsportsTheme.NeonBlue;
             if (other) other.color = UI.EsportsTheme.BgPanelLight;
         }

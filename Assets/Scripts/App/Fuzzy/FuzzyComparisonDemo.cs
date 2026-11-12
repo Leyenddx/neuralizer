@@ -25,8 +25,20 @@ namespace Neuralizer.Fuzzy {
 
         private static readonly MembershipFunction Critico = MembershipFunction.Trapezoidal(50f, 70f, 100f, 100f);
 
-        /// <summary>Por debajo de esta distancia entre los dos valores, se vuelve a sortear — una diferencia de 4 puntos sobre 100 es casi imposible de distinguir solo por color y frustra más de lo que enseña.</summary>
-        private const float MinGap = 18f;
+        /// <summary>
+        /// Diferencia mínima de GRADO de pertenencia (μ_Crítico, lo que realmente se ve en el contorno)
+        /// entre los dos personajes; si es menor, se vuelve a sortear.
+        /// </summary>
+        /// <remarks>
+        /// Antes se exigía separación en el daño crudo (18 puntos), pero dos daños bajo 50 (μ = 0) o
+        /// sobre 70 (μ = 1) se ven idénticos aunque estén lejos: el juego declaraba "peor" a uno de los
+        /// dos por desempate arbitrario y mostraba "(0% vs 0%)". Medir la separación en μ garantiza que
+        /// siempre haya una respuesta correcta visible. 0.3 ≈ el salto de verde a amarillo-naranja.
+        /// </remarks>
+        private const float MinMembershipGap = 0.3f;
+
+        /// <summary>Tope de re-sorteos por ronda (siempre se encuentra uno en pocos intentos; es solo una red de seguridad).</summary>
+        private const int MaxDraws = 200;
 
         [Header("Canvas / raíz")]
         [SerializeField] private RectTransform canvasRoot;
@@ -122,11 +134,12 @@ namespace Neuralizer.Fuzzy {
         // ---------------------------------------------------------------
 
         private void NewRound() {
-            float a, b;
-            do {
+            float a = 0f, b = 100f;
+            for (int i = 0; i < MaxDraws; i++) {
                 a = Random.Range(0f, 100f);
                 b = Random.Range(0f, 100f);
-            } while (Mathf.Abs(a - b) < MinGap);
+                if (Mathf.Abs(Critico.Evaluate(a) - Critico.Evaluate(b)) >= MinMembershipGap) break;
+            }
 
             leftT = Critico.Evaluate(a);
             rightT = Critico.Evaluate(b);
@@ -138,7 +151,7 @@ namespace Neuralizer.Fuzzy {
             resultText.text = "";
             if (leftBadge) leftBadge.text = "";
             if (rightBadge) rightBadge.text = "";
-            instructionText.text = "¿A quién curás primero? Elegí sin pensarlo — mirá el contorno.";
+            instructionText.text = "¿A quién curas primero? Elige sin pensarlo: mira el contorno.";
         }
 
         private void OnChoose(bool chooseLeft) {

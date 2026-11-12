@@ -152,6 +152,13 @@ namespace Neuralizer.EditorTools {
         }
 
         private static void BuildBackground(RectTransform canvasRoot) {
+            // Fondo ambiental común del sistema "Tactical Neon" (MODULO2_DISENO.md): mismo fondo en
+            // menú y ejercicios para que el módulo se sienta una sola app. El fondo del mockup queda
+            // como respaldo si todavía no se generaron los recursos.
+            if (EsportsSkin.HasSprites) {
+                EsportsUIKit.CreateAmbientBackground(canvasRoot);
+                return;
+            }
             Sprite backgroundSprite = LoadSprite("Module2_Background");
             if (backgroundSprite) {
                 Image bgImg = EsportsUIKit.CreateSpriteImage("Background", canvasRoot, backgroundSprite);
@@ -185,7 +192,7 @@ namespace Neuralizer.EditorTools {
 
             RectTransform titleRT = EsportsUIKit.CreateRect("Title", topBar);
             titleRT.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
-            EsportsUIKit.CreateTextFill(titleRT, "¿A QUIÉN CURÁS PRIMERO?", 16f, EsportsTheme.TextPrimary,
+            EsportsUIKit.CreateTextFill(titleRT, "¿A QUIÉN CURAS PRIMERO?", EsportsTheme.TextSize.Subtitle, EsportsTheme.TextPrimary,
                 FontStyles.Bold, TextAlignmentOptions.Center);
         }
 
@@ -254,13 +261,13 @@ namespace Neuralizer.EditorTools {
 
             // Badge "PEOR" — oculto (texto vacío) hasta que FuzzyComparisonDemo revela el resultado.
             TextMeshProUGUI badge = EsportsUIKit.CreateTextFill(
-                EsportsUIKit.CreateRect("BadgeHolder", portraitArea), "", 15f,
+                EsportsUIKit.CreateRect("BadgeHolder", portraitArea), "", EsportsTheme.TextSize.Subtitle,
                 EsportsTheme.NeonRed, FontStyles.Bold, TextAlignmentOptions.Center);
             RectTransform badgeHolderRT = (RectTransform)badge.transform.parent;
             badgeHolderRT.anchorMin = new Vector2(0.5f, 1f);
             badgeHolderRT.anchorMax = new Vector2(0.5f, 1f);
             badgeHolderRT.pivot = new Vector2(0.5f, 1f);
-            badgeHolderRT.sizeDelta = new Vector2(180f, 28f);
+            badgeHolderRT.sizeDelta = new Vector2(200f, 36f);
             badgeHolderRT.anchoredPosition = new Vector2(0f, 10f);
 
             // Overlay transparente invisible, clickeable en toda el área de la tarjeta — así el jugador
@@ -286,7 +293,7 @@ namespace Neuralizer.EditorTools {
             root.anchorMin = new Vector2(0f, 0f);
             root.anchorMax = new Vector2(1f, 0f);
             root.pivot = new Vector2(0.5f, 0f);
-            root.sizeDelta = new Vector2(-22f, 196f);
+            root.sizeDelta = new Vector2(-22f, 260f);
             root.anchoredPosition = new Vector2(0f, 20f);
 
             VerticalLayoutGroup v = container.gameObject.AddComponent<VerticalLayoutGroup>();
@@ -297,14 +304,14 @@ namespace Neuralizer.EditorTools {
             v.childForceExpandHeight = false;
             v.childAlignment = TextAnchor.MiddleCenter;
 
-            refs.instructionText = EsportsUIKit.CreateText(container, "¿A quién curás primero? Elegí sin pensarlo — mirá el contorno.",
-                14f, EsportsTheme.TextSecondary, FontStyles.Normal, TextAlignmentOptions.Center, 36f);
-            refs.resultText = EsportsUIKit.CreateText(container, "", 14f, EsportsTheme.TextPrimary,
-                FontStyles.Bold, TextAlignmentOptions.Center, 32f);
-            refs.scoreText = EsportsUIKit.CreateText(container, "Aciertos: 0/0", 13f, EsportsTheme.TextSecondary,
-                FontStyles.Normal, TextAlignmentOptions.Center, 24f);
+            refs.instructionText = EsportsUIKit.CreateText(container, "¿A quién curas primero? Elige sin pensarlo: mira el contorno.",
+                EsportsTheme.TextSize.Body, EsportsTheme.TextSecondary, FontStyles.Normal, TextAlignmentOptions.Center, 0f);
+            refs.resultText = EsportsUIKit.CreateText(container, "", EsportsTheme.TextSize.Subtitle, EsportsTheme.TextPrimary,
+                FontStyles.Bold, TextAlignmentOptions.Center, 0f);
+            refs.scoreText = EsportsUIKit.CreateText(container, "Aciertos: 0/0", EsportsTheme.TextSize.Small, EsportsTheme.TextSecondary,
+                FontStyles.Normal, TextAlignmentOptions.Center, 0f);
 
-            refs.nextRoundButton = EsportsUIKit.CreateGhostButton(container, "Siguiente ronda", 220f, 36f);
+            refs.nextRoundButton = EsportsUIKit.CreateGhostButton(container, "Siguiente ronda", 260f, EsportsTheme.Metrics.TouchTarget);
             refs.nextRoundButton.gameObject.SetActive(false);
         }
 

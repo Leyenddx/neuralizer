@@ -33,6 +33,10 @@ namespace Neuralizer.EditorTools {
             DrawPropertyByName("minMaxScores");
             DrawPropertyByName("successThreshold");
             DrawPropertyByName("narrativeContext");
+            DrawPropertyByName("mode");
+            DrawPropertyByName("editableRuleWeights");
+            DrawPropertyByName("editableMemberships");
+            DrawPropertyByName("showControlSurface");
 
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("Sistema Difuso", EditorStyles.boldLabel);

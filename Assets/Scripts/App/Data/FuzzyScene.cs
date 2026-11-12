@@ -29,6 +29,34 @@ namespace Neuralizer.Data {
         /// </summary>
         [Header("Casos de prueba")]
         public FuzzyCase[] cases = System.Array.Empty<FuzzyCase>();
+
+        /// <summary>
+        /// Cómo se califica el nivel: ordenando los casos por la salida del sistema
+        /// (<see cref="FuzzyExerciseMode.Ranking"/>) o clasificando cada caso en una etiqueta de la
+        /// primera variable de entrada (<see cref="FuzzyExerciseMode.Classification"/>, para niveles
+        /// introductorios sin reglas ni salida).
+        /// </summary>
+        [Header("Ejercicio")]
+        public FuzzyExerciseMode mode = FuzzyExerciseMode.Ranking;
+
+        /// <summary>El jugador puede mover el peso de cada regla.</summary>
+        public bool editableRuleWeights = true;
+
+        /// <summary>El jugador puede mover los puntos a/b/c/d de las etiquetas de las variables de entrada.</summary>
+        public bool editableMemberships;
+
+        /// <summary>Muestra la superficie de control (salida en función de las dos primeras entradas) como vista extra.</summary>
+        public bool showControlSurface;
+    }
+
+    /// <summary>
+    /// Forma de calificar un <see cref="FuzzyScene"/>
+    /// </summary>
+    public enum FuzzyExerciseMode {
+        /// <summary>Los casos se ordenan por la salida defuzzificada y se comparan contra <see cref="FuzzyCase.expectedRank"/></summary>
+        Ranking = 0,
+        /// <summary>Cada caso se clasifica en la etiqueta de mayor pertenencia de la primera entrada y se compara contra <see cref="FuzzyCase.expectedLabel"/></summary>
+        Classification = 1
     }
 
     /// <summary>
@@ -52,5 +80,11 @@ namespace Neuralizer.Data {
         /// Posición esperada en el ranking de salida (0 = debe resolverse/atenderse primero)
         /// </summary>
         public int expectedRank;
+
+        /// <summary>
+        /// Solo en modo <see cref="FuzzyExerciseMode.Classification"/>: etiqueta de la primera variable
+        /// de entrada en la que este caso debería quedar con mayor pertenencia (ej. "Eco")
+        /// </summary>
+        public string expectedLabel;
     }
 }
