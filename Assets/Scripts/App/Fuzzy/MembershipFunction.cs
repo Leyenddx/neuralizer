@@ -130,7 +130,10 @@ namespace Neuralizer.Fuzzy {
         }
 
         private readonly float EvaluateTrapezoidal(float x) {
-            if (x <= a || x >= d) return 0f;
+            // Fuera del soporte vale 0. Los BORDES se resuelven abajo: con comparaciones estrictas, un
+            // "hombro" (a == b o c == d) vale 1 justo en su borde (antes valía 0: salud 0 no era
+            // "Critical"), y una rampa normal sigue valiendo 0 en a y en d.
+            if (x < a || x > d) return 0f;
             if (x < b) return b > a ? (x - a) / (b - a) : 1f;
             if (x <= c) return 1f;
             return d > c ? (d - x) / (d - c) : 1f;

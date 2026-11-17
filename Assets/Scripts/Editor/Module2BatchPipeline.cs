@@ -37,10 +37,8 @@ namespace Neuralizer.EditorTools {
 
             try {
                 Module2AssetGenerator.Generate();
-                Module2LevelAssetsBuilder.Build();
-                BuildHealerHud();
-                Module2DamageDemoBuilder.Build();
-                Module2ComparisonDemoBuilder.Build();
+                Module2Tema1AssetsBuilder.Build();
+                Module2Tema1ExampleBuilder.Build();
                 Module2LevelSceneBuilder.Build();
                 BuildMenu();
                 CaptureAll(outDir);
@@ -63,13 +61,6 @@ namespace Neuralizer.EditorTools {
             Debug.Log("[Module2BatchPipeline] Capturas en " + outDir);
         }
 
-        private static void BuildHealerHud() {
-            // El builder del HUD trabaja sobre la escena abierta y no la guarda solo.
-            Scene scene = EditorSceneManager.OpenScene("Assets/Scenes/FuzzyDemo.unity", OpenSceneMode.Single);
-            Module2HudBuilder.BuildHud();
-            EditorSceneManager.SaveScene(scene);
-        }
-
         private static void BuildMenu() {
             Scene scene = EditorSceneManager.OpenScene("Assets/Scenes/MainScene.unity", OpenSceneMode.Single);
             Module2MenuBuilder.Build();
@@ -80,19 +71,11 @@ namespace Neuralizer.EditorTools {
 
         private static void CaptureAll(string outDir) {
             CaptureMenu(outDir);
-            CaptureScene("Assets/Scenes/FuzzyDemo.unity", Path.Combine(outDir, "ej1_healer.png"));
-            CaptureScene("Assets/Scenes/FuzzyDamageDemo.unity", Path.Combine(outDir, "ej2_dano.png"));
-            CaptureScene("Assets/Scenes/FuzzyComparisonDemo.unity", Path.Combine(outDir, "ej3_triage.png"));
-
-            string[] guids = AssetDatabase.FindAssets("t:FuzzyScene", new[] { Module2LevelAssetsBuilder.Folder });
-            string[] paths = Array.ConvertAll(guids, g => AssetDatabase.GUIDToAssetPath(g));
-            Array.Sort(paths, StringComparer.Ordinal);
-            for (int i = 0; i < paths.Length; i++) {
-                CaptureLevel(paths[i], Path.Combine(outDir, $"nivel{i + 1}.png"), false);
-            }
-            if (paths.Length > 0) {
-                CaptureLevel(paths[^1], Path.Combine(outDir, "nivel_resultado.png"), true);
-            }
+            CaptureExample(Path.Combine(outDir, "tema1_ejemplo_difusa.png"), false, false, 30f);
+            CaptureExample(Path.Combine(outDir, "tema1_ejemplo_trapezoidal.png"), false, true, 68f);
+            CaptureExample(Path.Combine(outDir, "tema1_ejemplo_clasica.png"), true, false, 30f);
+            CaptureLevel(Module2Tema1AssetsBuilder.LevelPath, Path.Combine(outDir, "tema1_ejercicio.png"), false);
+            CaptureLevel(Module2Tema1AssetsBuilder.LevelPath, Path.Combine(outDir, "tema1_ejercicio_resultado.png"), true);
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         }
 
@@ -136,6 +119,27 @@ namespace Neuralizer.EditorTools {
             }
             RebuildLayouts();
             EndCapture(capture, Path.Combine(outDir, "menu_modulo2.png"));
+        }
+
+        /// <summary>Captura el ejemplo del Tema 1 en un estado dado (lógica, forma y salud).</summary>
+        private static void CaptureExample(string file, bool classic, bool trapezoidal, float health) {
+            if (!File.Exists(Module2Tema1ExampleBuilder.ScenePath)) return;
+            EditorSceneManager.OpenScene(Module2Tema1ExampleBuilder.ScenePath, OpenSceneMode.Single);
+            FuzzyHealthExample example = UnityEngine.Object.FindAnyObjectByType<FuzzyHealthExample>();
+            if (!example) return;
+            Capture capture = BeginCapture();
+            Invoke(example, "Start");
+            Invoke(example, "SetLogic", classic);
+            Invoke(example, "SetShape", trapezoidal);
+            foreach (Slider slider in UnityEngine.Object.FindObjectsByType<Slider>()) slider.value = health;
+            for (int pass = 0; pass < 3; pass++) {
+                RebuildLayouts();
+                Invoke(example, "LateUpdate");
+                foreach (UI.M2TabIndicator indicator in UnityEngine.Object.FindObjectsByType<UI.M2TabIndicator>()) {
+                    Invoke(indicator, "LateUpdate");
+                }
+            }
+            EndCapture(capture, file);
         }
 
         private static void CaptureScene(string path, string file) {

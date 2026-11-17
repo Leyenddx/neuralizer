@@ -52,7 +52,7 @@ namespace Neuralizer.EditorTools {
             public TextMeshProUGUI scoreText;
         }
 
-        [MenuItem("Tools/Neuralizer/Módulo 2/5. Escena Ejercicio 3 (Triage)", false, 24)]
+        [MenuItem("Tools/Neuralizer/Módulo 2/Material anterior/Escena Triage", false, 62)]
         public static void Build() {
             Scene scene = OpenOrCreateScene();
 

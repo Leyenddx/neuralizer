@@ -33,7 +33,7 @@ namespace Neuralizer.EditorTools {
         private const string WrapperPath = "UI/Main Menu Canvas/Safe Area/Wrapper";
         private const string Module1PanelName = "Content Panel";
 
-        [MenuItem("Tools/Neuralizer/Módulo 2/7. Menú en MainScene (construir)", false, 26)]
+        [MenuItem("Tools/Neuralizer/Módulo 2/5. Menú en MainScene (construir)", false, 24)]
         public static void Build() {
             GameObject wrapperGO = GameObject.Find(WrapperPath);
             if (!wrapperGO) {
@@ -419,53 +419,34 @@ namespace Neuralizer.EditorTools {
             float delay = 0f;
             BuildHeader(list, delay, out TextMeshProUGUI progressLabel, out Image progressFill);
 
-            List<EntrySpec> demos = new() {
-                new EntrySpec { index = "01", title = "El Dilema del Healer", subtitle = "Ajusta el peso de una regla y decide a quién curar.", chip = "PRÁCTICA", sceneName = "FuzzyDemo", accent = EsportsTheme.NeonBlue },
-                new EntrySpec { index = "02", title = "Lectura del Daño", subtitle = "Asocia color con urgencia, sin mirar números.", chip = "PRÁCTICA", sceneName = "FuzzyDamageDemo", accent = EsportsTheme.NeonBlue },
-                new EntrySpec { index = "03", title = "Triage Rápido", subtitle = "Dos aliados en pantalla: ¿quién está peor?", chip = "PRÁCTICA", sceneName = "FuzzyComparisonDemo", accent = EsportsTheme.NeonBlue },
+            // El módulo se organiza por TEMAS; cada tema tiene un ejemplo guiado y un ejercicio.
+            FuzzyScene tema1Exercise = AssetDatabase.LoadAssetAtPath<FuzzyScene>(Module2Tema1AssetsBuilder.LevelPath);
+            if (!tema1Exercise) {
+                Debug.LogWarning("Module2MenuBuilder: falta " + Module2Tema1AssetsBuilder.LevelPath +
+                                 " — corre 'Tools → Neuralizer → Módulo 2 → 2. Tema 1 · Ejercicio (Distancia)'.");
+            }
+            List<EntrySpec> tema1 = new() {
+                new EntrySpec { index = "1.1", title = "Estado de salud", subtitle = "Overwatch · ¿Fine, Caution o Critical?",
+                    chip = "EJEMPLO", sceneName = Module2Tema1ExampleBuilder.SceneName, accent = EsportsTheme.NeonBlue },
+                new EntrySpec { index = "1.2", title = "Distancia del enemigo", subtitle = "Fortnite · ¿Cerca, medio o lejos?",
+                    chip = "EJERCICIO", sceneName = Module2LevelSceneBuilder.SceneName, accent = EsportsTheme.NeonPurple, level = tema1Exercise },
             };
-
-            List<EntrySpec> levels = new();
-            string[] guids = AssetDatabase.FindAssets("t:FuzzyScene", new[] { Module2LevelAssetsBuilder.Folder });
-            string[] paths = System.Array.ConvertAll(guids, g => AssetDatabase.GUIDToAssetPath(g));
-            System.Array.Sort(paths, System.StringComparer.Ordinal);
-            if (paths.Length == 0) {
-                Debug.LogWarning("Module2MenuBuilder: no hay niveles en " + Module2LevelAssetsBuilder.Folder +
-                                 " — corre 'Tools → Neuralizer → Módulo 2 → 2. Niveles (FuzzyScene)' para agregarlos al menú.");
-            }
-            for (int i = 0; i < paths.Length; i++) {
-                FuzzyScene level = AssetDatabase.LoadAssetAtPath<FuzzyScene>(paths[i]);
-                levels.Add(new EntrySpec {
-                    index = (i + 1).ToString("00"),
-                    title = level.DisplayName,
-                    subtitle = LevelSubtitle(level),
-                    chip = level.mode == FuzzyExerciseMode.Classification ? "CLASIFICAR" : "ORDENAR",
-                    sceneName = Module2LevelSceneBuilder.SceneName,
-                    accent = EsportsTheme.NeonPurple,
-                    level = level
-                });
-            }
 
             List<Module2ExerciseEntry> entries = new();
             List<GameObject> badges = new();
 
             delay += M2Ease.Stagger;
-            M2Motion.AddEntrance(EsportsUIKit.CreateSectionHeader(list, "Entrenamiento", EsportsTheme.NeonBlue).gameObject, delay);
-            foreach (EntrySpec spec in demos) {
+            M2Motion.AddEntrance(EsportsUIKit.CreateSectionHeader(list, "Tema 1 · No todo es verdad o mentira", EsportsTheme.NeonBlue).gameObject, delay);
+            foreach (EntrySpec spec in tema1) {
                 delay += M2Ease.Stagger;
                 entries.Add(BuildExerciseEntry(list, spec, delay, out GameObject badge));
                 badges.Add(badge);
             }
 
-            if (levels.Count > 0) {
-                delay += M2Ease.Stagger;
-                M2Motion.AddEntrance(EsportsUIKit.CreateSectionHeader(list, "Niveles", EsportsTheme.NeonPurple).gameObject, delay);
-                foreach (EntrySpec spec in levels) {
-                    delay += M2Ease.Stagger;
-                    entries.Add(BuildExerciseEntry(list, spec, delay, out GameObject badge));
-                    badges.Add(badge);
-                }
-            }
+            delay += M2Ease.Stagger;
+            TextMeshProUGUI soon = EsportsUIKit.CreateText(list, "Próximos temas en construcción.", MenuSize.Small,
+                EsportsTheme.TextSecondary, FontStyles.Italic, TextAlignmentOptions.Center, 40f);
+            M2Motion.AddEntrance(soon.gameObject, delay);
 
             Module2MenuView view = panel.gameObject.AddComponent<Module2MenuView>();
             SerializedObject so = new(view);
@@ -544,7 +525,7 @@ namespace Neuralizer.EditorTools {
             h.childForceExpandHeight = false;
             progressRow.gameObject.AddComponent<LayoutElement>().minHeight = 30f;
 
-            EsportsUIKit.CreateOverline(progressRow, "Niveles", EsportsTheme.TextSecondary, MenuSize.Caption);
+            EsportsUIKit.CreateOverline(progressRow, "Ejercicios", EsportsTheme.TextSecondary, MenuSize.Caption);
 
             RectTransform barHolder = EsportsUIKit.CreateRect("Bar", progressRow);
             LayoutElement barLE = barHolder.gameObject.AddComponent<LayoutElement>();
@@ -631,7 +612,7 @@ namespace Neuralizer.EditorTools {
             EsportsSkin.ApplyFont(index, TypeRole.Mono);
             index.fontStyle = FontStyles.Bold;
             index.textWrappingMode = TextWrappingModes.NoWrap;
-            index.gameObject.AddComponent<LayoutElement>().preferredWidth = 40f;
+            index.gameObject.AddComponent<LayoutElement>().preferredWidth = 52f;
 
             RectTransform texts = EsportsUIKit.CreateRect("Texts", content);
             texts.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;

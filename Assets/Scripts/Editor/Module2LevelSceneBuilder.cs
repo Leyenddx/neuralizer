@@ -57,7 +57,7 @@ namespace Neuralizer.EditorTools {
             public Button menuButton;
         }
 
-        [MenuItem("Tools/Neuralizer/Módulo 2/6. Escena de niveles", false, 25)]
+        [MenuItem("Tools/Neuralizer/Módulo 2/4. Escena de ejercicios (niveles)", false, 23)]
         public static void Build() {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             Scene scene = OpenOrCreateScene();
@@ -312,7 +312,7 @@ namespace Neuralizer.EditorTools {
         /// estirado a un tamaño fijo, esta sirve dentro de una página con scroll. Devuelve la raíz: los
         /// hijos se agregan directo ahí.
         /// </summary>
-        private static RectTransform AutoHeightCard(Transform parent, string name, Color accent) {
+        internal static RectTransform AutoHeightCard(Transform parent, string name, Color accent) {
             RectTransform root = EsportsUIKit.CreateRect(name, parent);
             Image bg = root.gameObject.AddComponent<Image>();
             bg.color = EsportsTheme.WithAlpha(EsportsTheme.BgPanel, 0.92f);
@@ -445,7 +445,7 @@ namespace Neuralizer.EditorTools {
             SerializedObject so = new(controller);
             so.FindProperty("host").objectReferenceValue = host;
             so.FindProperty("fallbackLevel").objectReferenceValue =
-                AssetDatabase.LoadAssetAtPath<FuzzyScene>(Module2LevelAssetsBuilder.Folder + "/Nivel 1 Economia.asset");
+                AssetDatabase.LoadAssetAtPath<FuzzyScene>(Module2LevelAssetsBuilder.Folder + "/Tema 1 Distancia.asset");
             so.FindProperty("backButton").objectReferenceValue = refs.backButton;
             so.FindProperty("titleText").objectReferenceValue = refs.titleText;
             so.FindProperty("narrativeText").objectReferenceValue = refs.narrativeText;

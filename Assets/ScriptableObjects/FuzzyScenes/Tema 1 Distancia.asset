@@ -1,0 +1,126 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3bb567751d5a964e8b5a825b0724e4d, type: 3}
+  m_Name: Tema 1 Distancia
+  m_EditorClassIdentifier: Neuralizer::Neuralizer.Data.FuzzyScene
+  displayName: Distancia del enemigo
+  storageName: m2_tema1_distancia
+  scoreboardID: 
+  minTime: 15
+  minMaxScores: {x: 1, y: 10}
+  successThreshold: 0.95
+  narrativeContext: "Tu escuadra decide el arma seg\xFAn la distancia del enemigo: cerca, escopeta; medio, rifle de asalto; lejos, francotirador. Pero el visor est\xE1 mal calibrado y casi todo le parece cerca. Ajusta las curvas de Distancia."
+  system:
+    inputs:
+    - variableName: Distancia
+      range: {x: 0, y: 300}
+      labels:
+      - label: Cerca
+        membership:
+          shape: 0
+          a: 0
+          b: 0
+          c: 0
+          d: 160
+          center: 0
+          spread: 1
+        displayColor: {r: 0.85, g: 0.3, b: 0.38, a: 1}
+      - label: Medio
+        membership:
+          shape: 0
+          a: 60
+          b: 180
+          c: 180
+          d: 290
+          center: 0
+          spread: 1
+        displayColor: {r: 0.61, g: 0.36, b: 1, a: 1}
+      - label: Lejos
+        membership:
+          shape: 0
+          a: 200
+          b: 300
+          c: 300
+          d: 300
+          center: 0
+          spread: 1
+        displayColor: {r: 0.18, g: 0.77, b: 1, a: 1}
+    outputs: []
+    rules: []
+  cases:
+  - label: Rusher
+    inputValues:
+    - 12
+    expectedRank: 0
+    expectedLabel: Cerca
+  - label: Emboscada
+    inputValues:
+    - 45
+    expectedRank: 0
+    expectedLabel: Cerca
+  - label: Duelo
+    inputValues:
+    - 90
+    expectedRank: 0
+    expectedLabel: Medio
+  - label: Colina
+    inputValues:
+    - 140
+    expectedRank: 0
+    expectedLabel: Medio
+  - label: Sniper
+    inputValues:
+    - 230
+    expectedRank: 0
+    expectedLabel: Lejos
+  mode: 1
+  editableRuleWeights: 0
+  editableMemberships: 1
+  showControlSurface: 0
+  alternateInputs:
+  - variableName: Distancia
+    range: {x: 0, y: 300}
+    labels:
+    - label: Cerca
+      membership:
+        shape: 0
+        a: 0
+        b: 0
+        c: 80
+        d: 130
+        center: 0
+        spread: 1
+      displayColor: {r: 0.85, g: 0.3, b: 0.38, a: 1}
+    - label: Medio
+      membership:
+        shape: 0
+        a: 80
+        b: 130
+        c: 220
+        d: 260
+        center: 0
+        spread: 1
+      displayColor: {r: 0.61, g: 0.36, b: 1, a: 1}
+    - label: Lejos
+      membership:
+        shape: 0
+        a: 220
+        b: 260
+        c: 300
+        d: 300
+        center: 0
+        spread: 1
+      displayColor: {r: 0.18, g: 0.77, b: 1, a: 1}
+  primaryShapeName: Triangular
+  alternateShapeName: Trapezoidal
+  primaryIsTriangular: 1
+  alternateIsTriangular: 0

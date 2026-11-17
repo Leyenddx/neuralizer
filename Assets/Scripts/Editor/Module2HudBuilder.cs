@@ -99,7 +99,7 @@ namespace Neuralizer.EditorTools {
             public Button resultCloseButton;
         }
 
-        [MenuItem("Tools/Neuralizer/Módulo 2/3. Escena Ejercicio 1 (Healer)", false, 22)]
+        [MenuItem("Tools/Neuralizer/Módulo 2/Material anterior/Escena Healer", false, 61)]
         public static void BuildHud() {
             FuzzyHealerDemo demo = Object.FindAnyObjectByType<FuzzyHealerDemo>();
             if (!demo) {

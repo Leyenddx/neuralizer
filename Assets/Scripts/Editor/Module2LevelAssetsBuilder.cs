@@ -35,7 +35,7 @@ namespace Neuralizer.EditorTools {
         private static readonly Color High = EsportsTheme.CurveAlto;
         private static readonly Color VeryHigh = EsportsTheme.NeonRed;
 
-        [MenuItem("Tools/Neuralizer/Módulo 2/2. Niveles (FuzzyScene)", false, 21)]
+        [MenuItem("Tools/Neuralizer/Módulo 2/Material anterior/Niveles 1 a 4 (FuzzyScene)", false, 60)]
         public static void Build() {
             if (!AssetDatabase.IsValidFolder(Folder)) {
                 AssetDatabase.CreateFolder("Assets/ScriptableObjects", "FuzzyScenes");

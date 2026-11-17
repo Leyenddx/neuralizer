@@ -47,6 +47,27 @@ namespace Neuralizer.Data {
 
         /// <summary>Muestra la superficie de control (salida en función de las dos primeras entradas) como vista extra.</summary>
         public bool showControlSurface;
+
+        /// <summary>
+        /// Opcional: segundo juego de variables de entrada con OTRA forma de curva (p. ej. trapezoidal
+        /// si <see cref="FuzzySystem.inputs"/> es triangular). Si no está vacío, el jugador puede alternar
+        /// entre ambos para ver que el mismo problema se puede modelar de distintas maneras. Debe tener
+        /// las mismas variables y etiquetas (mismos nombres y orden) que el juego principal.
+        /// </summary>
+        [Header("Formas alternativas (opcional)")]
+        public FuzzyVariable[] alternateInputs = System.Array.Empty<FuzzyVariable>();
+
+        /// <summary>Nombre que se muestra para el juego principal de curvas (<see cref="FuzzySystem.inputs"/>).</summary>
+        public string primaryShapeName = "Triangular";
+
+        /// <summary>Nombre que se muestra para <see cref="alternateInputs"/>.</summary>
+        public string alternateShapeName = "Trapezoidal";
+
+        /// <summary>El juego principal es triangular: se edita con 3 puntos (a, pico, d) en vez de 4.</summary>
+        public bool primaryIsTriangular;
+
+        /// <summary><see cref="alternateInputs"/> es triangular: se edita con 3 puntos (a, pico, d).</summary>
+        public bool alternateIsTriangular;
     }
 
     /// <summary>

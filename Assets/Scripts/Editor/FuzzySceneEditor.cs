@@ -37,6 +37,11 @@ namespace Neuralizer.EditorTools {
             DrawPropertyByName("editableRuleWeights");
             DrawPropertyByName("editableMemberships");
             DrawPropertyByName("showControlSurface");
+            DrawPropertyByName("alternateInputs");
+            DrawPropertyByName("primaryShapeName");
+            DrawPropertyByName("alternateShapeName");
+            DrawPropertyByName("primaryIsTriangular");
+            DrawPropertyByName("alternateIsTriangular");
 
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField("Sistema Difuso", EditorStyles.boldLabel);

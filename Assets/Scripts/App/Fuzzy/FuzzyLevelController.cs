@@ -41,6 +41,13 @@ namespace Neuralizer.Fuzzy {
             "a · empieza a subir", "b · llega a 1", "c · empieza a bajar", "d · vuelve a 0"
         };
 
+        private static readonly string[] TrianglePointNames = {
+            "a · empieza a subir", "pico · pertenencia total", "d · vuelve a 0"
+        };
+
+        private static readonly int[] TrapezoidPoints = { 0, 1, 2, 3 };
+        private static readonly int[] TrianglePoints = { 0, 1, 3 };
+
         private static readonly Color[] CaseColors = {
             EsportsTheme.NeonBlue, EsportsTheme.NeonPurple, EsportsTheme.NeonGreen,
             EsportsTheme.CurveIntersection, EsportsTheme.NeonRed
@@ -119,6 +126,9 @@ namespace Neuralizer.Fuzzy {
         private int[] selectedLabel = System.Array.Empty<int>();
         private Slider[] pointSliders = System.Array.Empty<Slider>();
         private TextMeshProUGUI[] pointLabels = System.Array.Empty<TextMeshProUGUI>();
+        private int[] pointMap = TrapezoidPoints;
+        private FuzzyVariable[] primaryInputs = System.Array.Empty<FuzzyVariable>();
+        private bool usingAlternate;
         private float lastQuality;
         private Vector2 lastPlotSize;
         private float lastCasesWidth;
@@ -155,6 +165,7 @@ namespace Neuralizer.Fuzzy {
             level = Instantiate(source);
             level.name = source.name;
             selectedLabel = new int[InputCount];
+            primaryInputs = level.system.inputs;
 
             titleText.text = level.DisplayName.ToUpperInvariant();
             narrativeText.text = level.narrativeContext;
@@ -583,6 +594,7 @@ namespace Neuralizer.Fuzzy {
             pointLabels = System.Array.Empty<TextMeshProUGUI>();
 
             bool any = false;
+            if (HasShapeChoice) BuildShapeSelector();
             if (level.editableMemberships && InputCount > 0) {
                 any = true;
                 BuildMembershipControls();
@@ -670,39 +682,84 @@ namespace Neuralizer.Fuzzy {
                 return;
             }
 
-            pointSliders = new Slider[4];
-            pointLabels = new TextMeshProUGUI[4];
+            // Triangular: 3 puntos (a, pico, d) — el pico mueve b y c juntos. Trapezoidal: los 4.
+            pointMap = CurrentIsTriangular ? TrianglePoints : TrapezoidPoints;
+            pointSliders = new Slider[pointMap.Length];
+            pointLabels = new TextMeshProUGUI[pointMap.Length];
             Vector2 range = variable.Range;
             bool wholeNumbers = Mathf.Abs(range.y - range.x) >= 100f;
-            for (int p = 0; p < 4; p++) {
+            for (int s = 0; s < pointMap.Length; s++) {
                 RectTransform row = Row();
-                pointLabels[p] = EsportsUIKit.CreateText(row, "", EsportsTheme.TextSize.Body, EsportsTheme.TextPrimary,
+                pointLabels[s] = EsportsUIKit.CreateText(row, "", EsportsTheme.TextSize.Body, EsportsTheme.TextPrimary,
                     FontStyles.Normal, TextAlignmentOptions.Left, 0f);
-                pointSliders[p] = SliderIn(row, range.x, range.y, GetPoint(label.membership, p));
-                pointSliders[p].wholeNumbers = wholeNumbers;
-                int point = p;
-                pointSliders[p].onValueChanged.AddListener(v => OnPointChanged(variable, label, point, v));
+                pointSliders[s] = SliderIn(row, range.x, range.y, GetPoint(label.membership, pointMap[s]));
+                pointSliders[s].wholeNumbers = wholeNumbers;
+                int slot = s;
+                pointSliders[s].onValueChanged.AddListener(v => OnPointChanged(variable, label, slot, v));
             }
             RefreshPointLabels(variable, label);
         }
 
-        private void OnPointChanged(FuzzyVariable variable, FuzzyLabel label, int point, float value) {
+        private void OnPointChanged(FuzzyVariable variable, FuzzyLabel label, int slot, float value) {
             MembershipFunction m = label.membership;
-            // Mantiene a <= b <= c <= d: cada punto queda acotado por sus vecinos.
-            float min = point > 0 ? GetPoint(m, point - 1) : variable.Range.x;
-            float max = point < 3 ? GetPoint(m, point + 1) : variable.Range.y;
+            // Mantiene el orden de los puntos: cada uno queda acotado por sus vecinos editables.
+            float min = slot > 0 ? GetPoint(m, pointMap[slot - 1]) : variable.Range.x;
+            float max = slot < pointMap.Length - 1 ? GetPoint(m, pointMap[slot + 1]) : variable.Range.y;
             value = Mathf.Clamp(value, min, max);
-            SetPoint(ref m, point, value);
+            SetPoint(ref m, pointMap[slot], value);
+            // En un triángulo el pico es b y c a la vez.
+            if (CurrentIsTriangular && pointMap[slot] == 1) m.c = value;
             label.membership = m;
-            pointSliders[point].SetValueWithoutNotify(value);
+            pointSliders[slot].SetValueWithoutNotify(value);
             RefreshPointLabels(variable, label);
             OnSystemEdited();
         }
 
         private void RefreshPointLabels(FuzzyVariable variable, FuzzyLabel label) {
-            for (int p = 0; p < pointLabels.Length; p++) {
-                pointLabels[p].text = $"{PointNames[p]} = {FormatValue(variable, GetPoint(label.membership, p))}";
+            string[] names = CurrentIsTriangular ? TrianglePointNames : PointNames;
+            for (int s = 0; s < pointLabels.Length; s++) {
+                pointLabels[s].text = $"{names[s]} = {FormatValue(variable, GetPoint(label.membership, pointMap[s]))}";
             }
+        }
+
+        // -----------------------------------------------------------------------------------------
+        // Selector de forma (triangular / trapezoidal)
+        // -----------------------------------------------------------------------------------------
+
+        private bool HasShapeChoice => level && level.alternateInputs != null && level.alternateInputs.Length > 0;
+        private bool CurrentIsTriangular => level && (usingAlternate ? level.alternateIsTriangular : level.primaryIsTriangular);
+
+        /// <summary>
+        /// Dos botones para alternar entre los dos juegos de curvas del nivel. Cada juego conserva lo
+        /// que el jugador ya le movió: el mismo problema se puede resolver con cualquiera de las formas.
+        /// </summary>
+        private void BuildShapeSelector() {
+            SectionTitle("FORMA DE LAS CURVAS");
+            RectTransform tabs = EsportsUIKit.CreateRect("ShapeTabs", controlsContent);
+            tabs.gameObject.AddComponent<LayoutElement>().preferredHeight = EsportsTheme.Metrics.TouchTarget;
+            HorizontalLayoutGroup h = tabs.gameObject.AddComponent<HorizontalLayoutGroup>();
+            h.spacing = 8f;
+            h.childControlWidth = true;
+            h.childControlHeight = true;
+            h.childForceExpandWidth = true;
+            for (int i = 0; i < 2; i++) {
+                bool alternate = i == 1;
+                Button b = EsportsUIKit.CreateGhostButton(tabs, alternate ? level.alternateShapeName : level.primaryShapeName,
+                    160f, EsportsTheme.Metrics.TouchTarget);
+                b.GetComponent<Image>().color = alternate == usingAlternate
+                    ? EsportsTheme.WithAlpha(EsportsTheme.NeonBlue, 0.45f)
+                    : EsportsTheme.BgPanelLight;
+                b.onClick.AddListener(() => SelectShape(alternate));
+            }
+        }
+
+        private void SelectShape(bool alternate) {
+            if (alternate == usingAlternate || !HasShapeChoice) return;
+            usingAlternate = alternate;
+            level.system.inputs = alternate ? level.alternateInputs : primaryInputs;
+            if (!IsSurfaceView) RebuildCurves();
+            RebuildControls();
+            OnSystemEdited();
         }
 
         private static float GetPoint(MembershipFunction m, int p) => p switch {
@@ -747,7 +804,7 @@ namespace Neuralizer.Fuzzy {
             else resultPanel.SetActive(true);
             int quality = Mathf.RoundToInt(lastQuality * 100f);
             if (correct) {
-                resultTitle.text = "¡Nivel resuelto!";
+                resultTitle.text = "¡Ejercicio resuelto!";
                 resultTitle.color = EsportsTheme.NeonGreen;
                 if (resultPulse) resultPulse.Play(EsportsTheme.NeonGreen);
                 resultDetail.text = $"Calidad del resultado: {quality}%\nTiempo: {ScorableExercise.FormatTime(Time.timeSinceLevelLoad)}";
