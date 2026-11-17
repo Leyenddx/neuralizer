@@ -22,7 +22,7 @@ namespace Neuralizer.EditorTools {
     /// <see cref="Module2DamageDemoBuilder"/>, aplicado a una pantalla de dos personajes.
     /// </summary>
     /// <remarks>
-    /// Correr <c>Tools → Neuralizer → Configurar Sprites del Módulo 2</c> ANTES de esta herramienta
+    /// Correr <c>Tools → Neuralizer → Módulo 2 → Configurar sprites del mockup</c> ANTES de esta herramienta
     /// al menos una vez, para que los retratos en <c>Resources/Sprites/Module2/Heroes/</c> ya estén
     /// importados como Sprite. Idempotente: correrla de nuevo borra el Canvas/EventSystem de una
     /// corrida anterior (marcados con <see cref="Module2ComparisonDemoMarker"/>) y arma todo de nuevo.
@@ -52,7 +52,7 @@ namespace Neuralizer.EditorTools {
             public TextMeshProUGUI scoreText;
         }
 
-        [MenuItem("Tools/Neuralizer/Construir Ejercicio 3 (Comparación)")]
+        [MenuItem("Tools/Neuralizer/Módulo 2/5. Escena Ejercicio 3 (Triage)", false, 24)]
         public static void Build() {
             Scene scene = OpenOrCreateScene();
 
@@ -152,21 +152,9 @@ namespace Neuralizer.EditorTools {
         }
 
         private static void BuildBackground(RectTransform canvasRoot) {
-            // Fondo ambiental común del sistema "Tactical Neon" (MODULO2_DISENO.md): mismo fondo en
-            // menú y ejercicios para que el módulo se sienta una sola app. El fondo del mockup queda
-            // como respaldo si todavía no se generaron los recursos.
-            if (EsportsSkin.HasSprites) {
-                EsportsUIKit.CreateAmbientBackground(canvasRoot);
-                return;
-            }
-            Sprite backgroundSprite = LoadSprite("Module2_Background");
-            if (backgroundSprite) {
-                Image bgImg = EsportsUIKit.CreateSpriteImage("Background", canvasRoot, backgroundSprite);
-                EsportsUIKit.Stretch(bgImg.rectTransform);
-            }
-            else {
-                EsportsUIKit.Stretch(EsportsUIKit.CreateImage("Background", canvasRoot, EsportsTheme.BgDeep).rectTransform);
-            }
+            // Fondo ambiental común del sistema "Tactical Neon" (MODULO2_DISENO.md). Si todavía no se
+            // generaron los recursos visuales, cae solo a un degradado azul noche plano.
+            EsportsUIKit.CreateAmbientBackground(canvasRoot);
         }
 
         private static void BuildTopBar(BuiltRefs refs) {

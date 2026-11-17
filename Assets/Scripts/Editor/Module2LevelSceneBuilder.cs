@@ -22,7 +22,7 @@ namespace Neuralizer.EditorTools {
     /// </summary>
     /// <remarks>
     /// Idempotente: borra lo que haya marcado con <see cref="Module2LevelMarker"/> y vuelve a armar.
-    /// Correr antes <c>Tools → Neuralizer → Crear Niveles del Módulo 2 (FuzzyScene)</c> para que el
+    /// Correr antes <c>Tools → Neuralizer → Módulo 2 → 2. Niveles (FuzzyScene)</c> para que el
     /// controlador quede con el Nivel 1 como <c>fallbackLevel</c> (para probar con Play directo).
     /// </remarks>
     public static class Module2LevelSceneBuilder {
@@ -57,7 +57,7 @@ namespace Neuralizer.EditorTools {
             public Button menuButton;
         }
 
-        [MenuItem("Tools/Neuralizer/Construir Escena de Niveles (Módulo 2)")]
+        [MenuItem("Tools/Neuralizer/Módulo 2/6. Escena de niveles", false, 25)]
         public static void Build() {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             Scene scene = OpenOrCreateScene();
@@ -161,15 +161,9 @@ namespace Neuralizer.EditorTools {
         }
 
         private static void BuildBackground(RectTransform canvasRoot) {
-            if (EsportsSkin.HasSprites) {
-                EsportsUIKit.CreateAmbientBackground(canvasRoot);
-                return;
-            }
-            Sprite backgroundSprite = LoadSprite("Module2_Background");
-            Image bg = backgroundSprite
-                ? EsportsUIKit.CreateSpriteImage("Background", canvasRoot, backgroundSprite)
-                : EsportsUIKit.CreateImage("Background", canvasRoot, EsportsTheme.BgDeep);
-            EsportsUIKit.Stretch(bg.rectTransform);
+            // Fondo ambiental común del sistema "Tactical Neon" (MODULO2_DISENO.md). Si todavía no se
+            // generaron los recursos visuales, cae solo a un degradado azul noche plano.
+            EsportsUIKit.CreateAmbientBackground(canvasRoot);
         }
 
         private static void BuildTopBar(BuiltRefs refs) {

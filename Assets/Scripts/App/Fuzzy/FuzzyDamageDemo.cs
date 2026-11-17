@@ -17,7 +17,7 @@ namespace Neuralizer.Fuzzy {
     /// <remarks>
     /// Vive en su propia escena (<c>FuzzyDamageDemo.unity</c>), no toca <c>MainScene</c> ni
     /// <c>FuzzyDemo.unity</c>. La jerarquía (Canvas, retrato, aro, slider, panel de revelado) la arma
-    /// la herramienta de editor <c>Tools → Neuralizer → Construir Ejercicio 2 (Lectura de Daño)</c>
+    /// la herramienta de editor <c>Tools → Neuralizer → Módulo 2 → 4. Escena Ejercicio 2 (Lectura del Daño)</c>
     /// (ver <c>Assets/Scripts/Editor/Module2DamageDemoBuilder.cs</c>), que también deja las
     /// referencias de abajo ya asignadas — este script solo conecta comportamiento.
     ///
@@ -94,8 +94,8 @@ namespace Neuralizer.Fuzzy {
             bool ok = true;
             void Check(Object obj, string name) {
                 if (!obj) {
-                    Debug.LogError($"[FuzzyDamageDemo] Falta la referencia '{name}'. Corré Tools → Neuralizer → " +
-                                    "Construir Ejercicio 2 (Lectura de Daño) para regenerar la pantalla, o arrastrá " +
+                    Debug.LogError($"[FuzzyDamageDemo] Falta la referencia '{name}'. Ejecuta Tools → Neuralizer → Módulo 2 → " +
+                                    "4. Escena Ejercicio 2 (Lectura del Daño) para regenerar la pantalla, o arrastra " +
                                     "el objeto correspondiente a mano en el Inspector.", this);
                     ok = false;
                 }

@@ -30,7 +30,7 @@ namespace Neuralizer.EditorTools {
         private const int PanelSize = 96;
         private const int GlowMargin = 28;
 
-        [MenuItem("Tools/Neuralizer/Generar Recursos Visuales (Módulo 2)")]
+        [MenuItem("Tools/Neuralizer/Módulo 2/1. Recursos visuales (sprites y fuentes)", false, 20)]
         public static void Generate() {
             EnsureFolder(SpriteFolder);
             EnsureFolder(FontSetFolder);

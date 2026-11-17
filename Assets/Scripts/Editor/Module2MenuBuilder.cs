@@ -20,7 +20,7 @@ namespace Neuralizer.EditorTools {
     /// por clic.
     /// </summary>
     /// <remarks>
-    /// Estructura de la que depende (ver MODULO2_GUIA.md e investigación de MainScene):
+    /// Estructura de la que depende (ver MODULO2_DISENO.md e investigación de MainScene):
     /// UI/Main Menu Canvas/{BG, Safe Area/Wrapper/{App Bar, Logo Panel/Image, Content Panel,
     /// Version Label}, Start Button}. Esta herramienta agrega: "ModuleTabs" (primer hijo de Wrapper,
     /// oculto hasta presionar Start), "Module2ContentPanel" (hermano nuevo de "Content Panel", inicialmente
@@ -33,7 +33,7 @@ namespace Neuralizer.EditorTools {
         private const string WrapperPath = "UI/Main Menu Canvas/Safe Area/Wrapper";
         private const string Module1PanelName = "Content Panel";
 
-        [MenuItem("Neuralizer/Construir menú del Módulo 2")]
+        [MenuItem("Tools/Neuralizer/Módulo 2/7. Menú en MainScene (construir)", false, 26)]
         public static void Build() {
             GameObject wrapperGO = GameObject.Find(WrapperPath);
             if (!wrapperGO) {
@@ -113,21 +113,7 @@ namespace Neuralizer.EditorTools {
             Debug.Log("Module2MenuBuilder: listo. Guarda la escena (Ctrl+S) para persistir los cambios.");
         }
 
-        /// <summary>
-        /// Versión ligera de <see cref="Build"/>: NO reconstruye el menú, solo busca la lista de
-        /// ejercicios del Módulo 2 ya existente en MainScene, quita las entradas de niveles de datos
-        /// de una corrida anterior (las que tienen <c>fuzzyLevel</c> asignado) y agrega una por cada
-        /// <see cref="FuzzyScene"/> de la carpeta de niveles. Respeta cualquier retoque manual del resto del menú.
-        /// </summary>
-        [MenuItem("Neuralizer/Agregar niveles al menú del Módulo 2")]
-        public static void AddLevelEntries() {
-            // Con el rediseño, la lista del Módulo 2 (encabezado con progreso, secciones y tarjetas) se
-            // arma completa en un solo paso para que el escalonado y el progreso queden coherentes.
-            // Este comando se conserva como atajo: reconstruye el panel con los niveles actuales.
-            Build();
-        }
-
-        [MenuItem("Neuralizer/Quitar menú del Módulo 2")]
+        [MenuItem("Tools/Neuralizer/Módulo 2/Quitar menú de MainScene", false, 40)]
         public static void Remove() {
             GameObject wrapperGO = GameObject.Find(WrapperPath);
             if (!wrapperGO) return;
@@ -445,7 +431,7 @@ namespace Neuralizer.EditorTools {
             System.Array.Sort(paths, System.StringComparer.Ordinal);
             if (paths.Length == 0) {
                 Debug.LogWarning("Module2MenuBuilder: no hay niveles en " + Module2LevelAssetsBuilder.Folder +
-                                 " — corre 'Tools/Neuralizer/Crear Niveles del Módulo 2 (FuzzyScene)' para agregarlos al menú.");
+                                 " — corre 'Tools → Neuralizer → Módulo 2 → 2. Niveles (FuzzyScene)' para agregarlos al menú.");
             }
             for (int i = 0; i < paths.Length; i++) {
                 FuzzyScene level = AssetDatabase.LoadAssetAtPath<FuzzyScene>(paths[i]);

@@ -25,7 +25,7 @@ namespace Neuralizer.Fuzzy {
     /// [SerializeField] más abajo, agrupados por sección con [Header].
     ///
     /// La jerarquía se genera (o se regenera desde cero) con la herramienta de editor
-    /// <c>Tools → Neuralizer → Reconstruir HUD del Ejercicio (Módulo 2)</c>
+    /// <c>Tools → Neuralizer → Módulo 2 → 3. Escena Ejercicio 1 (Healer)</c>
     /// (ver <c>Assets/Scripts/Editor/Module2HudBuilder.cs</c>), que además deja las referencias de
     /// abajo ya asignadas. Si alguna vez hace falta volver a una base "de fábrica" (por ejemplo después
     /// de desordenar el layout a propósito), esa misma herramienta reconstruye todo con las medidas
@@ -154,8 +154,8 @@ namespace Neuralizer.Fuzzy {
             bool ok = true;
             void Check(Object obj, string name) {
                 if (!obj) {
-                    Debug.LogError($"[FuzzyHealerDemo] Falta la referencia '{name}'. Corré Tools → Neuralizer → " +
-                                    "Reconstruir HUD del Ejercicio (Módulo 2) para regenerar el HUD, o arrastrá el " +
+                    Debug.LogError($"[FuzzyHealerDemo] Falta la referencia '{name}'. Ejecuta Tools → Neuralizer → Módulo 2 → " +
+                                    "3. Escena Ejercicio 1 (Healer) para regenerar el HUD, o arrastra el " +
                                     "objeto correspondiente a mano en el Inspector.", this);
                     ok = false;
                 }

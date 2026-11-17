@@ -9,7 +9,7 @@ namespace Neuralizer.EditorTools {
     /// <summary>
     /// Crea (o actualiza en su lugar, conservando el GUID) los 4 niveles de datos del Módulo 2 como
     /// assets <see cref="FuzzyScene"/> en <c>Assets/ScriptableObjects/FuzzyScenes/</c>, con los datos
-    /// de <c>FUZZY_MODULE.md</c> §3 más el estado inicial "roto" que el jugador debe corregir.
+    /// de la propuesta original (ver <c>MODULO2_DEFENSA.md</c> §5) más el estado inicial "roto" que el jugador debe corregir.
     /// </summary>
     /// <remarks>
     /// Los estados iniciales se validaron simulando el motor (40 muestras, centroide): cada nivel
@@ -35,7 +35,7 @@ namespace Neuralizer.EditorTools {
         private static readonly Color High = EsportsTheme.CurveAlto;
         private static readonly Color VeryHigh = EsportsTheme.NeonRed;
 
-        [MenuItem("Tools/Neuralizer/Crear Niveles del Módulo 2 (FuzzyScene)")]
+        [MenuItem("Tools/Neuralizer/Módulo 2/2. Niveles (FuzzyScene)", false, 21)]
         public static void Build() {
             if (!AssetDatabase.IsValidFolder(Folder)) {
                 AssetDatabase.CreateFolder("Assets/ScriptableObjects", "FuzzyScenes");

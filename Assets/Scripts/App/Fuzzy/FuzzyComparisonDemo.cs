@@ -16,7 +16,7 @@ namespace Neuralizer.Fuzzy {
     /// </summary>
     /// <remarks>
     /// Vive en su propia escena (<c>FuzzyComparisonDemo.unity</c>). La jerarquía la arma
-    /// <c>Tools → Neuralizer → Construir Ejercicio 3 (Comparación)</c> (ver
+    /// <c>Tools → Neuralizer → Módulo 2 → 5. Escena Ejercicio 3 (Triage)</c> (ver
     /// <c>Assets/Scripts/Editor/Module2ComparisonDemoBuilder.cs</c>), que deja las referencias de abajo
     /// ya conectadas. Mismos parámetros de μ_Crítico que <see cref="FuzzyDamageDemo"/> — ver ese script
     /// para la discusión de diseño de la curva.
@@ -100,8 +100,8 @@ namespace Neuralizer.Fuzzy {
             bool ok = true;
             void Check(Object obj, string name) {
                 if (!obj) {
-                    Debug.LogError($"[FuzzyComparisonDemo] Falta la referencia '{name}'. Corré Tools → Neuralizer → " +
-                                    "Construir Ejercicio 3 (Comparación) para regenerar la pantalla.", this);
+                    Debug.LogError($"[FuzzyComparisonDemo] Falta la referencia '{name}'. Ejecuta Tools → Neuralizer → Módulo 2 → " +
+                                    "5. Escena Ejercicio 3 (Triage) para regenerar la pantalla.", this);
                     ok = false;
                 }
             }

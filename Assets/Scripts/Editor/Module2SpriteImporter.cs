@@ -25,27 +25,18 @@ namespace Neuralizer.EditorTools {
         // para dejar fuera del área que se estira las esquinas/decoraciones (brackets, muescas,
         // franjas diagonales) de cada arte y que no se deformen.
         private static readonly (string file, Vector4 border)[] SlicedSprites = {
-            ("Module2_Card.png", new Vector4(60, 40, 60, 90)),
-            // Mismo marco que Module2_Card.png pero con el interior relleno de azul marino translúcido
+            // Marco del mockup con el interior relleno de azul marino translúcido
             // en vez de transparente — ver BuildBottomSheet: reemplaza el panel rectangular plano que
             // se usaba detrás de la tarjeta (sus esquinas cuadradas se salían del contorno redondeado
             // del marco, mostrando un bloque oscuro que no está en el mockup). Mismo border de 9-slice
             // porque viene del mismo arte fuente, solo cambia el color/alpha del relleno.
             ("Module2_CardFill.png", new Vector4(60, 40, 60, 90)),
-            ("Module2_ButtonEvaluate.png", new Vector4(70, 20, 70, 50)),
             ("Module2_Banner.png", new Vector4(60, 10, 60, 10)),
         };
 
         private static readonly string[] SimpleSprites = {
             "Module2_ButtonBack.png",
             "Module2_ButtonFullscreen.png",
-            "Module2_Stripes.png",
-        };
-
-        // Fondo de pantalla completa — Sprite igual (así Image.sprite lo acepta), pero sin 9-slice:
-        // se usa estirado a pantalla completa (Image.Type.Simple con preserveAspect = false).
-        private static readonly string[] BackgroundSprites = {
-            "Module2_Background.jpg",
         };
 
         // Retratos de personajes (Ejercicio 2 — Lectura visual del daño): arte con licencia provisto
@@ -59,7 +50,7 @@ namespace Neuralizer.EditorTools {
             "Hero_Soldier76.png",
         };
 
-        [MenuItem("Tools/Neuralizer/Configurar Sprites del Módulo 2")]
+        [MenuItem("Tools/Neuralizer/Módulo 2/Configurar sprites del mockup", false, 41)]
         public static void ConfigureSprites() {
             int configured = 0;
 
@@ -67,9 +58,6 @@ namespace Neuralizer.EditorTools {
                 if (ConfigureOne(FolderPath, file, border)) configured++;
             }
             foreach (string file in SimpleSprites) {
-                if (ConfigureOne(FolderPath, file, Vector4.zero)) configured++;
-            }
-            foreach (string file in BackgroundSprites) {
                 if (ConfigureOne(FolderPath, file, Vector4.zero)) configured++;
             }
             foreach (string file in HeroSprites) {
@@ -118,15 +106,14 @@ namespace Neuralizer.EditorTools {
             // Estas piezas son líneas finas (bordes de 1-3px) sobre transparencia — la compresión por
             // default (DXT/Crunch) difumina justo ese tipo de borde de alto contraste. Sin compresión
             // se ven nítidas a cualquier escala; son pocos archivos chicos, el costo en build es mínimo.
-            // El fondo de pantalla completa y los retratos de personaje quedan fuera (son imágenes
-            // grandes tipo foto, ahí sí vale la pena comprimir en vez de dejarlas sin comprimir).
-            bool isBackground = System.Array.Exists(BackgroundSprites, f => f == fileName);
+            // Los retratos de personaje quedan fuera (son imágenes grandes tipo foto: ahí sí vale la
+            // pena comprimir en vez de dejarlas sin comprimir).
             bool isHeroPortrait = System.Array.Exists(HeroSprites, f => f == fileName);
-            if (!isBackground && !isHeroPortrait && importer.textureCompression != TextureImporterCompression.Uncompressed) {
+            if (!isHeroPortrait && importer.textureCompression != TextureImporterCompression.Uncompressed) {
                 importer.textureCompression = TextureImporterCompression.Uncompressed;
                 changed = true;
             }
-            else if ((isBackground || isHeroPortrait) && importer.textureCompression != TextureImporterCompression.Compressed) {
+            else if (isHeroPortrait && importer.textureCompression != TextureImporterCompression.Compressed) {
                 importer.textureCompression = TextureImporterCompression.Compressed;
                 changed = true;
             }

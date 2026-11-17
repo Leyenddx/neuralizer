@@ -6,7 +6,7 @@ namespace Neuralizer.UI {
     /// <summary>
     /// Qué fuente usa cada rol tipográfico del Módulo 2 (ver <see cref="TypeRole"/>). El asset vive en
     /// <c>Assets/Resources/Module2/EsportsFonts.asset</c> y lo crea
-    /// <c>Tools → Neuralizer → Generar Recursos Visuales (Módulo 2)</c>; <see cref="EsportsSkin"/> lo carga.
+    /// <c>Tools → Neuralizer → Módulo 2 → 1. Recursos visuales</c>; <see cref="EsportsSkin"/> lo carga.
     /// </summary>
     [CreateAssetMenu(fileName = "EsportsFonts", menuName = "Neuralizer/Esports Font Set")]
     public class EsportsFontSet : ScriptableObject {

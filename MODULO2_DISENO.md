@@ -52,7 +52,7 @@ El menú vive en `MainScene`, cuyo Canvas es 540×960 con match de ancho: ahí 1
 
 ## 3. Recursos generados
 
-`Tools → Neuralizer → Generar Recursos Visuales (Módulo 2)` (`Editor/Module2AssetGenerator.cs`)
+`Tools → Neuralizer → Módulo 2 → 1. Recursos visuales` (`Editor/Module2AssetGenerator.cs`)
 crea por código, en `Assets/Resources/Sprites/Module2/UI/`:
 
 | Sprite | Qué es |
@@ -89,7 +89,7 @@ Nunca `ease-in`, nunca desde escala 0, nada que bloquee la interacción mientras
 
 ## 5. Cómo regenerar todo
 
-**Un solo paso:** `Tools → Neuralizer → Regenerar Módulo 2 completo + capturas`
+**Un solo paso:** `Tools → Neuralizer → Módulo 2 → Regenerar todo + capturas`
 (`Editor/Module2BatchPipeline.cs`). Genera recursos, niveles, las 4 escenas y el menú de
 `MainScene`, y deja capturas PNG a 540×960 en `Temp/Module2Captures/`. También corre sin abrir el
 editor (con Unity cerrado):
@@ -102,11 +102,30 @@ Ojo: reconstruye las escenas de ejercicios y el menú del Módulo 2 desde cero, 
 retoques manuales hechos en esos objetos.
 
 **A mano, paso por paso:**
-1. `Tools → Neuralizer → Generar Recursos Visuales (Módulo 2)`
-2. Abrir `MainScene` → `Neuralizer → Construir menú del Módulo 2` → Ctrl+S
+1. `Tools → Neuralizer → Módulo 2 → 1. Recursos visuales`
+2. Abrir `MainScene` → `Tools → Neuralizer → Módulo 2 → 7. Menú en MainScene` → Ctrl+S
 3. `Tools → Neuralizer →` cada "Construir/Reconstruir …" de los ejercicios y `Construir Escena de Niveles (Módulo 2)`
 
-## 6. Trampas conocidas de uGUI en este proyecto
+## 6. Cómo agregar un nivel nuevo (sin programar)
+
+1. En el Project window: clic derecho → `Create → Neuralizer → Fuzzy Scene`, dentro de
+   `Assets/ScriptableObjects/FuzzyScenes/`. El nombre del archivo define el orden en el menú
+   (`Nivel 5 …` queda después de `Nivel 4 …`).
+2. En el Inspector llena:
+   - **Display Name** y **Narrative Context**: título y situación.
+   - **Mode**: Ordenar (Ranking) o Clasificar.
+   - **Editable Rule Weights / Editable Memberships / Show Control Surface**: qué puede tocar el
+     jugador y si hay vista de superficie.
+   - **Variables de entrada y salida**, con sus etiquetas y curvas (a, b, c, d).
+   - **Reglas** (condiciones con Y/O, etiqueta de salida y peso inicial).
+   - **Casos**: valores de entrada y `expectedRank` (Ordenar) o `expectedLabel` (Clasificar).
+3. Revisa en el mismo Inspector la vista previa de curvas y el panel de prueba en vivo (sin Play).
+   Asegúrate de que el estado inicial esté "roto" y de que exista una solución: el juego no acepta
+   empates.
+4. Abre `MainScene` → `Tools → Neuralizer → Módulo 2 → 7. Menú en MainScene` → Ctrl+S. El nivel
+   aparece en el menú y se juega en `FuzzyLevel.unity`, sin escena propia.
+
+## 7. Trampas conocidas de uGUI en este proyecto
 
 - **Reference Pixels Per Unit:** el Canvas de `MainScene` usa 2 (estilo pixel art del Módulo 1); las
   escenas del Módulo 2 usan 100. Los sprites 9-slice escalan su borde con ese valor, así que el

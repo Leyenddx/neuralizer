@@ -99,7 +99,7 @@ namespace Neuralizer.EditorTools {
             public Button resultCloseButton;
         }
 
-        [MenuItem("Tools/Neuralizer/Reconstruir HUD del Ejercicio (Módulo 2)")]
+        [MenuItem("Tools/Neuralizer/Módulo 2/3. Escena Ejercicio 1 (Healer)", false, 22)]
         public static void BuildHud() {
             FuzzyHealerDemo demo = Object.FindAnyObjectByType<FuzzyHealerDemo>();
             if (!demo) {
@@ -182,24 +182,9 @@ namespace Neuralizer.EditorTools {
         }
 
         private static void BuildBackground(RectTransform canvasRoot) {
-            // Fondo del mockup (degradado radial azul) — si falta el Sprite (no se corrió todavía
-            // Tools/Neuralizer/Configurar Sprites del Módulo 2) cae de vuelta a un color sólido para
-            // que la pantalla no quede vacía/rosa.
-            // Fondo ambiental común del sistema "Tactical Neon" (MODULO2_DISENO.md): mismo fondo en
-            // menú y ejercicios para que el módulo se sienta una sola app. El fondo del mockup queda
-            // como respaldo si todavía no se generaron los recursos.
-            if (EsportsSkin.HasSprites) {
-                EsportsUIKit.CreateAmbientBackground(canvasRoot);
-                return;
-            }
-            Sprite backgroundSprite = LoadSprite("Module2_Background");
-            if (backgroundSprite) {
-                Image bgImg = EsportsUIKit.CreateSpriteImage("Background", canvasRoot, backgroundSprite);
-                EsportsUIKit.Stretch(bgImg.rectTransform);
-            }
-            else {
-                EsportsUIKit.Stretch(EsportsUIKit.CreateImage("Background", canvasRoot, EsportsTheme.BgDeep).rectTransform);
-            }
+            // Fondo ambiental común del sistema "Tactical Neon" (MODULO2_DISENO.md). Si todavía no se
+            // generaron los recursos visuales, cae solo a un degradado azul noche plano.
+            EsportsUIKit.CreateAmbientBackground(canvasRoot);
         }
 
         // -----------------------------------------------------------------------------------------
@@ -374,7 +359,7 @@ namespace Neuralizer.EditorTools {
 
         private static void BuildBottomSheet(BuiltRefs refs) {
             Sprite cardFill = LoadSprite("Module2_CardFill");
-            Sprite cardFrame = cardFill ? cardFill : LoadSprite("Module2_Card");
+            Sprite cardFrame = cardFill;
             Color panelColor = cardFill
                 ? new Color(0f, 0f, 0f, 0f)
                 : new Color(EsportsTheme.BgDeep.r, EsportsTheme.BgDeep.g, EsportsTheme.BgDeep.b, 0.55f);

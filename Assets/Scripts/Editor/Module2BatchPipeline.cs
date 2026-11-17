@@ -29,7 +29,7 @@ namespace Neuralizer.EditorTools {
         private const int Width = 540;
         private const int Height = 960;
 
-        [MenuItem("Tools/Neuralizer/Regenerar Módulo 2 completo + capturas")]
+        [MenuItem("Tools/Neuralizer/Módulo 2/Regenerar todo + capturas", false, 1)]
         public static void Run() {
             string outDir = Environment.GetEnvironmentVariable("M2_CAPTURE_DIR");
             if (string.IsNullOrEmpty(outDir)) outDir = Path.GetFullPath("Temp/Module2Captures");
@@ -54,7 +54,7 @@ namespace Neuralizer.EditorTools {
         }
 
         /// <summary>Solo capturas (sin reconstruir nada).</summary>
-        [MenuItem("Tools/Neuralizer/Capturas del Módulo 2")]
+        [MenuItem("Tools/Neuralizer/Módulo 2/Solo capturas", false, 2)]
         public static void CaptureOnly() {
             string outDir = Environment.GetEnvironmentVariable("M2_CAPTURE_DIR");
             if (string.IsNullOrEmpty(outDir)) outDir = Path.GetFullPath("Temp/Module2Captures");

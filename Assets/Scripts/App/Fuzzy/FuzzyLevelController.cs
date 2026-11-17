@@ -20,7 +20,7 @@ namespace Neuralizer.Fuzzy {
     /// <remarks>
     /// <para>
     /// El "esqueleto" fijo de la pantalla (barra superior, tarjetas contenedoras, botón Evaluar, popup
-    /// de resultado) lo arma <c>Tools → Neuralizer → Construir Escena de Niveles (Módulo 2)</c> como
+    /// de resultado) lo arma <c>Tools → Neuralizer → Módulo 2 → 6. Escena de niveles</c> como
     /// GameObjects reales en la escena — editable a mano en el Inspector. Lo que varía por nivel
     /// (cuántos casos, variables, reglas, etiquetas) se instancia aquí por código dentro de esos
     /// contenedores, que es justo lo que <see cref="FuzzyHost"/> pide en su documentación.
