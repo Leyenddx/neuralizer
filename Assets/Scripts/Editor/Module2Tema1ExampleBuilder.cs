@@ -12,13 +12,7 @@ using UnityEngine.UI;
 
 namespace Neuralizer.EditorTools {
 
-    /// <summary>
-    /// Arma (o rearma desde cero) la escena del EJEMPLO del Tema 1 del Módulo 2,
-    /// <c>Assets/Scenes/Tema1Ejemplo.unity</c>: el estado de salud de un aliado visto por un healer
-    /// (contorno de color), con sus tres conjuntos difusos, selector de lógica clásica/difusa y selector
-    /// de forma triangular/trapezoidal. Deja conectadas las referencias de <see cref="FuzzyHealthExample"/>.
-    /// </summary>
-    /// <remarks>Idempotente: borra lo marcado con <see cref="Module2LevelMarker"/> y vuelve a armar.</remarks>
+ 
     public static class Module2Tema1ExampleBuilder {
 
         public const string ScenePath = "Assets/Scenes/Tema1Ejemplo.unity";
@@ -100,7 +94,7 @@ namespace Neuralizer.EditorTools {
             es.AddComponent<InputSystemUIInputModule>();
         }
 
-        /// <summary>Agrega la escena a Build Settings y quita las entradas cuyo archivo ya no existe.</summary>
+      
         public static void RegisterInBuildSettings(string scenePath) {
             var scenes = EditorBuildSettings.scenes.Where(s => System.IO.File.Exists(s.path)).ToList();
             if (scenes.All(s => s.path != scenePath)) scenes.Add(new EditorBuildSettingsScene(scenePath, true));
@@ -168,10 +162,7 @@ namespace Neuralizer.EditorTools {
             BuildBottom(column, refs);
         }
 
-        /// <summary>
-        /// LayoutElement de una fila que TAMBIÉN lleva un HorizontalLayoutGroup: prioridad 2 y
-        /// flexibleHeight 0 para que el grupo no le gane con su flexibleHeight = 1 (ver MODULO2_DISENO §7).
-        /// </summary>
+  
         private static void FixedRow(RectTransform row, float height) {
             LayoutElement le = row.gameObject.AddComponent<LayoutElement>();
             le.minHeight = height;
@@ -190,7 +181,7 @@ namespace Neuralizer.EditorTools {
             h.childForceExpandWidth = false;
             h.childForceExpandHeight = true;
 
-            // Retrato con resplandor y contorno (el "aliado visto a través de la pared").
+       
             RectTransform area = EsportsUIKit.CreateRect("HeroArea", row);
             LayoutElement areaLE = area.gameObject.AddComponent<LayoutElement>();
             areaLE.preferredWidth = 250f;
@@ -214,7 +205,7 @@ namespace Neuralizer.EditorTools {
             EsportsUIKit.Stretch(ringRT, 4f, 4f, 4f, 4f);
             EsportsUIKit.CreateOutline(ringRT, EsportsTheme.NeonGreen, 5f, out refs.heroRing);
 
-            // Lectura: estado dominante + grado de pertenencia a cada conjunto.
+         
             RectTransform card = Module2LevelSceneBuilder.AutoHeightCard(row, "ReadoutCard", EsportsTheme.NeonBlend);
             card.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
             VerticalLayoutGroup cv = card.GetComponent<VerticalLayoutGroup>();
@@ -251,7 +242,7 @@ namespace Neuralizer.EditorTools {
             }
         }
 
-        /// <summary>Fila "ETIQUETA  [opción A | opción B]" con indicador deslizante bajo la opción activa.</summary>
+     
         private static Button[] BuildSegmented(RectTransform column, string caption, string[] options,
             out M2TabIndicator tabIndicator, out CanvasGroup group) {
             RectTransform row = EsportsUIKit.CreateRect("Segmented_" + caption, column);
@@ -333,7 +324,7 @@ namespace Neuralizer.EditorTools {
             axisX.rectTransform.sizeDelta = new Vector2(0f, 1f);
             axisX.rectTransform.anchoredPosition = Vector2.zero;
 
-            // Marcas del eje: 0, 50, 100 de salud.
+      
             foreach ((float t, string text, TextAlignmentOptions align) in new[] {
                          (0f, "0", TextAlignmentOptions.TopLeft), (0.5f, "50", TextAlignmentOptions.Top),
                          (1f, "100", TextAlignmentOptions.TopRight) }) {

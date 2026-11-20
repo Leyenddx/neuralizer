@@ -6,15 +6,7 @@ using UnityEngine;
 
 namespace Neuralizer.EditorTools {
 
-    /// <summary>
-    /// Editor personalizado para <see cref="FuzzyScene"/>: agrega validación de datos, una gráfica
-    /// de las funciones de pertenencia y un panel para probar el sistema en vivo sin entrar a Play Mode.
-    /// </summary>
-    /// <remarks>
-    /// Vive en una carpeta "Editor" a propósito: Unity excluye automáticamente cualquier script
-    /// dentro de una carpeta con ese nombre de los builds (incluyendo WebGL), así que esta
-    /// herramienta de autoría no agrega peso al build final.
-    /// </remarks>
+
     [CustomEditor(typeof(FuzzyScene))]
     public class FuzzySceneEditor : UnityEditor.Editor {
 

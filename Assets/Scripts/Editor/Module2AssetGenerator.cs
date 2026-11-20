@@ -8,17 +8,7 @@ using UnityEngine;
 
 namespace Neuralizer.EditorTools {
 
-    /// <summary>
-    /// Genera por código todos los recursos visuales del sistema "Tactical Neon" del Módulo 2
-    /// (ver MODULO2_DISENO.md §3): paneles con esquinas recortadas (9-slice), halos, retícula,
-    /// franjas, viñeta e iconos, más el set de fuentes por rol.
-    /// </summary>
-    /// <remarks>
-    /// Todo se dibuja en BLANCO con alfa y se tiñe después con <c>Image.color</c>: cambiar la paleta
-    /// en <see cref="EsportsTheme"/> no exige regenerar nada. Las formas se rasterizan con campos de
-    /// distancia con signo (SDF) para que los bordes salgan antialiasados y nítidos. Idempotente:
-    /// correrlo otra vez sobrescribe los PNG conservando sus GUID (las referencias no se rompen).
-    /// </remarks>
+  
     public static class Module2AssetGenerator {
 
         private const string SpriteFolder = "Assets/Resources/Sprites/Module2/UI";

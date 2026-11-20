@@ -12,21 +12,7 @@ using Neuralizer.UI;
 
 namespace Neuralizer.EditorTools {
 
-    /// <summary>
-    /// Arma (o rearma desde cero) la escena completa del Ejercicio 3 del Módulo 2 ("¿A quién curás
-    /// primero?") — Canvas, dos tarjetas de personaje (Reinhardt a la izquierda, Reaper a la derecha),
-    /// cada una con retrato + aro de urgencia + resplandor + badge de resultado, más el área de
-    /// instrucción/resultado/puntaje y el botón de siguiente ronda — como GameObjects guardados en
-    /// <c>Assets/Scenes/FuzzyComparisonDemo.unity</c>, y deja las referencias de
-    /// <see cref="FuzzyComparisonDemo"/> ya conectadas. Mismo patrón que
-    /// <see cref="Module2DamageDemoBuilder"/>, aplicado a una pantalla de dos personajes.
-    /// </summary>
-    /// <remarks>
-    /// Correr <c>Tools → Neuralizer → Módulo 2 → Configurar sprites del mockup</c> ANTES de esta herramienta
-    /// al menos una vez, para que los retratos en <c>Resources/Sprites/Module2/Heroes/</c> ya estén
-    /// importados como Sprite. Idempotente: correrla de nuevo borra el Canvas/EventSystem de una
-    /// corrida anterior (marcados con <see cref="Module2ComparisonDemoMarker"/>) y arma todo de nuevo.
-    /// </remarks>
+
     public static class Module2ComparisonDemoBuilder {
 
         private const string ScenePath = "Assets/Scenes/FuzzyComparisonDemo.unity";

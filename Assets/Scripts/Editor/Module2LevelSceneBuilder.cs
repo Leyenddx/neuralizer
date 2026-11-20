@@ -13,18 +13,7 @@ using UnityEngine.UI;
 
 namespace Neuralizer.EditorTools {
 
-    /// <summary>
-    /// Arma (o rearma desde cero) la escena genérica de niveles del Módulo 2,
-    /// <c>Assets/Scenes/FuzzyLevel.unity</c>: el esqueleto fijo de la pantalla (barra superior,
-    /// contexto narrativo, fila de casos, gráfica, controles, botón Evaluar y popup de resultado),
-    /// un <see cref="FuzzyHost"/> y un <see cref="FuzzyLevelController"/> con todas sus referencias
-    /// conectadas. Lo que varía por nivel lo instancia el controlador en runtime.
-    /// </summary>
-    /// <remarks>
-    /// Idempotente: borra lo que haya marcado con <see cref="Module2LevelMarker"/> y vuelve a armar.
-    /// Correr antes <c>Tools → Neuralizer → Módulo 2 → 2. Niveles (FuzzyScene)</c> para que el
-    /// controlador quede con el Nivel 1 como <c>fallbackLevel</c> (para probar con Play directo).
-    /// </remarks>
+
     public static class Module2LevelSceneBuilder {
 
         public const string ScenePath = "Assets/Scenes/FuzzyLevel.unity";
@@ -98,7 +87,7 @@ namespace Neuralizer.EditorTools {
         }
 
         // -----------------------------------------------------------------------------------------
-        // Escena / limpieza (mismo patrón que Module2DamageDemoBuilder)
+        // Escena / limpieza
         // -----------------------------------------------------------------------------------------
 
         private static Scene OpenOrCreateScene() {
@@ -161,8 +150,6 @@ namespace Neuralizer.EditorTools {
         }
 
         private static void BuildBackground(RectTransform canvasRoot) {
-            // Fondo ambiental común del sistema "Tactical Neon" (MODULO2_DISENO.md). Si todavía no se
-            // generaron los recursos visuales, cae solo a un degradado azul noche plano.
             EsportsUIKit.CreateAmbientBackground(canvasRoot);
         }
 
@@ -192,7 +179,6 @@ namespace Neuralizer.EditorTools {
             refs.titleText = EsportsUIKit.CreateTextFill(titleRT, "NIVEL", EsportsTheme.TextSize.Title, EsportsTheme.TextPrimary,
                 FontStyles.Bold, TextAlignmentOptions.Center);
 
-            // Contrapeso del botón Volver para que el título quede centrado de verdad.
             RectTransform spacer = EsportsUIKit.CreateRect("Spacer", topBar);
             spacer.gameObject.AddComponent<LayoutElement>().preferredWidth = backSprite ? 44f : 100f;
         }
@@ -201,12 +187,7 @@ namespace Neuralizer.EditorTools {
         // Columna principal: contexto, casos, gráfica, controles
         // -----------------------------------------------------------------------------------------
 
-        /// <summary>
-        /// Contenido de la pantalla como una página con scroll vertical (patrón móvil): las tarjetas
-        /// crecen con su contenido en vez de pelear por alturas fijas dentro de 1280 unidades, que era
-        /// lo que encimaba textos al subir la tipografía a tamaños legibles. Solo la barra superior y
-        /// la inferior (estado + Evaluar) quedan fijas.
-        /// </summary>
+
         private static void BuildMainColumn(BuiltRefs refs) {
             RectTransform column = EsportsUIKit.CreateScrollArea(refs.canvasRoot, 0f);
             RectTransform scrollRoot = (RectTransform)column.parent.parent;
@@ -216,12 +197,10 @@ namespace Neuralizer.EditorTools {
             v.spacing = EsportsTheme.Metrics.GapLarge;
             v.padding = new RectOffset(16, 16, 8, 24);
 
-            // Contexto narrativo
             RectTransform narrative = AutoHeightCard(column, "NarrativeCard", EsportsTheme.NeonBlend);
             refs.narrativeText = EsportsUIKit.CreateText(narrative, "", EsportsTheme.TextSize.Body, EsportsTheme.TextPrimary,
                 FontStyles.Normal, TextAlignmentOptions.Left, 0f);
 
-            // Casos: grilla de hasta 3 columnas (el controlador ajusta el ancho de celda)
             refs.casesContainer = EsportsUIKit.CreateRect("CasesGrid", column);
             GridLayoutGroup grid = refs.casesContainer.gameObject.AddComponent<GridLayoutGroup>();
             grid.spacing = new Vector2(EsportsTheme.Metrics.Gap, EsportsTheme.Metrics.Gap);
@@ -229,9 +208,7 @@ namespace Neuralizer.EditorTools {
             grid.constraintCount = 3;
             grid.childAlignment = TextAnchor.UpperCenter;
             grid.cellSize = new Vector2(216f, 170f);
-            // El ancho mínimo que reporta un GridLayoutGroup depende del tamaño de celda, y el
-            // controlador calcula la celda a partir del ancho: sin esto se retroalimentan y la grilla
-            // puede quedar más ancha que la pantalla. El LayoutElement (prioridad mayor) corta el ciclo.
+
             LayoutElement gridLE = refs.casesContainer.gameObject.AddComponent<LayoutElement>();
             gridLE.minWidth = 0f;
             gridLE.layoutPriority = 2;
@@ -250,9 +227,7 @@ namespace Neuralizer.EditorTools {
             LayoutElement tabsLE = refs.viewTabsContainer.gameObject.AddComponent<LayoutElement>();
             tabsLE.preferredHeight = EsportsTheme.Metrics.TouchTarget;
             tabsLE.minHeight = EsportsTheme.Metrics.TouchTarget;
-            // Mismo bug de Unity documentado en Module2MenuBuilder.BuildModuleTabs: el
-            // HorizontalLayoutGroup reporta flexibleHeight=1 y, a igual prioridad, gana sobre este
-            // LayoutElement — las pestañas crecían hasta 160 de alto y aplastaban la gráfica.
+    
             tabsLE.flexibleHeight = 0f;
             tabsLE.layoutPriority = 2;
             HorizontalLayoutGroup th = refs.viewTabsContainer.gameObject.AddComponent<HorizontalLayoutGroup>();
@@ -269,7 +244,7 @@ namespace Neuralizer.EditorTools {
             EsportsUIKit.Stretch(plotBg.rectTransform);
             plotBg.raycastTarget = false;
 
-            // Margen superior extra para las etiquetas de los casos que flotan sobre la gráfica.
+ 
             refs.plotArea = EsportsUIKit.CreateRect("PlotArea", plotHolder);
             EsportsUIKit.Stretch(refs.plotArea, 16f, 16f, 52f, 16f);
             refs.plotArea.pivot = Vector2.zero;
@@ -292,8 +267,7 @@ namespace Neuralizer.EditorTools {
             refs.plotCaption = EsportsUIKit.CreateText(graph, "", EsportsTheme.TextSize.Small, EsportsTheme.TextSecondary,
                 FontStyles.Normal, TextAlignmentOptions.Center, 30f);
 
-            // Controles editables (los crea el controlador según el nivel). Sin scroll propio: la
-            // tarjeta crece y la página entera hace scroll (nada de scroll anidado).
+
             RectTransform controls = AutoHeightCard(column, "ControlsCard", EsportsTheme.NeonBlend);
             refs.controlsHint = EsportsUIKit.CreateText(controls, "", EsportsTheme.TextSize.Body, EsportsTheme.TextSecondary,
                 FontStyles.Italic, TextAlignmentOptions.Left, 0f);
@@ -306,12 +280,7 @@ namespace Neuralizer.EditorTools {
             cv.childForceExpandHeight = false;
         }
 
-        /// <summary>
-        /// Tarjeta oscura con contorno que crece con su contenido (VerticalLayoutGroup con padding en la
-        /// propia raíz). A diferencia de <see cref="EsportsUIKit.CreateNeonCard"/>, cuyo contenido está
-        /// estirado a un tamaño fijo, esta sirve dentro de una página con scroll. Devuelve la raíz: los
-        /// hijos se agregan directo ahí.
-        /// </summary>
+
         internal static RectTransform AutoHeightCard(Transform parent, string name, Color accent) {
             RectTransform root = EsportsUIKit.CreateRect(name, parent);
             Image bg = root.gameObject.AddComponent<Image>();
@@ -356,7 +325,7 @@ namespace Neuralizer.EditorTools {
             bar.pivot = new Vector2(0.5f, 0f);
             bar.sizeDelta = new Vector2(0f, BottomBarHeight);
             bar.anchoredPosition = Vector2.zero;
-            // Fondo opaco: el contenido de la página hace scroll por debajo y no debe verse a través.
+   
             Image barBg = bar.gameObject.AddComponent<Image>();
             barBg.color = new Color(EsportsTheme.BgDeep.r, EsportsTheme.BgDeep.g, EsportsTheme.BgDeep.b, 0.94f);
             VerticalLayoutGroup v = bar.gameObject.AddComponent<VerticalLayoutGroup>();
@@ -371,8 +340,7 @@ namespace Neuralizer.EditorTools {
                 FontStyles.Bold, TextAlignmentOptions.Center);
             refs.statusText.gameObject.AddComponent<LayoutElement>().preferredHeight = 50f;
 
-            // CTA principal del sistema (chamfer con degradado cian→violeta). El sprite del mockup
-            // ("Module2_ButtonEvaluate") no está hecho para estirarse a lo ancho y se veía roto.
+  
             refs.evaluateButton = EsportsUIKit.CreateGradientButton(bar, "Evaluar", 64f);
         }
 
@@ -387,7 +355,7 @@ namespace Neuralizer.EditorTools {
             dim.gameObject.AddComponent<CanvasGroup>();
             refs.resultPopup = dim.gameObject.AddComponent<M2Popup>();
 
-            // Halo detrás de la tarjeta: solo se dispara al resolver el nivel (momento raro → "delight").
+            // Halo detrás de la tarjeta
             if (EsportsSkin.HasSprites) {
                 Image pulse = EsportsUIKit.CreateSpriteImage("SuccessPulse", dim.rectTransform, EsportsSkin.ChamferGlow, Image.Type.Sliced);
                 pulse.raycastTarget = false;
@@ -416,7 +384,7 @@ namespace Neuralizer.EditorTools {
 
             refs.resultTitle = EsportsUIKit.CreateText(content, "", EsportsTheme.TextSize.Display, EsportsTheme.TextPrimary,
                 FontStyles.Bold, TextAlignmentOptions.Center, 56f);
-            // El detalle llena el espacio que queda y se autoajusta si la pista es larga.
+  
             refs.resultDetail = EsportsUIKit.CreateText(content, "", EsportsTheme.TextSize.Body, EsportsTheme.TextPrimary,
                 FontStyles.Normal, TextAlignmentOptions.Center, 0f);
             refs.resultDetail.gameObject.AddComponent<LayoutElement>().flexibleHeight = 1f;

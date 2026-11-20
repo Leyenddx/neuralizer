@@ -11,19 +11,6 @@ using UnityEngine.UI;
 
 namespace Neuralizer.EditorTools {
 
-    /// <summary>
-    /// Regenera todo el Módulo 2 de una vez (recursos, niveles, escenas de ejercicios y menú) y saca
-    /// capturas PNG a 540×960 (la resolución del build WebGL) de cada pantalla, para revisar el diseño
-    /// sin abrir cada escena a mano. Pensado para correrse también en modo batch:
-    /// <c>Unity -batchmode -quit -projectPath … -executeMethod Neuralizer.EditorTools.Module2BatchPipeline.Run</c>
-    /// (variable de entorno <c>M2_CAPTURE_DIR</c> opcional para la carpeta de salida).
-    /// </summary>
-    /// <remarks>
-    /// Las capturas se hacen en modo edición: la escena de niveles se "arranca" invocando por
-    /// reflexión el Start/LateUpdate de <see cref="FuzzyLevelController"/> sobre un nivel, y el menú se
-    /// pone en estado "Módulo 2 seleccionado". Las escenas se abren para capturar SIN guardar esos
-    /// cambios temporales.
-    /// </remarks>
     public static class Module2BatchPipeline {
 
         private const int Width = 540;

@@ -6,26 +6,7 @@ using UnityEngine;
 
 namespace Neuralizer.EditorTools {
 
-    /// <summary>
-    /// Crea (o actualiza en su lugar, conservando el GUID) los 4 niveles de datos del Módulo 2 como
-    /// assets <see cref="FuzzyScene"/> en <c>Assets/ScriptableObjects/FuzzyScenes/</c>, con los datos
-    /// de la propuesta original (ver <c>MODULO2_DEFENSA.md</c> §5) más el estado inicial "roto" que el jugador debe corregir.
-    /// </summary>
-    /// <remarks>
-    /// Los estados iniciales se validaron simulando el motor (40 muestras, centroide): cada nivel
-    /// arranca mal calificado y tiene solución con los controles que deja editables.
-    /// <list type="bullet">
-    /// <item>Nivel 1 (clasificación, curvas): las curvas arrancan corridas a la derecha; "Bonus" y
-    /// "Ronda ganada" caen en la etiqueta equivocada. Con las curvas del documento, 5/5.</item>
-    /// <item>Nivel 2 (ranking, curvas): "Parejo" arranca tan ancho que los tres carriles empatan en 50.
-    /// Con las curvas del documento: Top 79.9 &gt; Mid 50 &gt; Bot 28.</item>
-    /// <item>Nivel 3 (ranking, pesos): la regla 1 arranca con peso 0 (Reinhardt 75 &gt; D.Va 50). Con
-    /// cualquier peso &gt; 0, D.Va pasa a ~88-90.</item>
-    /// <item>Nivel 4 (ranking, pesos + superficie): la regla 1 arranca con peso 0 (Tanque 75 &gt;
-    /// Tirador 50 &gt; Support 45.7). Al subirla: Tirador ~88-90 &gt; Tanque 75 &gt; Support 45.7.</item>
-    /// </list>
-    /// Correr esta herramienta otra vez SOBRESCRIBE los datos de los 4 assets con estos valores.
-    /// </remarks>
+ 
     public static class Module2LevelAssetsBuilder {
 
         public const string Folder = "Assets/ScriptableObjects/FuzzyScenes";
@@ -227,7 +208,6 @@ namespace Neuralizer.EditorTools {
             return scene;
         }
 
-        /// <summary>Rellena las descripciones de reglas y los campos privados de <see cref="ScorableExercise"/>.</summary>
         private static void Finish(FuzzyScene scene, string displayName, string storageName) {
             FuzzySystem system = scene.system;
             foreach (FuzzyRule rule in system.rules) {

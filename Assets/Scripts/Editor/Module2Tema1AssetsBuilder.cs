@@ -6,29 +6,7 @@ using UnityEngine;
 
 namespace Neuralizer.EditorTools {
 
-    /// <summary>
-    /// Crea (o actualiza en su lugar) el EJERCICIO del Tema 1 del Módulo 2 como asset
-    /// <see cref="FuzzyScene"/>: "Distancia del enemigo" (ambientado en Fortnite). El jugador ajusta
-    /// las funciones de pertenencia de la variable lingüística <b>Distancia</b> (Cerca, Medio, Lejos)
-    /// hasta que cada enemigo quede clasificado en su conjunto. Se juega en <c>FuzzyLevel.unity</c>.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// Trae DOS juegos de curvas para el mismo problema — triangulares (principal) y trapezoidales
-    /// (alternativo) — y el jugador elige con cuál resolverlo. Ambos arrancan mal calibrados ("todo le
-    /// parece cerca") con 3 de 5 enemigos bien clasificados, y ambos tienen solución:
-    /// </para>
-    /// <list type="bullet">
-    /// <item>Triangular — inicio: Cerca (0, 0, 160) · Medio (60, 180, 290) · Lejos (200, 300, 300).
-    /// Referencia: Cerca (0, 0, 80) · Medio (40, 110, 200) · Lejos (150, 300, 300).</item>
-    /// <item>Trapezoidal — inicio: Cerca (0, 0, 80, 130) · Medio (80, 130, 220, 260) · Lejos (220, 260, 300, 300).
-    /// Referencia: Cerca (0, 0, 40, 70) · Medio (40, 70, 150, 190) · Lejos (150, 190, 300, 300).</item>
-    /// </list>
-    /// <para>
-    /// El arma sugerida (escopeta / rifle / francotirador) es solo ambientación en este tema: las reglas
-    /// SI–ENTONCES llegan en el tema siguiente.
-    /// </para>
-    /// </remarks>
+    
     public static class Module2Tema1AssetsBuilder {
 
         public const string LevelPath = Module2LevelAssetsBuilder.Folder + "/Tema 1 Distancia.asset";

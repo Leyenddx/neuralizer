@@ -11,38 +11,8 @@ using Neuralizer.UI;
 
 namespace Neuralizer.EditorTools {
 
-    /// <summary>
-    /// Arma (o rearma desde cero) toda la jerarquía visual de la pantalla de ejercicio del Módulo 2
-    /// — Canvas, barra superior, gráfica, tarjeta inferior, popup de resultado — como GameObjects
-    /// reales guardados en la escena, y deja las referencias de <see cref="FuzzyHealerDemo"/> ya
-    /// conectadas. Correrlo es lo que reemplaza al viejo "la UI se construye en código en Start()":
-    /// ahora se construye UNA VEZ acá, en el editor, y desde ese momento es una jerarquía Unity normal
-    /// — se puede mover, redimensionar y retocar a mano, con el resultado visible en la escena/Game
-    /// view SIN apretar Play.
-    /// </summary>
-    /// <remarks>
-    /// Las medidas usadas acá son las mismas, medidas directo del mockup, que tenía el viejo código de
-    /// construcción en tiempo de ejecución — ver GUIA_AJUSTE_TAMANOS.md para el detalle de qué medía
-    /// cada una. Los 5 valores que además afectan lógica en RUNTIME (pantalla completa, escala de la
-    /// gráfica) viven como <c>public const</c> en <see cref="FuzzyHealerDemo"/> y se leen de ahí
-    /// (<see cref="FuzzyHealerDemo.GraphSideMargin"/> y compañía) para que este builder y el
-    /// comportamiento en juego nunca queden desincronizados. El resto de las medidas (específicas de
-    /// la construcción inicial, no de lógica) viven solo acá como constantes locales — una vez armada
-    /// la jerarquía, esos valores se ajustan directo en el Inspector de cada objeto, no hay necesidad
-    /// de que sigan existiendo como código.
-    ///
-    /// Es seguro correr esta herramienta más de una vez: primero borra cualquier Canvas/EventSystem
-    /// generado por una corrida anterior (identificados por el componente marcador
-    /// <see cref="Module2HudMarker"/>) y arma todo de nuevo — útil para volver a la base "de fábrica"
-    /// después de desordenar el layout a propósito. Objetos que el usuario haya agregado a mano FUERA
-    /// de esta jerarquía (o cuyo GameObject raíz no tenga el marcador) no se tocan.
-    /// </remarks>
+   
     public static class Module2HudBuilder {
-
-        // -----------------------------------------------------------------------------------------
-        // Medidas de construcción (solo se usan acá, una vez, para dejar la jerarquía en su posición
-        // inicial medida del mockup — después de correr el builder se ajustan a mano en el Inspector).
-        // -----------------------------------------------------------------------------------------
 
         private const float TopBarMargin = 16f;
         private const float TopBarHeight = 64f;
@@ -71,8 +41,7 @@ namespace Neuralizer.EditorTools {
         private const string SpriteFolder = "Sprites/Module2/";
         private static Sprite LoadSprite(string name) => Resources.Load<Sprite>(SpriteFolder + name);
 
-        // Referencias recolectadas mientras se arma la jerarquía — al final se vuelcan todas de una
-        // en el componente FuzzyHealerDemo vía SerializedObject.
+  
         private class BuiltRefs {
             public RectTransform canvasRoot;
             public Button backButton;
@@ -144,10 +113,6 @@ namespace Neuralizer.EditorTools {
             Debug.Log("[Module2HudBuilder] HUD del Módulo 2 reconstruido y referencias conectadas en FuzzyHealerDemo.");
         }
 
-        // -----------------------------------------------------------------------------------------
-        // Limpieza (para que correr la herramienta de nuevo sea seguro / idempotente)
-        // -----------------------------------------------------------------------------------------
-
         private static void CleanupPreviousHud() {
             foreach (Module2HudMarker marker in Object.FindObjectsByType<Module2HudMarker>()) {
                 Undo.DestroyObjectImmediate(marker.gameObject);
@@ -161,10 +126,6 @@ namespace Neuralizer.EditorTools {
             es.AddComponent<EventSystem>();
             es.AddComponent<InputSystemUIInputModule>();
         }
-
-        // -----------------------------------------------------------------------------------------
-        // Canvas / fondo
-        // -----------------------------------------------------------------------------------------
 
         private static RectTransform BuildCanvas() {
             GameObject canvasGO = new("Canvas");
@@ -182,14 +143,8 @@ namespace Neuralizer.EditorTools {
         }
 
         private static void BuildBackground(RectTransform canvasRoot) {
-            // Fondo ambiental común del sistema "Tactical Neon" (MODULO2_DISENO.md). Si todavía no se
-            // generaron los recursos visuales, cae solo a un degradado azul noche plano.
             EsportsUIKit.CreateAmbientBackground(canvasRoot);
         }
-
-        // -----------------------------------------------------------------------------------------
-        // Barra superior
-        // -----------------------------------------------------------------------------------------
 
         private static void BuildTopBar(BuiltRefs refs) {
             RectTransform topBar = EsportsUIKit.CreateRect("TopBar", refs.canvasRoot);
@@ -215,14 +170,11 @@ namespace Neuralizer.EditorTools {
                 refs.backButton = EsportsUIKit.CreateGhostButton(topBar, "‹ Volver", 100f, TopBarHeight);
             }
 
-            // Título dentro del banner hexagonal del mockup — si falta el sprite cae de vuelta al texto
-            // simple (sin fondo).
             Sprite bannerSprite = LoadSprite("Module2_Banner");
             RectTransform titleRT;
             if (bannerSprite) {
                 titleRT = EsportsUIKit.CreateSpriteCard(topBar, "Title", bannerSprite, 24f, 24f, 4f, 4f);
-                // flexibleWidth (no preferredWidth fijo): el banner se estira para llenar todo el
-                // espacio entre los botones.
+
                 ((RectTransform)titleRT.parent).gameObject.AddComponent<LayoutElement>().flexibleWidth = 1f;
             }
             else {
@@ -236,8 +188,7 @@ namespace Neuralizer.EditorTools {
                 refs.fullscreenButton = EsportsUIKit.CreateSpriteIconButton(topBar, fullscreenSprite, 44f, TopBarHeight, out refs.fullscreenIcon);
             }
             else {
-                // Se evitan glifos Unicode poco comunes (ej. ⛶): la fuente TMP del proyecto (LiberationSans
-                // SDF) no los tiene y Unity los reemplaza por un cuadro de reemplazo.
+
                 refs.fullscreenButton = EsportsUIKit.CreateGhostButton(topBar, "Completa", 140f, TopBarHeight);
             }
         }
@@ -265,14 +216,13 @@ namespace Neuralizer.EditorTools {
 
             BuildAxis(plotArea);
 
-            // Relleno primero (debajo), borde nítido encima.
+            // Relleno
             refs.bajoFill = EsportsUIKit.CreateFilledCurve(plotArea, new Color(EsportsTheme.CurveBajo.r, EsportsTheme.CurveBajo.g, EsportsTheme.CurveBajo.b, 0.75f));
             refs.altoFill = EsportsUIKit.CreateFilledCurve(plotArea, new Color(EsportsTheme.CurveAlto.r, EsportsTheme.CurveAlto.g, EsportsTheme.CurveAlto.b, 0.75f));
             refs.bajoLine = EsportsUIKit.CreatePolyline(plotArea, EsportsTheme.CurveBajo, 3f);
             refs.altoLine = EsportsUIKit.CreatePolyline(plotArea, EsportsTheme.CurveAlto, 3f);
         }
 
-        /// <summary>Eje X/Y tal como el mockup: una línea por eje con marcas cortas perpendiculares, sin números ni grilla interna.</summary>
         private static void BuildAxis(RectTransform plotArea) {
             Color axisColor = EsportsTheme.TextPrimary;
 
@@ -396,7 +346,7 @@ namespace Neuralizer.EditorTools {
             Button evaluarButton = EsportsUIKit.CreateGradientButton(sheetContent, "Evaluar", 64f);
             evaluarButton.GetComponent<LayoutElement>().preferredWidth = contentWidth * EvaluarWidthFrac;
             TextMeshProUGUI evaluarLabel = evaluarButton.GetComponentInChildren<TextMeshProUGUI>();
-            if (evaluarLabel) evaluarLabel.fontSizeMax = EsportsTheme.TextSize.Subtitle; // botón angosto: autoajuste con piso legible (ver CreateTextFill)
+            if (evaluarLabel) evaluarLabel.fontSizeMax = EsportsTheme.TextSize.Subtitle; 
             refs.evaluarButton = evaluarButton;
         }
 
@@ -457,7 +407,7 @@ namespace Neuralizer.EditorTools {
             refs.dvaRing = BuildHeroIcon(bottomRow, "D");
         }
 
-        /// <summary>Caja oscura con la fórmula de la función de pertenencia actual — mismo recuadro tipo "código" que el mockup, bajo el selector de Función.</summary>
+   
         private static TextMeshProUGUI BuildFormulaBox(Transform parent, float preferredWidth) {
             RectTransform box = EsportsUIKit.CreateRect("FormulaBox", parent);
             LayoutElement boxLE = box.gameObject.AddComponent<LayoutElement>();
@@ -467,28 +417,21 @@ namespace Neuralizer.EditorTools {
             bg.color = new Color(0.06f, 0.07f, 0.09f, 1f);
 
             TextMeshProUGUI text = EsportsUIKit.CreateTextFill(box, "", EsportsTheme.TextSize.Small, EsportsTheme.TextSecondary, FontStyles.Normal, TextAlignmentOptions.Center);
-            // La caja es angosta a propósito — con fórmulas largas como "trapezoidal(a, b, c, d)" el
-            // texto a tamaño fijo se saldría de la caja. Autosize con piso legible (Caption, 12 px reales) deja que se
-            // achique solo lo necesario para entrar, en vez de desbordar.
+
             text.enableAutoSizing = true;
-            text.textWrappingMode = TextWrappingModes.NoWrap; // una sola línea: se achica antes que partirse
+            text.textWrappingMode = TextWrappingModes.NoWrap; 
             text.fontSizeMin = EsportsTheme.TextSize.Caption;
             text.fontSizeMax = EsportsTheme.TextSize.Small;
             return text;
         }
 
-        /// <summary>
-        /// PLACEHOLDER: caja con solo contorno + letra, en el mismo lugar donde el mockup muestra un
-        /// cuadro con una X ("imagen no encontrada") — reemplazar el Image/Sprite de este GameObject en
-        /// el Inspector cambia el ícono en toda la pantalla, no hace falta tocar código.
-        /// </summary>
+
         private static Image[] BuildHeroIcon(Transform parent, string letter) {
             RectTransform icon = EsportsUIKit.CreateRect("Icon", parent);
             icon.gameObject.AddComponent<LayoutElement>().preferredWidth = 48f;
             icon.sizeDelta = new Vector2(48f, 48f);
 
-            // Aro de urgencia: un contorno de 4 barras, no un rectángulo sólido. Arranca invisible
-            // (alpha 0) — recién toma color en runtime cuando el sistema difuso calcula una prioridad.
+
             RectTransform ringRT = EsportsUIKit.CreateRect("Ring", icon);
             EsportsUIKit.Stretch(ringRT, -9f, -9f, -9f, -9f);
             Color ringStart = new(EsportsTheme.NeonGreen.r, EsportsTheme.NeonGreen.g, EsportsTheme.NeonGreen.b, 0f);
@@ -536,17 +479,11 @@ namespace Neuralizer.EditorTools {
             refs.resultText = EsportsUIKit.CreateText(popupContent, "Sin evaluar", EsportsTheme.TextSize.Subtitle, EsportsTheme.TextPrimary, FontStyles.Bold, TextAlignmentOptions.Center, 120f);
             refs.resultCloseButton = EsportsUIKit.CreateGradientButton(popupContent, "Cerrar", 50f);
 
-            // Arranca oculto — FuzzyHealerDemo.WireUI() también lo fuerza a oculto al entrar a Play,
-            // pero dejarlo así de entrada evita que el popup tape la pantalla mientras se edita el HUD.
+
             backdrop.gameObject.SetActive(false);
         }
 
-        // -----------------------------------------------------------------------------------------
-        // Vista previa de las curvas en modo edición (sin Play): mismos valores por defecto que
-        // FuzzyHealerDemo.BuildScene() le da a la variable "DañoEntrante" en Trapezoidal — así la
-        // gráfica no se ve vacía al abrir la escena. En runtime, FuzzyHealerDemo.RedrawCurves()
-        // recalcula con los datos reales y pisa estos puntos.
-        // -----------------------------------------------------------------------------------------
+
 
         private static void SeedPreviewCurves(BuiltRefs refs) {
             FuzzyVariable dano = new(
@@ -572,9 +509,6 @@ namespace Neuralizer.EditorTools {
             refs.altoFill.SetPoints(alto);
         }
 
-        // -----------------------------------------------------------------------------------------
-        // Volcar las referencias recolectadas en el componente FuzzyHealerDemo
-        // -----------------------------------------------------------------------------------------
 
         private static void AssignReferences(FuzzyHealerDemo demo, BuiltRefs refs) {
             SerializedObject so = new(demo);
