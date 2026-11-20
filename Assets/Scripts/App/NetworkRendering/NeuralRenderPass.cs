@@ -445,7 +445,11 @@ namespace Neuralizer.NetworkRendering {
         /// <param name="context">El contexto del renderizador</param>
         /// <seealso href="https://docs.unity3d.com/Packages/com.unity.render-pipelines.core@17.2/api/UnityEngine.Rendering.RenderGraphModule.RasterGraphContext.html"/>
         static void ExecutePaintPass(PaintPassData data, RasterGraphContext context) {
-            Shader.SetGlobalTexture(Output_ID, data.networkOutput);
+            // Por el command buffer, no con Shader.SetGlobalTexture: este último se aplica en el momento
+            // de GRABAR el pase y la GPU dibuja después; con el pool de texturas de Render Graph, el
+            // shader podía leer una textura de otro frame (parpadeo en celulares). Requiere
+            // AllowGlobalStateModification(true) en el builder del pase.
+            context.cmd.SetGlobalTexture(Output_ID, data.networkOutput);
             Blitter.BlitTexture(context.cmd, data.cameraTex, Vector2.one, data.material, 0);
         }
 
@@ -694,6 +698,7 @@ namespace Neuralizer.NetworkRendering {
                 builder.UseTexture(passData.cameraTex);
                 builder.UseTexture(passData.networkOutput);
                 builder.SetRenderAttachment(passData.paintOutput, 0);
+                builder.AllowGlobalStateModification(true);
                 builder.SetRenderFunc((PaintPassData data, RasterGraphContext context) =>
                     ExecutePaintPass(data, context));
             }
