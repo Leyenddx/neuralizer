@@ -1,0 +1,48 @@
+# Publica la build WebGL (carpeta public/) en GitHub Pages.
+#
+# Se ejecuta sola cuando haces push a la rama Leyenddx con cambios en public/, o a mano desde
+# la pestaña Actions → "Publicar build web" → Run workflow.
+#
+# Para regenerar la build: en Unity, Tools → Neuralizer → Build Web (carpeta public).
+
+name: Publicar build web
+
+on:
+  push:
+    branches: [Leyenddx]
+    paths:
+      - "public/**"
+      - ".github/workflows/deploy-pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Si llegan dos pushes seguidos, solo se publica el último.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Pages
+        uses: actions/configure-pages@v5
+
+      - name: Empaquetar la carpeta public
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Publicar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

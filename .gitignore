@@ -75,3 +75,4 @@ crashlytics-build.properties
 # Generados localmente (no versionar)
 *.slnx
 submodule_report.json
+/[Dd]ata/
