@@ -242,9 +242,9 @@ namespace Neuralizer.Fuzzy {
 
             // Color del contorno: mezcla de los tres colores ponderada por su grado (en clásica, uno solo).
             Color mix = Color.black;
-            for (int s = 0; s < 3; s++) mix += StateColor(s) * (total > 0f ? degrees[s] / total : 0f);
+            for (int s = 0; s < 3; s++) mix += StateColor(s).linear * (total > 0f ? degrees[s] / total : 0f);
             mix.a = 1f;
-            ringColor = mix;
+            ringColor = mix.gamma;
             urgency = Mathf.Clamp01(degrees[0] + 0.45f * degrees[1]);
 
             for (int s = 0; s < 3; s++) {

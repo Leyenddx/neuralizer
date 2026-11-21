@@ -247,6 +247,13 @@ namespace Neuralizer.Fuzzy {
                 title.textWrappingMode = TextWrappingModes.NoWrap;
                 title.overflowMode = TextOverflowModes.Ellipsis;
 
+                if (cases[i].icon) {
+                    var image = EsportsUIKit.CreateSpriteImage(cases[i].icon.name, content, cases[i].icon, Image.Type.Simple);
+                    image.preserveAspect = true;
+                    var imageLayout = image.gameObject.AddComponent<LayoutElement>();
+                    imageLayout.preferredHeight = 64f;
+                }
+
                 // La línea de valores es la única que puede crecer: toma el espacio libre de la celda y
                 // se achica (nunca por debajo de 12 px reales) si no cabe, en vez de encimarse.
                 TextMeshProUGUI inputs = EsportsUIKit.CreateText(content, DescribeInputs(cases[i]), EsportsTheme.TextSize.Small,

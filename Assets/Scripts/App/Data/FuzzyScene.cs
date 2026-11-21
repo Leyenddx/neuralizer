@@ -93,6 +93,11 @@ namespace Neuralizer.Data {
         public string label = "Caso A";
 
         /// <summary>
+        /// Imágen representativa para mostrar en la interfaz
+        /// </summary>
+        public Sprite icon;
+
+        /// <summary>
         /// Un valor por cada variable de entrada del sistema, en el mismo orden que <see cref="FuzzySystem.inputs"/>
         /// </summary>
         public float[] inputValues = System.Array.Empty<float>();
