@@ -58,19 +58,19 @@ MonoBehaviour:
     rules: []
   cases:
   - label: Escopeta
-    icon: {fileID: 21300000, guid: cf8312fa3bdb0624888991db5e02beb0, type: 3}
+    icon: {fileID: 8052672802746627241, guid: cf8312fa3bdb0624888991db5e02beb0, type: 3}
     inputValues:
     - 6
     expectedRank: 0
     expectedLabel: Cerca
   - label: Rifle de Asalto
-    icon: {fileID: 21300000, guid: 43eadc186fe15024482f554a4c5f9e18, type: 3}
+    icon: {fileID: -6328814241428266698, guid: 43eadc186fe15024482f554a4c5f9e18, type: 3}
     inputValues:
     - 90
     expectedRank: 0
     expectedLabel: Medio
   - label: Sniper
-    icon: {fileID: 21300000, guid: 77d2a8f4d03cd4c4ab5225b16495add9, type: 3}
+    icon: {fileID: 208716839059096894, guid: 77d2a8f4d03cd4c4ab5225b16495add9, type: 3}
     inputValues:
     - 230
     expectedRank: 0
